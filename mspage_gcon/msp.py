@@ -59,10 +59,18 @@ MONTHS = {
 TIME_PATTERN = re.compile(
     r"(?i)\b([A-Za-z]{3})\s+(\d{1,2})\s*[—-]\s*(\d{1,2}):(\d{2})\s*([ap])\.m\."
 )
+NEXT_PAGE_PATTERN = re.compile(r"[?&]page=(\d+)")
+MAX_PAGES = 6
 
 
 def fetch_delta_departures_html(timeout: float = 20.0) -> str:
-    return fetch_flights_page(timeout=timeout)
+    pages: list[str] = []
+    for page in range(MAX_PAGES):
+        html = fetch_flights_page(page=page, timeout=timeout)
+        pages.append(html)
+        if not has_next_page(html, page):
+            break
+    return "\n".join(pages)
 
 
 def fetch_flights_ajax(timeout: float = 20.0) -> list[dict]:
@@ -93,9 +101,11 @@ def extract_ajax_markup(commands: list[dict]) -> str:
     return ranked[0]
 
 
-def fetch_flights_page(timeout: float = 20.0) -> str:
+def fetch_flights_page(page: int = 0, timeout: float = 20.0) -> str:
+    params = dict(MSP_QUERY_PARAMS)
+    params["page"] = str(page)
     request = Request(
-        f"{MSP_FLIGHTS_URL}?{urlencode(MSP_QUERY_PARAMS)}",
+        f"{MSP_FLIGHTS_URL}?{urlencode(params)}",
         headers=MSP_HEADERS,
     )
     with urlopen(request, timeout=timeout) as response:
@@ -142,6 +152,11 @@ def parse_departure_rows(markup: str, now: datetime | None = None) -> list[dict]
 
 def has_gate_rows(markup: str) -> bool:
     return bool(RAW_GATE_PATTERN.search(markup))
+
+
+def has_next_page(markup: str, current_page: int) -> bool:
+    matches = [int(value) for value in NEXT_PAGE_PATTERN.findall(unescape(markup))]
+    return any(page > current_page for page in matches)
 
 
 def parse_departure_time(value: str, now: datetime | None = None) -> datetime | None:

@@ -9,6 +9,7 @@ from zoneinfo import ZoneInfo
 from mspage_gcon.config import load_pod_ranges
 from mspage_gcon.msp import (
     extract_ajax_markup,
+    has_next_page,
     parse_departure_rows,
     parse_departure_time,
     parse_destination,
@@ -51,6 +52,10 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(parse_destination("Los Cabos (SJD)"), "SJD")
         self.assertEqual(parse_flight_number("DeltaDL 1826"), "1826")
         self.assertIsNone(parse_flight_number("UnitedUA 1220"))
+
+    def test_has_next_page_detects_pagination_links(self) -> None:
+        self.assertTrue(has_next_page('<a href="?flight_type=departures&amp;text=&amp;page=1">Next</a>', 0))
+        self.assertFalse(has_next_page('<a href="?flight_type=departures&amp;text=&amp;page=2">Current</a>', 2))
 
     def test_parse_departure_rows_filters_non_t1g_scope(self) -> None:
         self.assertEqual(len(self.rows), 4)
