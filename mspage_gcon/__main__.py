@@ -8,7 +8,7 @@ import sys
 
 from .airlabs import fetch_schedules
 from .config import load_pod_ranges
-from .pipeline import build_departures, should_fetch_now, write_outputs
+from .pipeline import CHICAGO, build_departures_from_now, should_fetch_now, write_outputs
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -49,8 +49,8 @@ def main(argv: list[str] | None = None) -> int:
 
     payload = fetch_schedules(api_key=api_key, dep_iata=args.airport, limit=args.limit)
     rows = payload.get("response", [])
-    departures = build_departures(rows=rows, pods=pods)
     generated_at = datetime.now(timezone.utc)
+    departures = build_departures_from_now(rows=rows, pods=pods, now=generated_at.astimezone(CHICAGO))
     write_outputs(output_dir=output_dir, departures=departures, pods=pods, generated_at=generated_at)
 
     print(f"Wrote {len(departures)} departures to {output_dir}.")

@@ -99,7 +99,16 @@ def should_fetch_now(schedule_hours: set[int], now: datetime | None = None) -> b
 
 
 def build_departures(rows: list[dict], pods: list[PodRange]) -> list[DepartureRecord]:
+    return _build_departures(rows=rows, pods=pods, not_before=None)
+
+
+def _build_departures(
+    rows: list[dict],
+    pods: list[PodRange],
+    not_before: datetime | None,
+) -> list[DepartureRecord]:
     grouped: dict[tuple[int, str, str], list[dict]] = defaultdict(list)
+    threshold_minute = _minute_epoch(not_before) if not_before else None
 
     for row in rows:
         gate = normalize_gate(row.get("dep_gate"))
@@ -108,6 +117,8 @@ def build_departures(rows: list[dict], pods: list[PodRange]) -> list[DepartureRe
 
         departure_time = select_departure_time(row)
         if departure_time is None:
+            continue
+        if threshold_minute is not None and _minute_epoch(departure_time) < threshold_minute:
             continue
 
         dep_key = (
@@ -144,7 +155,7 @@ def build_departures(rows: list[dict], pods: list[PodRange]) -> list[DepartureRe
                 pod_id=pod_id,
                 pod_label=pod_label,
                 time_display_ops=departure_time.strftime("%H%M"),
-                time_display_finance=departure_time.strftime("%I:%M").lstrip("0") or "0:00",
+                time_display_finance=departure_time.strftime("%H:%M"),
                 sort_timestamp=int(departure_time.timestamp()),
                 status=status,
             )
@@ -152,6 +163,14 @@ def build_departures(rows: list[dict], pods: list[PodRange]) -> list[DepartureRe
 
     departures.sort(key=lambda item: (item.sort_timestamp, item.gate_number, item.destination))
     return departures
+
+
+def build_departures_from_now(
+    rows: list[dict],
+    pods: list[PodRange],
+    now: datetime,
+) -> list[DepartureRecord]:
+    return _build_departures(rows=rows, pods=pods, not_before=now)
 
 
 def build_ops_payload(
@@ -197,11 +216,9 @@ def render_finance_text(departures: list[DepartureRecord]) -> str:
         for index, value in enumerate(row):
             widths[index] = max(widths[index], len(value))
 
-    lines = [
-        " | ".join(header.ljust(widths[index]) for index, header in enumerate(headers))
-    ]
+    lines = [" | ".join(header.ljust(widths[index]) for index, header in enumerate(headers)).rstrip()]
     for row in rows:
-        lines.append(" | ".join(value.ljust(widths[index]) for index, value in enumerate(row)))
+        lines.append(" | ".join(value.ljust(widths[index]) for index, value in enumerate(row)).rstrip())
 
     return "\n".join(lines) + "\n"
 
@@ -286,3 +303,7 @@ def _clean_string(value: object) -> str | None:
         return None
     text = str(value).strip()
     return text or None
+
+
+def _minute_epoch(value: datetime) -> int:
+    return int(value.timestamp()) // 60

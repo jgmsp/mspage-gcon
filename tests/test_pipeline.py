@@ -9,6 +9,7 @@ from zoneinfo import ZoneInfo
 from mspage_gcon.config import load_pod_ranges
 from mspage_gcon.pipeline import (
     build_departures,
+    build_departures_from_now,
     build_ops_payload,
     normalize_gate,
     render_finance_text,
@@ -54,11 +55,28 @@ class PipelineTests(unittest.TestCase):
 
         expected = (
             "Flight | Gate | Time\n"
-            "2607   | 8    | 6:34\n"
-            "942    | 22   | 6:40\n"
-            "1062   | 18   | 8:05\n"
+            "2607   | 8    | 18:34\n"
+            "942    | 22   | 18:40\n"
+            "1062   | 18   | 20:05\n"
         )
         self.assertEqual(rendered, expected)
+
+    def test_build_departures_from_now_filters_past_etd(self) -> None:
+        rows = self.rows + [
+            {
+                "dep_gate": "G1",
+                "dep_time": "2026-03-08 17:00",
+                "dep_time_ts": 1773007200,
+                "arr_iata": "MSN",
+                "flight_iata": "DL9999",
+                "flight_number": "9999",
+            }
+        ]
+        now = datetime(2026, 3, 8, 18, 35, tzinfo=ZoneInfo("America/Chicago"))
+        departures = build_departures_from_now(rows, self.pods, now=now)
+
+        numbers = [item.flight_display for item in departures]
+        self.assertNotIn("9999", numbers)
 
     def test_ops_payload_contains_metadata(self) -> None:
         departures = build_departures(self.rows, self.pods)
@@ -83,12 +101,13 @@ class PipelineTests(unittest.TestCase):
 
         self.assertIn("Concourse G", index_html)
         self.assertIn("pod-filters", index_html)
-        self.assertIn("view-switch", index_html)
-        self.assertIn("theme-switch", index_html)
-        self.assertIn("ops-only-toggle", index_html)
-        self.assertIn("VIEW_CONFIG", app_js)
+        self.assertIn("theme-cycle", index_html)
+        self.assertIn("Board filters", index_html)
         self.assertIn("isVisibleInOps", app_js)
         self.assertIn("THEMES", app_js)
+        self.assertIn("THEME_ICONS", app_js)
+        self.assertIn("isFinanceView", app_js)
+        self.assertIn("isUrgent", app_js)
 
 
 if __name__ == "__main__":

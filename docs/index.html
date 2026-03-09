@@ -19,82 +19,39 @@
   <body>
     <main class="shell">
       <section class="hero">
-        <div class="hero-copy">
+        <div class="eyebrow-row">
           <p class="eyebrow">Terminal 1</p>
-          <h1>Concourse G</h1>
-          <p class="lede">
-            Departures snapshot for G, grouped by pod; refreshed at 4am & 1pm.
-          </p>
+          <p class="eyebrow-meta" id="last-updated-inline">Awaiting snapshot</p>
         </div>
-        <div class="hero-meta">
-          <div class="stat">
-            <span class="stat-label">Last Updated</span>
-            <span class="stat-value" id="last-updated">Awaiting snapshot</span>
+        <div class="hero-heading">
+          <div class="hero-copy">
+            <h1>Concourse G</h1>
+            <p class="lede">
+              Departures snapshot for G.
+            </p>
           </div>
-          <div class="stat">
-            <span class="stat-label">Visible Flights</span>
-            <span class="stat-value" id="visible-count">0</span>
-          </div>
-          <div class="stat stat-accent">
-            <span class="stat-label">View</span>
-            <span class="stat-value" id="active-view-label">Operations</span>
+          <div class="theme-inline">
+            <button type="button" class="theme-cycle" id="theme-cycle" aria-label="Cycle theme">
+              <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+                <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+            </button>
           </div>
         </div>
-      </section>
-
-      <section class="controls">
-        <div class="controls-block">
-          <div class="controls-copy">
-            <h2>Views</h2>
-            <p>Switch between the ops board and the finance-facing list.</p>
-          </div>
-          <div class="view-switch" id="view-switch" aria-label="View switch"></div>
-        </div>
-        <div class="controls-block">
-          <div class="controls-copy">
-            <h2>Pods</h2>
-            <p id="pod-copy">Filter by pod or full list.</p>
-          </div>
-          <div class="pod-filters" id="pod-filters" aria-label="Pod filters"></div>
-        </div>
-        <div class="controls-block">
-          <div class="controls-copy">
-            <h2>Preferences</h2>
-            <p>Theme and local browser behavior only affect this device.</p>
-          </div>
-          <div class="preferences-grid">
-            <div class="preference-card">
-              <h3>Theme</h3>
-              <p>Pick a saved palette inspired by your Terminal profiles.</p>
-              <div class="theme-switch" id="theme-switch" aria-label="Theme switch"></div>
-            </div>
-            <div class="preference-card">
-              <h3>Mobile Shortcut</h3>
-              <p>Lock this browser into operations-only mode when you want a simpler mobile view.</p>
-              <label class="ops-toggle" for="ops-only-toggle">
-                <span class="ops-toggle-copy">
-                  <strong>Ops only on this browser</strong>
-                  <span>Hide finance controls and stay on the ops board.</span>
-                </span>
-                <span class="toggle-ui">
-                  <input type="checkbox" id="ops-only-toggle">
-                  <span class="toggle-track" aria-hidden="true"></span>
-                </span>
-              </label>
-            </div>
-          </div>
+        <div class="hero-toolbar">
+          <span class="toolbar-label">Filter</span>
+          <div class="pod-filters" id="pod-filters" aria-label="Board filters"></div>
         </div>
       </section>
 
       <section class="board">
         <div class="board-header">
-          <div>
-            <h2 id="board-title">Operations Board</h2>
-            <p id="board-caption">Time | Gate | Dest</p>
+          <div class="board-heading">
+            <h2 id="board-title">Operations View</h2>
+            <p class="board-count" id="visible-count">Flights: 0</p>
           </div>
           <div class="board-actions">
-            <p class="board-note" id="board-note">Flights stay visible through their ETD minute, then drop off the ops board.</p>
-            <a class="finance-link" id="finance-download" href="./finance.txt" download>Download Finance TXT</a>
+            <p class="board-note hidden" id="board-note"></p>
           </div>
         </div>
         <div class="table-wrap">
