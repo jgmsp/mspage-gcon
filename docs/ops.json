@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-09T05:12:59.012520Z",
+  "generatedAt": "2026-03-09T07:01:08.008865Z",
   "pods": [
     {
       "id": "pod-1",
@@ -52,17 +52,45 @@
       "status": "scheduled"
     },
     {
-      "id": "G17-2026-03-09 06:06-CUN",
-      "flightDisplay": "399",
-      "flightIata": "DL399",
-      "gateNumber": 17,
-      "gateLabel": "G17",
-      "destination": "CUN",
+      "id": "G19-2026-03-09 06:20-RSW",
+      "flightDisplay": "854",
+      "flightIata": "DL854",
+      "gateNumber": 19,
+      "gateLabel": "G19",
+      "destination": "RSW",
       "podId": "pod-5",
       "podLabel": "Pod 5",
-      "timeDisplayOps": "0606",
-      "timeDisplayFinance": "06:06",
-      "sortTimestamp": 1773054360,
+      "timeDisplayOps": "0620",
+      "timeDisplayFinance": "06:20",
+      "sortTimestamp": 1773055200,
+      "status": "scheduled"
+    },
+    {
+      "id": "G21-2026-03-09 06:55-LAS",
+      "flightDisplay": "2261",
+      "flightIata": "DL2261",
+      "gateNumber": 21,
+      "gateLabel": "G21",
+      "destination": "LAS",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
+      "timeDisplayOps": "0655",
+      "timeDisplayFinance": "06:55",
+      "sortTimestamp": 1773057300,
+      "status": "scheduled"
+    },
+    {
+      "id": "G8-2026-03-09 07:00-ATL",
+      "flightDisplay": "1039",
+      "flightIata": "DL1039",
+      "gateNumber": 8,
+      "gateLabel": "G8",
+      "destination": "ATL",
+      "podId": "pod-1",
+      "podLabel": "Pod 1",
+      "timeDisplayOps": "0700",
+      "timeDisplayFinance": "07:00",
+      "sortTimestamp": 1773057600,
       "status": "scheduled"
     }
   ]
