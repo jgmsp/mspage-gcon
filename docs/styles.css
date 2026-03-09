@@ -291,7 +291,7 @@ h1 {
   border-radius: 999px;
   background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
-  transition: transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1), width 420ms cubic-bezier(0.2, 0.8, 0.2, 1), height 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform, width, height;
   z-index: 0;
 }
 
@@ -332,10 +332,6 @@ h1 {
   align-items: center;
   justify-content: center;
   transition: transform 220ms ease, background 220ms ease, color 220ms ease, border-color 220ms ease;
-}
-
-.theme-cycle.is-spinning svg {
-  animation: theme-spin 360ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .board {
@@ -399,10 +395,6 @@ h1 {
   transition: border-color 180ms ease, box-shadow 180ms ease;
 }
 
-.table-wrap.is-refreshing {
-  animation: table-refresh 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
 table {
   width: 100%;
   border-collapse: collapse;
@@ -433,6 +425,10 @@ tbody td {
   will-change: transform, opacity, background;
 }
 
+.board-row.is-exiting {
+  pointer-events: none;
+}
+
 .is-window {
   transition: background 220ms ease;
 }
@@ -451,11 +447,6 @@ tbody td {
     );
   background-repeat: no-repeat;
   background-size: 240% 100%;
-  animation: critical-row-sweep 760ms linear infinite;
-}
-
-.is-window-red-4 td:first-child {
-  animation: critical-row-sweep 760ms linear infinite;
 }
 
 .is-window-red-3 td {
@@ -518,42 +509,10 @@ tbody td {
   }
 }
 
-@keyframes theme-spin {
-  from {
-    transform: rotate(-18deg) scale(0.92);
-  }
-  55% {
-    transform: rotate(14deg) scale(1.04);
-  }
-  to {
-    transform: rotate(0deg) scale(1);
-  }
-}
-
-@keyframes table-refresh {
-  0% {
-    transform: translateY(8px);
-    opacity: 0.82;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes critical-row-sweep {
-  0% {
-    background-position: 140% 0;
-  }
-  100% {
-    background-position: -40% 0;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .hero,
   .board,
-  .theme-cycle.is-spinning svg {
+  .theme-cycle svg {
     animation: none !important;
   }
 
@@ -565,9 +524,6 @@ tbody td {
     transition: none;
   }
 
-  .is-window-red-4 td {
-    animation: none !important;
-  }
 }
 
 @media (max-width: 760px) {

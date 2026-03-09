@@ -12,7 +12,7 @@ from .config import PodRange, assign_pod
 
 
 CHICAGO = ZoneInfo("America/Chicago")
-GATE_PATTERN = re.compile(r"(?i)\bG\s*([0-9]{1,2})\b")
+GATE_PATTERN = re.compile(r"(?i)\b(?:T1)?G\s*([0-9]{1,2})\b")
 DATE_PATTERNS = (
     "%Y-%m-%d %H:%M",
     "%Y-%m-%d %H:%M:%S",
@@ -34,7 +34,6 @@ class DepartureRecord:
     time_display_ops: str
     time_display_finance: str
     sort_timestamp: int
-    status: str | None
 
 
 def normalize_gate(raw_gate: str | None) -> int | None:
@@ -142,8 +141,6 @@ def _build_departures(
         pod_label = pod.label if pod else "Unassigned"
         flight_display, flight_iata = _choose_operating_flight(group_rows)
         gate_label = f"G{gate}"
-        status = _clean_string(exemplar.get("status"))
-
         departures.append(
             DepartureRecord(
                 id=f"{gate_label}-{dep_key}-{destination}",
@@ -157,7 +154,6 @@ def _build_departures(
                 time_display_ops=departure_time.strftime("%H%M"),
                 time_display_finance=departure_time.strftime("%H:%M"),
                 sort_timestamp=int(departure_time.timestamp()),
-                status=status,
             )
         )
 
@@ -197,7 +193,6 @@ def build_ops_payload(
                 "timeDisplayOps": departure.time_display_ops,
                 "timeDisplayFinance": departure.time_display_finance,
                 "sortTimestamp": departure.sort_timestamp,
-                "status": departure.status,
             }
             for departure in departures
         ],

@@ -8,6 +8,8 @@ const state = {
 const params = new URLSearchParams(window.location.search);
 const snapshotPath = params.get("snapshot") || "ops.json";
 const previewNow = readPreviewNow(params.get("previewNow"));
+const animeApi = window.anime || {};
+const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
 
 const themeCycle = document.getElementById("theme-cycle");
 const departuresHead = document.getElementById("departures-head");
@@ -78,7 +80,7 @@ function renderMeta() {
     timeStyle: "short",
     timeZone: "America/Chicago",
   });
-  lastUpdatedInline.textContent = `Updated ${formatter.format(new Date(generatedAt))}`;
+  lastUpdatedInline.textContent = `Updated ${formatter.format(new Date(generatedAt))} · MSP DL`;
 }
 
 function renderPodFilters() {
@@ -104,6 +106,7 @@ function renderPodFilters() {
       button.className = state.activeFilter === definition.id ? "pill active" : "pill";
     });
   }
+
   ensureFilterIndicator();
   updateFilterIndicator();
 }
@@ -119,6 +122,7 @@ function createFilterButton(id, label, active) {
       return;
     }
     state.activeFilter = id;
+    animateFilterPress(button);
     render();
   });
   return button;
@@ -144,29 +148,19 @@ function renderHead() {
 
 function renderRows() {
   const departures = getVisibleDepartures();
+  const financeView = isFinanceView();
+  const previousRows = Array.from(departuresBody.querySelectorAll(".board-row"));
+  const oldPositions = new Map(previousRows.map((row) => [row.dataset.rowKey, row.getBoundingClientRect().top]));
+  const existingRows = new Map(previousRows.map((row) => [row.dataset.rowKey, row]));
+  const desiredKeys = new Set(departures.map((departure) => rowKeyFor(departure, financeView)));
+  const exitingRows = previousRows.filter((row) => !desiredKeys.has(row.dataset.rowKey));
+
   setFlightsCount(departures.length);
 
   if (departures.length === 0) {
-    for (const row of Array.from(departuresBody.children)) {
-      row.remove();
-    }
     emptyState.classList.remove("hidden");
-    return;
-  }
-
-  emptyState.classList.add("hidden");
-  const financeView = isFinanceView();
-  const oldPositions = new Map(
-    Array.from(departuresBody.children).map((row) => [row.dataset.rowKey, row.getBoundingClientRect().top])
-  );
-  const existingRows = new Map(Array.from(departuresBody.children).map((row) => [row.dataset.rowKey, row]));
-  const desiredKeys = new Set(departures.map((departure) => rowKeyFor(departure, financeView)));
-
-  for (const [key, row] of existingRows.entries()) {
-    if (!desiredKeys.has(key)) {
-      animateRowExit(row);
-      existingRows.delete(key);
-    }
+  } else {
+    emptyState.classList.add("hidden");
   }
 
   const fragment = document.createDocumentFragment();
@@ -174,9 +168,8 @@ function renderRows() {
     const key = rowKeyFor(departure, financeView);
     const row = existingRows.get(key) || document.createElement("tr");
     row.dataset.rowKey = key;
-    row.style.setProperty("--row-delay", `${Math.min(index, 7) * 24}ms`);
-    row.className = "";
-    row.classList.add("board-row");
+    row.dataset.rowIndex = String(index);
+    row.className = "board-row";
 
     const urgencyBand = financeView ? null : getUrgencyBand(departure);
     if (urgencyBand) {
@@ -185,14 +178,10 @@ function renderRows() {
 
     updateRowContent(row, departure, financeView);
     fragment.appendChild(row);
-
-    if (!existingRows.has(key)) {
-      row.classList.add("is-entering");
-    }
   });
 
-  departuresBody.replaceChildren(fragment);
-  animateRowMoves(oldPositions);
+  departuresBody.replaceChildren(fragment, ...exitingRows);
+  animateRows(departures, financeView, oldPositions, existingRows, exitingRows);
 }
 
 function getVisibleDepartures() {
@@ -214,10 +203,6 @@ function isVisibleInOps(departure) {
   const currentMinute = Math.floor(currentTimeMs() / 60000);
   const departureMinute = Math.floor(departure.sortTimestamp / 60);
   return currentMinute <= departureMinute;
-}
-
-function isUrgent(departure) {
-  return getUrgencyBand(departure) !== null;
 }
 
 function getUrgencyBand(departure) {
@@ -270,9 +255,7 @@ themeCycle.addEventListener("click", () => {
   state.activeTheme = nextTheme.id;
   writeStorage("mspage-gcon-theme", nextTheme.id);
   applyTheme(nextTheme.id);
-  themeCycle.classList.remove("is-spinning");
-  void themeCycle.offsetWidth;
-  themeCycle.classList.add("is-spinning");
+  animateThemeCycle();
   updateThemeControl(nextTheme);
 });
 
@@ -299,9 +282,14 @@ function animateBoardTransition() {
   if (!tableWrap) {
     return;
   }
-  tableWrap.classList.remove("is-refreshing");
-  void tableWrap.offsetWidth;
-  tableWrap.classList.add("is-refreshing");
+
+  stopAnimations(tableWrap);
+  animateTargets(tableWrap, {
+    opacity: [0.84, 1],
+    translateY: [6, 0],
+    duration: 320,
+    ease: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+  });
 }
 
 function rowKeyFor(departure, financeView) {
@@ -341,46 +329,83 @@ function makeCell(className, text) {
   return cell;
 }
 
-function animateRowMoves(oldPositions) {
-  for (const row of Array.from(departuresBody.children)) {
+function animateRows(departures, financeView, oldPositions, existingRows, exitingRows) {
+  const stagger = createStagger(28, 0);
+  const rows = Array.from(departuresBody.querySelectorAll(".board-row")).filter(
+    (row) => !exitingRows.includes(row)
+  );
+
+  rows.forEach((row, index) => {
     const key = row.dataset.rowKey;
     const previousTop = oldPositions.get(key);
     const nextTop = row.getBoundingClientRect().top;
+    const isExisting = existingRows.has(key);
+
+    stopAnimations(row);
+
+    if (!isExisting) {
+      animateTargets(row, {
+        opacity: [0, 1],
+        translateY: [14, 0],
+        scale: [0.985, 1],
+        duration: 560,
+        delay: stagger(index),
+        ease: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+      });
+      return;
+    }
 
     if (previousTop == null) {
-      row.animate(
-        [
-          { opacity: 0, transform: "translateY(10px) scale(0.985)" },
-          { opacity: 1, transform: "translateY(0) scale(1)" },
-        ],
-        { duration: 700, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)" }
-      );
-      continue;
+      return;
     }
 
     const delta = previousTop - nextTop;
     if (Math.abs(delta) < 1) {
-      continue;
+      return;
     }
 
-    row.animate(
-      [
-        { transform: `translateY(${delta}px)` },
-        { transform: "translateY(0)" },
-      ],
-      { duration: 860, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)" }
-    );
+    animateTargets(row, {
+      translateY: [delta, 0],
+      duration: 900,
+      delay: Math.min(index, 5) * 24,
+      ease: "cubic-bezier(0.16, 1, 0.3, 1)",
+    });
+  });
+
+  exitingRows.forEach((row) => {
+    row.classList.add("is-exiting");
+    stopAnimations(row);
+    animateTargets(row, {
+      opacity: [1, 0],
+      translateY: [0, -10],
+      scale: [1, 0.985],
+      duration: 420,
+      ease: "cubic-bezier(0.4, 0, 0.2, 1)",
+      onComplete: () => row.remove(),
+    });
+  });
+
+  if (!financeView && rows.length) {
+    const criticalRows = rows.filter((row) => row.classList.contains("is-window-red-4"));
+    criticalRows.forEach((row) => {
+      animateCriticalRow(row);
+    });
   }
 }
 
-function animateRowExit(row) {
-  row.animate(
-    [
-      { opacity: 1, transform: "translateY(0) scale(1)" },
-      { opacity: 0, transform: "translateY(-8px) scale(0.985)" },
-    ],
-    { duration: 500, easing: "ease-out" }
-  );
+function animateThemeCycle() {
+  themeCycle.classList.add("is-spinning");
+  const icon = themeCycle.querySelector("svg");
+  if (icon) {
+    stopAnimations(icon);
+    animateTargets(icon, {
+      rotate: [-24, 0],
+      scale: [0.86, 1],
+      duration: 440,
+      ease: "cubic-bezier(0.16, 1, 0.3, 1)",
+      onComplete: () => themeCycle.classList.remove("is-spinning"),
+    });
+  }
 }
 
 function updateThemeControl(theme) {
@@ -399,7 +424,7 @@ function ensureFilterIndicator() {
   podFilters.prepend(indicator);
 }
 
-function updateFilterIndicator() {
+function updateFilterIndicator(instant = false) {
   const indicator = podFilters.querySelector(".filter-indicator");
   const activeButton = podFilters.querySelector(".pill.active");
   if (!indicator || !activeButton) {
@@ -408,26 +433,70 @@ function updateFilterIndicator() {
 
   const containerRect = podFilters.getBoundingClientRect();
   const buttonRect = activeButton.getBoundingClientRect();
-  indicator.style.width = `${buttonRect.width}px`;
-  indicator.style.height = `${buttonRect.height}px`;
-  indicator.style.transform = `translate(${buttonRect.left - containerRect.left}px, ${buttonRect.top - containerRect.top}px)`;
+  const left = buttonRect.left - containerRect.left;
+  const top = buttonRect.top - containerRect.top;
+
+  if (!indicator.dataset.ready || instant || prefersReducedMotion) {
+    indicator.style.width = `${buttonRect.width}px`;
+    indicator.style.height = `${buttonRect.height}px`;
+    indicator.style.transform = `translate(${left}px, ${top}px)`;
+    indicator.dataset.ready = "true";
+    return;
+  }
+
+  stopAnimations(indicator);
+  animateTargets(indicator, {
+    width: [indicator.offsetWidth, buttonRect.width],
+    height: [indicator.offsetHeight, buttonRect.height],
+    translateX: [getTranslateAxis(indicator, "x"), left],
+    translateY: [getTranslateAxis(indicator, "y"), top],
+    duration: 540,
+    ease: "cubic-bezier(0.16, 1, 0.3, 1)",
+    onComplete: () => {
+      indicator.style.width = `${buttonRect.width}px`;
+      indicator.style.height = `${buttonRect.height}px`;
+      indicator.style.transform = `translate(${left}px, ${top}px)`;
+    },
+  });
 }
 
 function animateHeaderTransition(previousView, nextView) {
   const headers = Array.from(departuresHead.querySelectorAll("th"));
   headers.forEach((header, index) => {
-    header.animate(
-      [
-        { opacity: previousView && previousView !== nextView ? 0.4 : 0, transform: "translateY(-10px)" },
-        { opacity: 1, transform: "translateY(0)" },
-      ],
-      {
-        duration: previousView && previousView !== nextView ? 340 : 220,
-        delay: index * 28,
-        easing: "cubic-bezier(0.2, 0.8, 0.2, 1)",
-        fill: "both",
-      }
-    );
+    stopAnimations(header);
+    animateTargets(header, {
+      opacity: [previousView && previousView !== nextView ? 0.3 : 0, 1],
+      translateY: [previousView && previousView !== nextView ? -12 : -6, 0],
+      duration: previousView && previousView !== nextView ? 360 : 240,
+      delay: index * 36,
+      ease: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+    });
+  });
+}
+
+function animateFilterPress(button) {
+  stopAnimations(button);
+  animateTargets(button, {
+    scale: [1, 0.96, 1],
+    duration: 260,
+    ease: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+  });
+}
+
+function animateCriticalRow(row) {
+  const cells = Array.from(row.children);
+  if (!cells.length || prefersReducedMotion) {
+    return;
+  }
+
+  cells.forEach((cell) => {
+    stopAnimations(cell);
+    animateTargets(cell, {
+      backgroundPositionX: ["130%", "-20%"],
+      duration: 760,
+      ease: "linear",
+      loop: true,
+    });
   });
 }
 
@@ -471,4 +540,157 @@ function readPreviewNow(rawValue) {
   }
 
   return null;
+}
+
+function animateTargets(targets, params) {
+  const items = Array.isArray(targets) ? targets : [targets];
+  if (!items.length) {
+    return null;
+  }
+
+  if (!prefersReducedMotion && typeof animeApi.animate === "function") {
+    try {
+      return animeApi.animate(items, params);
+    } catch (error) {
+      try {
+        return animeApi.animate({ targets: items, ...params });
+      } catch (fallbackError) {
+        return animateFallback(items, params);
+      }
+    }
+  }
+
+  return animateFallback(items, params);
+}
+
+function animateFallback(targets, params) {
+  const duration = params.duration ?? 0;
+  const delayValue = params.delay;
+  const easing = params.ease || "ease-out";
+  const loop = Boolean(params.loop);
+
+  targets.forEach((target, index) => {
+    const delay = typeof delayValue === "function" ? delayValue(index, target, targets) : delayValue || 0;
+    const keyframes = buildKeyframesFromParams(params, target);
+    if (!keyframes.length) {
+      return;
+    }
+
+    const animation = target.animate(keyframes, {
+      duration,
+      delay,
+      easing,
+      iterations: loop ? Number.POSITIVE_INFINITY : 1,
+      fill: "both",
+    });
+
+    if (typeof params.onComplete === "function" && !loop) {
+      animation.addEventListener("finish", () => params.onComplete());
+    }
+  });
+
+  return null;
+}
+
+function buildKeyframesFromParams(params, target) {
+  const frames = [{}, {}];
+  let hasFrame = false;
+
+  for (const [key, value] of Object.entries(params)) {
+    if (["duration", "delay", "ease", "loop", "onComplete", "onUpdate"].includes(key)) {
+      continue;
+    }
+
+    const values = Array.isArray(value) ? value : [null, value];
+    const start = values[0];
+    const end = values[values.length - 1];
+
+    if (key === "translateY") {
+      frames[0].transform = mergeTransform(frames[0].transform, `translateY(${asUnit(start || 0, "px")})`);
+      frames[1].transform = mergeTransform(frames[1].transform, `translateY(${asUnit(end || 0, "px")})`);
+      hasFrame = true;
+      continue;
+    }
+
+    if (key === "translateX") {
+      frames[0].transform = mergeTransform(frames[0].transform, `translateX(${asUnit(start || 0, "px")})`);
+      frames[1].transform = mergeTransform(frames[1].transform, `translateX(${asUnit(end || 0, "px")})`);
+      hasFrame = true;
+      continue;
+    }
+
+    if (key === "scale") {
+      frames[0].transform = mergeTransform(frames[0].transform, `scale(${start ?? 1})`);
+      frames[1].transform = mergeTransform(frames[1].transform, `scale(${end ?? 1})`);
+      hasFrame = true;
+      continue;
+    }
+
+    if (key === "rotate") {
+      frames[0].transform = mergeTransform(frames[0].transform, `rotate(${asUnit(start || 0, "deg")})`);
+      frames[1].transform = mergeTransform(frames[1].transform, `rotate(${asUnit(end || 0, "deg")})`);
+      hasFrame = true;
+      continue;
+    }
+
+    if (key === "backgroundPositionX") {
+      frames[0].backgroundPositionX = start ?? getComputedStyle(target).backgroundPositionX;
+      frames[1].backgroundPositionX = end ?? getComputedStyle(target).backgroundPositionX;
+      hasFrame = true;
+      continue;
+    }
+
+    frames[0][key] = start;
+    frames[1][key] = end;
+    hasFrame = true;
+  }
+
+  return hasFrame ? frames : [];
+}
+
+function stopAnimations(target) {
+  if (typeof animeApi.remove === "function") {
+    try {
+      animeApi.remove(target);
+    } catch (error) {
+      // Ignore; fallback animations are handled by WAAPI below.
+    }
+  }
+
+  if (typeof target.getAnimations === "function") {
+    target.getAnimations().forEach((animation) => animation.cancel());
+  }
+}
+
+function createStagger(step, start) {
+  if (!prefersReducedMotion && typeof animeApi.stagger === "function") {
+    try {
+      return animeApi.stagger(step, { start });
+    } catch (error) {
+      try {
+        return animeApi.stagger(step, start);
+      } catch (fallbackError) {
+        return (index) => start + index * step;
+      }
+    }
+  }
+
+  return (index) => start + index * step;
+}
+
+function getTranslateAxis(element, axis) {
+  const transform = element.style.transform || "";
+  const match = transform.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
+  if (!match) {
+    return 0;
+  }
+  return axis === "x" ? Number(match[1]) : Number(match[2]);
+}
+
+function mergeTransform(current, addition) {
+  return current ? `${current} ${addition}` : addition;
+}
+
+function asUnit(value, unit) {
+  return typeof value === "number" ? `${value}${unit}` : value;
 }

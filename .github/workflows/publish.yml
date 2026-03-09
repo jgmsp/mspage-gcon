@@ -25,7 +25,6 @@ jobs:
 
       - name: Generate latest snapshot
         env:
-          AIRLABS_API_KEY: ${{ secrets.AIRLABS_API_KEY }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
         run: |
           EXTRA_ARGS=""

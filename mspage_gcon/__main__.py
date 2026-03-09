@@ -2,26 +2,18 @@ from __future__ import annotations
 
 import argparse
 from datetime import datetime, timezone
-import os
 from pathlib import Path
 import sys
 
-from .airlabs import fetch_schedules
 from .config import load_pod_ranges
+from .msp import fetch_delta_departures_html, parse_departure_rows
 from .pipeline import CHICAGO, build_departures_from_now, should_fetch_now, write_outputs
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Generate latest MSP G-concourse outputs.")
+    parser = argparse.ArgumentParser(description="Generate latest MSP Delta T1G outputs.")
     parser.add_argument("--output-dir", default="docs", help="Directory for generated output files.")
     parser.add_argument("--pod-config", default="config/pods.json", help="Path to pod config JSON.")
-    parser.add_argument("--airport", default="MSP", help="Departure airport IATA code.")
-    parser.add_argument("--limit", type=int, default=1000, help="AirLabs result limit.")
-    parser.add_argument(
-        "--api-key-env",
-        default="AIRLABS_API_KEY",
-        help="Environment variable that contains the AirLabs key.",
-    )
     parser.add_argument(
         "--respect-schedule",
         action="store_true",
@@ -39,17 +31,13 @@ def main(argv: list[str] | None = None) -> int:
         print("Skipping fetch outside the configured Chicago schedule window.")
         return 0
 
-    api_key = os.environ.get(args.api_key_env, "").strip()
-    if not api_key:
-        raise SystemExit(f"Missing AirLabs API key in {args.api_key_env}.")
-
     output_dir = Path(args.output_dir)
     pod_config = Path(args.pod_config)
     pods = load_pod_ranges(pod_config)
 
-    payload = fetch_schedules(api_key=api_key, dep_iata=args.airport, limit=args.limit)
-    rows = payload.get("response", [])
     generated_at = datetime.now(timezone.utc)
+    markup = fetch_delta_departures_html()
+    rows = parse_departure_rows(markup, now=generated_at.astimezone(CHICAGO))
     departures = build_departures_from_now(rows=rows, pods=pods, now=generated_at.astimezone(CHICAGO))
     write_outputs(output_dir=output_dir, departures=departures, pods=pods, generated_at=generated_at)
 

@@ -1,0 +1,17 @@
+[
+  {
+    "command": "settings",
+    "settings": {
+      "views": {
+        "ajax_path": "/views/ajax"
+      }
+    },
+    "merge": true
+  },
+  {
+    "command": "insert",
+    "method": "replaceWith",
+    "selector": ".js-view-dom-id-flights",
+    "data": "<div class=\"view-flights\"><table><tbody><tr><td headers=\"view-scheduled-time-table-column\" class=\"views-field views-field-scheduled-time is-active views-align-left\">Mar 09 — 10:00 a.m.</td><td headers=\"view-city-airport-table-column\" class=\"views-field views-field-city-airport views-align-left\">Los Cabos (SJD)</td><td headers=\"view-airline-table-column\" class=\"views-field views-field-airline views-align-left views-field-name\">DeltaDL 1826</td><td headers=\"view-terminal-1-table-column\" class=\"views-field views-field-terminal-1 views-align-left views-field-gate-1 views-align-left\">T1G9</td></tr><tr><td headers=\"view-scheduled-time-table-column\" class=\"views-field views-field-scheduled-time is-active views-align-left\">Mar 09 — 10:00 a.m.</td><td headers=\"view-city-airport-table-column\" class=\"views-field views-field-city-airport views-align-left\">Phoenix (PHX)</td><td headers=\"view-airline-table-column\" class=\"views-field views-field-airline views-align-left views-field-name\">DeltaDL 2208</td><td headers=\"view-terminal-1-table-column\" class=\"views-field views-field-terminal-1 views-align-left views-field-gate-1 views-align-left\">T1G22</td></tr><tr><td headers=\"view-scheduled-time-table-column\" class=\"views-field views-field-scheduled-time is-active views-align-left\">Mar 09 — 10:24 a.m.</td><td headers=\"view-city-airport-table-column\" class=\"views-field views-field-city-airport views-align-left\">Seattle (SEA)</td><td headers=\"view-airline-table-column\" class=\"views-field views-field-airline views-align-left views-field-name\">DeltaDL 1476</td><td headers=\"view-terminal-1-table-column\" class=\"views-field views-field-terminal-1 views-align-left views-field-gate-1 views-align-left\">T1G5</td></tr><tr><td headers=\"view-scheduled-time-table-column\" class=\"views-field views-field-scheduled-time is-active views-align-left\">Mar 09 — 10:35 a.m.</td><td headers=\"view-city-airport-table-column\" class=\"views-field views-field-city-airport views-align-left\">Detroit (DTW)</td><td headers=\"view-airline-table-column\" class=\"views-field views-field-airline views-align-left views-field-name\">DeltaDL 1172</td><td headers=\"view-terminal-1-table-column\" class=\"views-field views-field-terminal-1 views-align-left views-field-gate-1 views-align-left\">T1A4</td></tr><tr><td headers=\"view-scheduled-time-table-column\" class=\"views-field views-field-scheduled-time is-active views-align-left\">Mar 09 — 11:05 a.m.</td><td headers=\"view-city-airport-table-column\" class=\"views-field views-field-city-airport views-align-left\">San Antonio (SAT)</td><td headers=\"view-airline-table-column\" class=\"views-field views-field-airline views-align-left views-field-name\">DeltaDL 889</td><td headers=\"view-terminal-1-table-column\" class=\"views-field views-field-terminal-1 views-align-left views-field-gate-1 views-align-left\">T1G18</td></tr></tbody></table></div>"
+  }
+]

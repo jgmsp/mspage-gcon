@@ -34,8 +34,7 @@
       "podLabel": "Pod 1",
       "timeDisplayOps": "0530",
       "timeDisplayFinance": "05:30",
-      "sortTimestamp": 1773052200,
-      "status": "scheduled"
+      "sortTimestamp": 1773052200
     },
     {
       "id": "sample-g8-bos",
@@ -48,8 +47,7 @@
       "podLabel": "Pod 1",
       "timeDisplayOps": "0542",
       "timeDisplayFinance": "05:42",
-      "sortTimestamp": 1773052920,
-      "status": "scheduled"
+      "sortTimestamp": 1773052920
     },
     {
       "id": "sample-g6-sfo",
@@ -62,8 +60,7 @@
       "podLabel": "Pod 1",
       "timeDisplayOps": "0600",
       "timeDisplayFinance": "06:00",
-      "sortTimestamp": 1773054000,
-      "status": "scheduled"
+      "sortTimestamp": 1773054000
     },
     {
       "id": "sample-g12-den",
@@ -76,8 +73,7 @@
       "podLabel": "Pod 4",
       "timeDisplayOps": "0600",
       "timeDisplayFinance": "06:00",
-      "sortTimestamp": 1773054000,
-      "status": "scheduled"
+      "sortTimestamp": 1773054000
     },
     {
       "id": "sample-g15-sea",
@@ -90,8 +86,7 @@
       "podLabel": "Pod 4",
       "timeDisplayOps": "0630",
       "timeDisplayFinance": "06:30",
-      "sortTimestamp": 1773055800,
-      "status": "scheduled"
+      "sortTimestamp": 1773055800
     },
     {
       "id": "sample-g17-cun",
@@ -104,8 +99,7 @@
       "podLabel": "Pod 5",
       "timeDisplayOps": "0537",
       "timeDisplayFinance": "05:37",
-      "sortTimestamp": 1773052620,
-      "status": "scheduled"
+      "sortTimestamp": 1773052620
     },
     {
       "id": "sample-g18-aus",
@@ -118,8 +112,7 @@
       "podLabel": "Pod 5",
       "timeDisplayOps": "0600",
       "timeDisplayFinance": "06:00",
-      "sortTimestamp": 1773054000,
-      "status": "scheduled"
+      "sortTimestamp": 1773054000
     },
     {
       "id": "sample-g21-mco",
@@ -132,8 +125,7 @@
       "podLabel": "Pod 5",
       "timeDisplayOps": "0905",
       "timeDisplayFinance": "09:05",
-      "sortTimestamp": 1773065100,
-      "status": "scheduled"
+      "sortTimestamp": 1773065100
     }
   ]
 }
