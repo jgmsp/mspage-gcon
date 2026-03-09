@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-09T04:24:30.938017Z",
+  "generatedAt": "2026-03-09T04:56:12.245895Z",
   "pods": [
     {
       "id": "pod-1",
@@ -24,34 +24,6 @@
   ],
   "departures": [
     {
-      "id": "G14-2026-03-08 20:45-BNA",
-      "flightDisplay": "1144",
-      "flightIata": "DL1144",
-      "gateNumber": 14,
-      "gateLabel": "G14",
-      "destination": "BNA",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "2132",
-      "timeDisplayFinance": "9:32",
-      "sortTimestamp": 1773023520,
-      "status": "landed"
-    },
-    {
-      "id": "G10-2026-03-08 21:03-CVG",
-      "flightDisplay": "1469",
-      "flightIata": "DL1469",
-      "gateNumber": 10,
-      "gateLabel": "G10",
-      "destination": "CVG",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "2146",
-      "timeDisplayFinance": "9:46",
-      "sortTimestamp": 1773024360,
-      "status": "landed"
-    },
-    {
       "id": "G1-2026-03-08 21:55-FSD",
       "flightDisplay": "1694",
       "flightIata": "DL1694",
@@ -64,6 +36,62 @@
       "timeDisplayFinance": "10:03",
       "sortTimestamp": 1773025380,
       "status": "landed"
+    },
+    {
+      "id": "G3-2026-03-08 21:40-CMH",
+      "flightDisplay": "1356",
+      "flightIata": "DL1356",
+      "gateNumber": 3,
+      "gateLabel": "G3",
+      "destination": "CMH",
+      "podId": "pod-1",
+      "podLabel": "Pod 1",
+      "timeDisplayOps": "2228",
+      "timeDisplayFinance": "10:28",
+      "sortTimestamp": 1773026880,
+      "status": "active"
+    },
+    {
+      "id": "G15-2026-03-08 21:50-LAX",
+      "flightDisplay": "2103",
+      "flightIata": "DL2103",
+      "gateNumber": 15,
+      "gateLabel": "G15",
+      "destination": "LAX",
+      "podId": "pod-4",
+      "podLabel": "Pod 4",
+      "timeDisplayOps": "2258",
+      "timeDisplayFinance": "10:58",
+      "sortTimestamp": 1773028680,
+      "status": "active"
+    },
+    {
+      "id": "G19-2026-03-08 22:08-PHX",
+      "flightDisplay": "1029",
+      "flightIata": "DL1029",
+      "gateNumber": 19,
+      "gateLabel": "G19",
+      "destination": "PHX",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
+      "timeDisplayOps": "2304",
+      "timeDisplayFinance": "11:04",
+      "sortTimestamp": 1773029040,
+      "status": "active"
+    },
+    {
+      "id": "G3-2026-03-09 05:15-ATL",
+      "flightDisplay": "1062",
+      "flightIata": "DL1062",
+      "gateNumber": 3,
+      "gateLabel": "G3",
+      "destination": "ATL",
+      "podId": "pod-1",
+      "podLabel": "Pod 1",
+      "timeDisplayOps": "0515",
+      "timeDisplayFinance": "5:15",
+      "sortTimestamp": 1773051300,
+      "status": "scheduled"
     }
   ]
 }
