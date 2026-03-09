@@ -1,0 +1,48 @@
+name: Publish MSP Snapshot
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run tests
+        run: python -m unittest discover -s tests -t .
+
+      - name: Generate latest snapshot
+        env:
+          AIRLABS_API_KEY: ${{ secrets.AIRLABS_API_KEY }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+        run: |
+          EXTRA_ARGS=""
+          if [ "$GITHUB_EVENT_NAME" = "schedule" ]; then
+            EXTRA_ARGS="--respect-schedule"
+          fi
+          python -m mspage_gcon --output-dir docs --pod-config config/pods.json $EXTRA_ARGS
+
+      - name: Commit generated files
+        run: |
+          if [ -z "$(git status --porcelain docs)" ]; then
+            echo "No generated file changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs
+          git commit -m "Update MSP G-concourse snapshot"
+          git push

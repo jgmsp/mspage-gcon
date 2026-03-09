@@ -1,0 +1,34 @@
+{
+  "pods": [
+    {
+      "id": "pod-1",
+      "label": "Pod 1",
+      "start_gate": 1,
+      "end_gate": 4
+    },
+    {
+      "id": "pod-2",
+      "label": "Pod 2",
+      "start_gate": 5,
+      "end_gate": 8
+    },
+    {
+      "id": "pod-3",
+      "label": "Pod 3",
+      "start_gate": 9,
+      "end_gate": 12
+    },
+    {
+      "id": "pod-4",
+      "label": "Pod 4",
+      "start_gate": 13,
+      "end_gate": 16
+    },
+    {
+      "id": "pod-5",
+      "label": "Pod 5",
+      "start_gate": 17,
+      "end_gate": 22
+    }
+  ]
+}

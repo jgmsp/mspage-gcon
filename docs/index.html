@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MSP G Concourse Ops Board</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">MSP Terminal 1</p>
+          <h1>Concourse G Operations Board</h1>
+          <p class="lede">
+            Latest-only departures snapshot for G gates, grouped by pod and refreshed from the
+            scheduled GitHub Actions pipeline.
+          </p>
+        </div>
+        <div class="hero-meta">
+          <div class="stat">
+            <span class="stat-label">Last Updated</span>
+            <span class="stat-value" id="last-updated">Awaiting snapshot</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Visible Flights</span>
+            <span class="stat-value" id="visible-count">0</span>
+          </div>
+          <a class="finance-link" href="./finance.txt">Open Finance Export</a>
+        </div>
+      </section>
+
+      <section class="controls">
+        <div class="controls-copy">
+          <h2>Pods</h2>
+          <p>Filter the board to a pod or view the full concourse list.</p>
+        </div>
+        <div class="pod-filters" id="pod-filters" aria-label="Pod filters"></div>
+      </section>
+
+      <section class="board">
+        <div class="board-header">
+          <h2>Departures</h2>
+          <p id="board-caption">Time | Gate | Dest</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Gate</th>
+                <th>Dest</th>
+              </tr>
+            </thead>
+            <tbody id="departures-body"></tbody>
+          </table>
+          <div class="empty-state hidden" id="empty-state">No departures match this pod.</div>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>

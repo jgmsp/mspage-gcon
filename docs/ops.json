@@ -1,0 +1,81 @@
+{
+  "airport": "MSP",
+  "concourse": "G",
+  "generatedAt": "2026-03-09T03:02:11.655525Z",
+  "pods": [
+    {
+      "id": "pod-1",
+      "label": "Pod 1",
+      "start_gate": 1,
+      "end_gate": 4
+    },
+    {
+      "id": "pod-2",
+      "label": "Pod 2",
+      "start_gate": 5,
+      "end_gate": 8
+    },
+    {
+      "id": "pod-3",
+      "label": "Pod 3",
+      "start_gate": 9,
+      "end_gate": 12
+    },
+    {
+      "id": "pod-4",
+      "label": "Pod 4",
+      "start_gate": 13,
+      "end_gate": 16
+    },
+    {
+      "id": "pod-5",
+      "label": "Pod 5",
+      "start_gate": 17,
+      "end_gate": 22
+    }
+  ],
+  "departures": [
+    {
+      "id": "G21-2026-03-08 20:00-SLC",
+      "flightDisplay": "1051",
+      "flightIata": "DL1051",
+      "gateNumber": 21,
+      "gateLabel": "G21",
+      "destination": "SLC",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
+      "timeDisplayOps": "2007",
+      "timeDisplayFinance": "8:07",
+      "sortTimestamp": 1773018420,
+      "status": "active"
+    },
+    {
+      "id": "G18-2026-03-08 20:22-PHX",
+      "flightDisplay": "1448",
+      "flightIata": "DL1448",
+      "gateNumber": 18,
+      "gateLabel": "G18",
+      "destination": "PHX",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
+      "timeDisplayOps": "2014",
+      "timeDisplayFinance": "8:14",
+      "sortTimestamp": 1773018840,
+      "status": "active"
+    },
+    {
+      "id": "G9-2026-03-08 20:32-PHL",
+      "flightDisplay": "2703",
+      "flightIata": "DL2703",
+      "gateNumber": 9,
+      "gateLabel": "G9",
+      "destination": "PHL",
+      "podId": "pod-3",
+      "podLabel": "Pod 3",
+      "timeDisplayOps": "2042",
+      "timeDisplayFinance": "8:42",
+      "sortTimestamp": 1773020520,
+      "status": "active"
+    }
+  ]
+}
