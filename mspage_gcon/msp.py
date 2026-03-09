@@ -22,12 +22,10 @@ MSP_VIEW_PARAMS = {
     "pager_element": "0",
     "_drupal_ajax": "1",
     "flight_type": "departures",
-    "airline_code": "DL",
     "text": "",
 }
 MSP_QUERY_PARAMS = {
     "flight_type": "departures",
-    "airline_code": "DL",
     "text": "",
 }
 MSP_HEADERS = {
@@ -43,7 +41,7 @@ ROW_PATTERN = re.compile(r"<tr[^>]*>(.*?)</tr>", re.IGNORECASE | re.DOTALL)
 CELL_TEMPLATE = r'<td[^>]*class="[^"]*{marker}[^"]*"[^>]*>(.*?)</td>'
 RAW_GATE_PATTERN = re.compile(r"(?i)\bT1G([1-9]|1\d|2[0-2])\b")
 DESTINATION_CODE_PATTERN = re.compile(r"\(([A-Z0-9]{2,4})\)")
-FLIGHT_NUMBER_PATTERN = re.compile(r"\bDL\s*([0-9]{1,4})\b", re.IGNORECASE)
+FLIGHT_NUMBER_PATTERN = re.compile(r"(?:Delta)?DL\s*([0-9]{1,4})\b", re.IGNORECASE)
 MONTHS = {
     "jan": 1,
     "feb": 2,
@@ -64,10 +62,6 @@ TIME_PATTERN = re.compile(
 
 
 def fetch_delta_departures_html(timeout: float = 20.0) -> str:
-    ajax_commands = fetch_flights_ajax(timeout=timeout)
-    ajax_markup = extract_ajax_markup(ajax_commands)
-    if has_gate_rows(ajax_markup):
-        return ajax_markup
     return fetch_flights_page(timeout=timeout)
 
 
@@ -121,6 +115,9 @@ def parse_departure_rows(markup: str, now: datetime | None = None) -> list[dict]
         destination_text = _extract_cell_text(row_html, "views-field-city-airport")
         flight_text = _extract_cell_text(row_html, "views-field-airline")
         if not departure_time_text or not destination_text or not flight_text:
+            continue
+
+        if parse_flight_number(flight_text) is None:
             continue
 
         departure_time = parse_departure_time(departure_time_text, now=current)
@@ -193,9 +190,7 @@ def parse_flight_number(value: str) -> str | None:
     match = FLIGHT_NUMBER_PATTERN.search(cleaned)
     if match:
         return match.group(1)
-
-    digits = re.findall(r"\d+", cleaned)
-    return digits[-1] if digits else None
+    return None
 
 
 def _extract_raw_gate(row_html: str) -> str | None:

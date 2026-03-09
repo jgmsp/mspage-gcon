@@ -50,6 +50,7 @@ class PipelineTests(unittest.TestCase):
     def test_parse_helpers_extract_destination_and_flight_number(self) -> None:
         self.assertEqual(parse_destination("Los Cabos (SJD)"), "SJD")
         self.assertEqual(parse_flight_number("DeltaDL 1826"), "1826")
+        self.assertIsNone(parse_flight_number("UnitedUA 1220"))
 
     def test_parse_departure_rows_filters_non_t1g_scope(self) -> None:
         self.assertEqual(len(self.rows), 4)
