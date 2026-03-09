@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-09T07:01:08.008865Z",
+  "generatedAt": "2026-03-09T09:02:27.607870Z",
   "pods": [
     {
       "id": "pod-1",
@@ -80,17 +80,31 @@
       "status": "scheduled"
     },
     {
-      "id": "G8-2026-03-09 07:00-ATL",
-      "flightDisplay": "1039",
-      "flightIata": "DL1039",
-      "gateNumber": 8,
-      "gateLabel": "G8",
-      "destination": "ATL",
+      "id": "G14-2026-03-09 07:05-LAX",
+      "flightDisplay": "2110",
+      "flightIata": "DL2110",
+      "gateNumber": 14,
+      "gateLabel": "G14",
+      "destination": "LAX",
+      "podId": "pod-4",
+      "podLabel": "Pod 4",
+      "timeDisplayOps": "0705",
+      "timeDisplayFinance": "07:05",
+      "sortTimestamp": 1773057900,
+      "status": "scheduled"
+    },
+    {
+      "id": "G9-2026-03-09 07:10-SJD",
+      "flightDisplay": "1924",
+      "flightIata": "DL1924",
+      "gateNumber": 9,
+      "gateLabel": "G9",
+      "destination": "SJD",
       "podId": "pod-1",
       "podLabel": "Pod 1",
-      "timeDisplayOps": "0700",
-      "timeDisplayFinance": "07:00",
-      "sortTimestamp": 1773057600,
+      "timeDisplayOps": "0710",
+      "timeDisplayFinance": "07:10",
+      "sortTimestamp": 1773058200,
       "status": "scheduled"
     }
   ]
