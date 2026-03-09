@@ -1,5 +1,6 @@
 const state = {
   payload: null,
+  financeText: "",
   activeFilter: "all",
   activeTheme: readStorage("mspage-gcon-theme") || "light",
   lastView: null,
@@ -21,6 +22,7 @@ const visibleCount = document.getElementById("visible-count");
 const emptyState = document.getElementById("empty-state");
 const boardTitle = document.getElementById("board-title");
 const boardNote = document.getElementById("board-note");
+const financePlain = document.getElementById("finance-plain");
 
 const THEMES = [
   { id: "light", label: "Light" },
@@ -52,11 +54,17 @@ const THEME_ICONS = {
 applyTheme(state.activeTheme);
 
 async function loadSnapshot() {
-  const response = await fetch(`./${snapshotPath}?ts=${Date.now()}`, { cache: "no-store" });
-  if (!response.ok) {
-    throw new Error(`Failed to load ops snapshot: ${response.status}`);
+  const [snapshotResponse, financeResponse] = await Promise.all([
+    fetch(`./${snapshotPath}?ts=${Date.now()}`, { cache: "no-store" }),
+    fetch(`./finance.txt?ts=${Date.now()}`, { cache: "no-store" }),
+  ]);
+
+  if (!snapshotResponse.ok) {
+    throw new Error(`Failed to load ops snapshot: ${snapshotResponse.status}`);
   }
-  state.payload = await response.json();
+
+  state.payload = await snapshotResponse.json();
+  state.financeText = financeResponse.ok ? await financeResponse.text() : renderFinanceTextFromPayload();
   render();
 }
 
@@ -134,8 +142,13 @@ function renderHead() {
   boardNote.textContent = "";
   boardNote.classList.add("hidden");
 
+  if (financeView) {
+    departuresHead.replaceChildren();
+    return;
+  }
+
   const tr = document.createElement("tr");
-  const headers = financeView ? ["Flight", "Gate", "Time", "Dest"] : ["Time", "Gate", "Dest"];
+  const headers = ["Time", "Gate", "Dest"];
   headers.forEach((header) => {
     const th = document.createElement("th");
     th.textContent = header;
@@ -149,6 +162,13 @@ function renderHead() {
 function renderRows() {
   const departures = getVisibleDepartures();
   const financeView = isFinanceView();
+  if (financeView) {
+    renderFinancePlainText();
+    return;
+  }
+
+  financePlain.classList.add("hidden");
+  tableWrap.classList.remove("hidden");
   const previousRows = Array.from(departuresBody.querySelectorAll(".board-row"));
   const oldPositions = new Map(previousRows.map((row) => [row.dataset.rowKey, row.getBoundingClientRect().top]));
   const existingRows = new Map(previousRows.map((row) => [row.dataset.rowKey, row]));
@@ -176,7 +196,7 @@ function renderRows() {
       row.classList.add("is-window", `is-window-${urgencyBand}`);
     }
 
-    updateRowContent(row, departure, financeView);
+    updateRowContent(row, departure);
     fragment.appendChild(row);
   });
 
@@ -296,26 +316,18 @@ function rowKeyFor(departure, financeView) {
   return `${financeView ? "finance" : "ops"}:${departure.id}`;
 }
 
-function updateRowContent(row, departure, financeView) {
+function updateRowContent(row, departure) {
   const cells = [];
+  cells.push(makeCell("time-cell", departure.timeDisplayOps));
 
-  if (financeView) {
-    cells.push(makeCell("flight-cell", departure.flightDisplay));
-    cells.push(makeCell("gate-number-cell", String(departure.gateNumber)));
-    cells.push(makeCell("time-cell", departure.timeDisplayFinance));
-    cells.push(makeCell("", departure.destination));
-  } else {
-    cells.push(makeCell("time-cell", departure.timeDisplayOps));
+  const gateCell = document.createElement("td");
+  const badge = document.createElement("span");
+  badge.className = "gate-badge";
+  badge.textContent = departure.gateLabel;
+  gateCell.appendChild(badge);
+  cells.push(gateCell);
 
-    const gateCell = document.createElement("td");
-    const badge = document.createElement("span");
-    badge.className = "gate-badge";
-    badge.textContent = departure.gateLabel;
-    gateCell.appendChild(badge);
-    cells.push(gateCell);
-
-    cells.push(makeCell("", departure.destination));
-  }
+  cells.push(makeCell("", departure.destination));
 
   row.replaceChildren(...cells);
 }
@@ -391,6 +403,38 @@ function animateRows(departures, financeView, oldPositions, existingRows, exitin
       animateCriticalRow(row);
     });
   }
+}
+
+function renderFinancePlainText() {
+  visibleCount.textContent = `Flights: ${state.payload?.departures?.length ?? 0}`;
+  departuresBody.replaceChildren();
+  emptyState.classList.add("hidden");
+  tableWrap.classList.add("hidden");
+  financePlain.textContent = state.financeText || renderFinanceTextFromPayload();
+  financePlain.classList.remove("hidden");
+}
+
+function renderFinanceTextFromPayload() {
+  const departures = sortDepartures(state.payload?.departures ?? []);
+  const headers = ["Flight", "Gate", "Time"];
+  const rows = departures.map((departure) => [
+    departure.flightDisplay,
+    String(departure.gateNumber),
+    departure.timeDisplayFinance,
+  ]);
+  const widths = headers.map((header) => header.length);
+
+  rows.forEach((row) => {
+    row.forEach((value, index) => {
+      widths[index] = Math.max(widths[index], value.length);
+    });
+  });
+
+  const lines = [
+    headers.map((header, index) => header.padEnd(widths[index], " ")).join(" | ").trimEnd(),
+    ...rows.map((row) => row.map((value, index) => value.padEnd(widths[index], " ")).join(" | ").trimEnd()),
+  ];
+  return `${lines.join("\n")}\n`;
 }
 
 function animateThemeCycle() {

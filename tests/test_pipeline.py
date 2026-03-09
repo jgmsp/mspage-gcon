@@ -127,8 +127,11 @@ class PipelineTests(unittest.TestCase):
         self.assertIn("pod-filters", index_html)
         self.assertIn("theme-cycle", index_html)
         self.assertIn("Board filters", index_html)
+        self.assertIn("finance-plain", index_html)
         self.assertIn("vendor/anime.iife.min.js", index_html)
         self.assertIn("window.anime", app_js)
+        self.assertIn("./finance.txt", app_js)
+        self.assertIn("renderFinancePlainText", app_js)
         self.assertIn("anime.js - IIFE", anime_js)
 
 

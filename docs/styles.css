@@ -395,6 +395,19 @@ h1 {
   transition: border-color 180ms ease, box-shadow 180ms ease;
 }
 
+.finance-plain {
+  margin: 0;
+  padding: 4px 0 0;
+  background: transparent;
+  border: 0;
+  color: var(--ink);
+  font-family: "SFMono-Regular", "Menlo", "Monaco", "Consolas", monospace;
+  font-size: 0.98rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
