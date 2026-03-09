@@ -44,7 +44,7 @@ class PipelineTests(unittest.TestCase):
         departures = build_departures(self.rows, self.pods)
         gate_to_pod = {item.gate_number: item.pod_id for item in departures}
 
-        self.assertEqual(gate_to_pod[8], "pod-2")
+        self.assertEqual(gate_to_pod[8], "pod-1")
         self.assertEqual(gate_to_pod[22], "pod-5")
         self.assertEqual(gate_to_pod[18], "pod-5")
 
@@ -69,7 +69,7 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(payload["airport"], "MSP")
         self.assertEqual(payload["concourse"], "G")
         self.assertEqual(payload["generatedAt"], "2026-03-09T12:00:00Z")
-        self.assertEqual(len(payload["pods"]), 5)
+        self.assertEqual(len(payload["pods"]), 3)
         self.assertEqual(payload["departures"][0]["destination"], "SLC")
 
     def test_schedule_hours_are_checked_in_chicago_time(self) -> None:
@@ -81,9 +81,14 @@ class PipelineTests(unittest.TestCase):
         index_html = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
         app_js = (ROOT / "docs" / "app.js").read_text(encoding="utf-8")
 
-        self.assertIn("Concourse G Operations Board", index_html)
+        self.assertIn("Concourse G", index_html)
         self.assertIn("pod-filters", index_html)
-        self.assertIn("loadSnapshot", app_js)
+        self.assertIn("view-switch", index_html)
+        self.assertIn("theme-switch", index_html)
+        self.assertIn("ops-only-toggle", index_html)
+        self.assertIn("VIEW_CONFIG", app_js)
+        self.assertIn("isVisibleInOps", app_js)
+        self.assertIn("THEMES", app_js)
 
 
 if __name__ == "__main__":

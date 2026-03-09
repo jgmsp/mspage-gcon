@@ -1,30 +1,18 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-09T03:02:11.655525Z",
+  "generatedAt": "2026-03-09T04:24:30.938017Z",
   "pods": [
     {
       "id": "pod-1",
       "label": "Pod 1",
       "start_gate": 1,
-      "end_gate": 4
-    },
-    {
-      "id": "pod-2",
-      "label": "Pod 2",
-      "start_gate": 5,
-      "end_gate": 8
-    },
-    {
-      "id": "pod-3",
-      "label": "Pod 3",
-      "start_gate": 9,
-      "end_gate": 12
+      "end_gate": 9
     },
     {
       "id": "pod-4",
       "label": "Pod 4",
-      "start_gate": 13,
+      "start_gate": 10,
       "end_gate": 16
     },
     {
@@ -36,46 +24,46 @@
   ],
   "departures": [
     {
-      "id": "G21-2026-03-08 20:00-SLC",
-      "flightDisplay": "1051",
-      "flightIata": "DL1051",
-      "gateNumber": 21,
-      "gateLabel": "G21",
-      "destination": "SLC",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "2007",
-      "timeDisplayFinance": "8:07",
-      "sortTimestamp": 1773018420,
-      "status": "active"
+      "id": "G14-2026-03-08 20:45-BNA",
+      "flightDisplay": "1144",
+      "flightIata": "DL1144",
+      "gateNumber": 14,
+      "gateLabel": "G14",
+      "destination": "BNA",
+      "podId": "pod-4",
+      "podLabel": "Pod 4",
+      "timeDisplayOps": "2132",
+      "timeDisplayFinance": "9:32",
+      "sortTimestamp": 1773023520,
+      "status": "landed"
     },
     {
-      "id": "G18-2026-03-08 20:22-PHX",
-      "flightDisplay": "1448",
-      "flightIata": "DL1448",
-      "gateNumber": 18,
-      "gateLabel": "G18",
-      "destination": "PHX",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "2014",
-      "timeDisplayFinance": "8:14",
-      "sortTimestamp": 1773018840,
-      "status": "active"
+      "id": "G10-2026-03-08 21:03-CVG",
+      "flightDisplay": "1469",
+      "flightIata": "DL1469",
+      "gateNumber": 10,
+      "gateLabel": "G10",
+      "destination": "CVG",
+      "podId": "pod-4",
+      "podLabel": "Pod 4",
+      "timeDisplayOps": "2146",
+      "timeDisplayFinance": "9:46",
+      "sortTimestamp": 1773024360,
+      "status": "landed"
     },
     {
-      "id": "G9-2026-03-08 20:32-PHL",
-      "flightDisplay": "2703",
-      "flightIata": "DL2703",
-      "gateNumber": 9,
-      "gateLabel": "G9",
-      "destination": "PHL",
-      "podId": "pod-3",
-      "podLabel": "Pod 3",
-      "timeDisplayOps": "2042",
-      "timeDisplayFinance": "8:42",
-      "sortTimestamp": 1773020520,
-      "status": "active"
+      "id": "G1-2026-03-08 21:55-FSD",
+      "flightDisplay": "1694",
+      "flightIata": "DL1694",
+      "gateNumber": 1,
+      "gateLabel": "G1",
+      "destination": "FSD",
+      "podId": "pod-1",
+      "podLabel": "Pod 1",
+      "timeDisplayOps": "2203",
+      "timeDisplayFinance": "10:03",
+      "sortTimestamp": 1773025380,
+      "status": "landed"
     }
   ]
 }
