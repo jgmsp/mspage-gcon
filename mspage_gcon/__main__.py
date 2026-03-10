@@ -6,7 +6,11 @@ from pathlib import Path
 import sys
 
 from .config import load_pod_ranges
-from .msp import fetch_delta_departures_html, parse_departure_rows
+from .msp import (
+    fetch_delta_departures_source,
+    is_suspicious_parse,
+    parse_departure_rows_with_diagnostics,
+)
 from .pipeline import CHICAGO, build_departures_from_now, should_fetch_now, write_outputs
 
 
@@ -21,7 +25,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--schedule-hours",
-        default="4,13",
+        default="3,8,13,17,20",
         help="Comma-separated Chicago local hours used with --respect-schedule.",
     )
     args = parser.parse_args(argv)
@@ -36,11 +40,30 @@ def main(argv: list[str] | None = None) -> int:
     pods = load_pod_ranges(pod_config)
 
     generated_at = datetime.now(timezone.utc)
-    markup = fetch_delta_departures_html()
-    rows = parse_departure_rows(markup, now=generated_at.astimezone(CHICAGO))
+    markup, fetch_diagnostics = fetch_delta_departures_source()
+    rows, parse_diagnostics = parse_departure_rows_with_diagnostics(
+        markup,
+        now=generated_at.astimezone(CHICAGO),
+        source=fetch_diagnostics.source,
+        pages_fetched=fetch_diagnostics.pages_fetched,
+    )
+    if is_suspicious_parse(parse_diagnostics):
+        raise RuntimeError(
+            "MSP parse looked suspiciously incomplete; refusing to replace the last good snapshot."
+        )
+
     departures = build_departures_from_now(rows=rows, pods=pods, now=generated_at.astimezone(CHICAGO))
     write_outputs(output_dir=output_dir, departures=departures, pods=pods, generated_at=generated_at)
 
+    print(
+        "MSP diagnostics:"
+        f" source={parse_diagnostics.source}"
+        f" pages={parse_diagnostics.pages_fetched}"
+        f" rows_seen={parse_diagnostics.rows_seen}"
+        f" candidate_rows={parse_diagnostics.candidate_rows}"
+        f" rows_kept={parse_diagnostics.rows_kept}"
+        f" status_rows={parse_diagnostics.status_rows}"
+    )
     print(f"Wrote {len(departures)} departures to {output_dir}.")
     return 0
 

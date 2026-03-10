@@ -34,6 +34,20 @@ class DepartureRecord:
     time_display_ops: str
     time_display_finance: str
     sort_timestamp: int
+    departure_time: datetime
+    status: str | None = None
+
+
+@dataclass(frozen=True)
+class FinanceEntry:
+    flight_display: str
+    gate_number: int
+    time_display_finance: str
+    sort_timestamp: int
+
+    @property
+    def key(self) -> tuple[str, int, str]:
+        return (self.flight_display, self.gate_number, self.time_display_finance)
 
 
 def normalize_gate(raw_gate: str | None) -> int | None:
@@ -154,6 +168,8 @@ def _build_departures(
                 time_display_ops=departure_time.strftime("%H%M"),
                 time_display_finance=departure_time.strftime("%H:%M"),
                 sort_timestamp=int(departure_time.timestamp()),
+                departure_time=departure_time,
+                status=_choose_status(group_rows),
             )
         )
 
@@ -193,17 +209,35 @@ def build_ops_payload(
                 "timeDisplayOps": departure.time_display_ops,
                 "timeDisplayFinance": departure.time_display_finance,
                 "sortTimestamp": departure.sort_timestamp,
+                **({"status": departure.status} if departure.status else {}),
             }
             for departure in departures
         ],
     }
 
 
-def render_finance_text(departures: list[DepartureRecord]) -> str:
+def build_finance_entries(
+    departures: list[DepartureRecord],
+    *,
+    day: datetime,
+) -> list[FinanceEntry]:
+    return [
+        FinanceEntry(
+            flight_display=departure.flight_display,
+            gate_number=departure.gate_number,
+            time_display_finance=departure.time_display_finance,
+            sort_timestamp=departure.sort_timestamp,
+        )
+        for departure in departures
+        if departure.departure_time.astimezone(CHICAGO).date() == day.date()
+    ]
+
+
+def render_finance_text(finance_entries: list[FinanceEntry]) -> str:
     headers = ("Flight", "Gate", "Time")
     rows = [
-        (departure.flight_display, str(departure.gate_number), departure.time_display_finance)
-        for departure in departures
+        (entry.flight_display, str(entry.gate_number), entry.time_display_finance)
+        for entry in finance_entries
     ]
 
     widths = [len(header) for header in headers]
@@ -215,6 +249,15 @@ def render_finance_text(departures: list[DepartureRecord]) -> str:
     for row in rows:
         lines.append(" | ".join(value.ljust(widths[index]) for index, value in enumerate(row)).rstrip())
 
+    totals = summarize_finance_entries(finance_entries)
+    lines.extend(
+        [
+            "",
+            f"Total flights: {totals['total']}",
+            f"AM flights: {totals['am']}",
+            f"PM flights: {totals['pm']}",
+        ]
+    )
     return "\n".join(lines) + "\n"
 
 
@@ -225,13 +268,20 @@ def write_outputs(
     generated_at: datetime | None = None,
 ) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
+    created = generated_at or datetime.now(timezone.utc)
+    chicago_now = created.astimezone(CHICAGO)
+    finance_entries = _merge_finance_entries(
+        output_dir=output_dir,
+        new_entries=build_finance_entries(departures, day=chicago_now),
+        generated_at=chicago_now,
+    )
 
-    ops_payload = build_ops_payload(departures=departures, pods=pods, generated_at=generated_at)
+    ops_payload = build_ops_payload(departures=departures, pods=pods, generated_at=created)
     (output_dir / "ops.json").write_text(
         json.dumps(ops_payload, indent=2) + "\n",
         encoding="utf-8",
     )
-    (output_dir / "finance.txt").write_text(render_finance_text(departures), encoding="utf-8")
+    (output_dir / "finance.txt").write_text(render_finance_text(finance_entries), encoding="utf-8")
 
 
 def _pick_exemplar(group_rows: list[dict]) -> dict:
@@ -286,6 +336,94 @@ def _choose_operating_flight(group_rows: list[dict]) -> tuple[str, str | None]:
     return display, winner["flight_iata"]
 
 
+def _choose_status(group_rows: list[dict]) -> str | None:
+    priorities = {
+        "Cancelled": 5,
+        "Delayed": 4,
+        "Boarding": 3,
+        "On Time": 2,
+        "Departed": 1,
+    }
+    statuses = [_clean_string(row.get("status")) for row in group_rows]
+    statuses = [status for status in statuses if status]
+    if not statuses:
+        return None
+    return max(statuses, key=lambda status: priorities.get(status, 0))
+
+
+def summarize_finance_entries(finance_entries: list[FinanceEntry]) -> dict[str, int]:
+    total = len(finance_entries)
+    am = 0
+    pm = 0
+
+    for entry in finance_entries:
+        hour, minute = _parse_finance_time(entry.time_display_finance)
+        total_minutes = hour * 60 + minute
+        if total_minutes < (4 * 60 + 30):
+            continue
+        if total_minutes < 13 * 60:
+            am += 1
+        else:
+            pm += 1
+
+    return {"total": total, "am": am, "pm": pm}
+
+
+def parse_finance_text(
+    text: str,
+    *,
+    day: datetime,
+) -> list[FinanceEntry]:
+    entries: list[FinanceEntry] = []
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("Flight |") or line.startswith("Total flights:") or line.startswith("AM flights:") or line.startswith("PM flights:"):
+            continue
+
+        parts = [part.strip() for part in raw_line.split("|")]
+        if len(parts) != 3:
+            continue
+
+        flight_display, gate_text, time_text = parts
+        if not gate_text.isdigit():
+            continue
+        try:
+            sort_timestamp = _finance_sort_timestamp(day=day, time_display=time_text)
+        except ValueError:
+            continue
+
+        entries.append(
+            FinanceEntry(
+                flight_display=flight_display,
+                gate_number=int(gate_text),
+                time_display_finance=time_text,
+                sort_timestamp=sort_timestamp,
+            )
+        )
+
+    entries.sort(key=lambda entry: (entry.sort_timestamp, entry.gate_number, entry.flight_display))
+    return entries
+
+
+def _merge_finance_entries(
+    output_dir: Path,
+    new_entries: list[FinanceEntry],
+    generated_at: datetime,
+) -> list[FinanceEntry]:
+    merged: dict[tuple[str, int, str], FinanceEntry] = {}
+
+    existing_generated_at = _read_existing_generated_at(output_dir / "ops.json")
+    if existing_generated_at and existing_generated_at.date() == generated_at.date():
+        existing_text = (output_dir / "finance.txt").read_text(encoding="utf-8") if (output_dir / "finance.txt").exists() else ""
+        for entry in parse_finance_text(existing_text, day=generated_at):
+            merged[entry.key] = entry
+
+    for entry in new_entries:
+        merged[entry.key] = entry
+
+    return sorted(merged.values(), key=lambda entry: (entry.sort_timestamp, entry.gate_number, entry.flight_display))
+
+
 def _extract_digits(value: str | None) -> str | None:
     if not value:
         return None
@@ -302,3 +440,37 @@ def _clean_string(value: object) -> str | None:
 
 def _minute_epoch(value: datetime) -> int:
     return int(value.timestamp()) // 60
+
+
+def _read_existing_generated_at(path: Path) -> datetime | None:
+    if not path.exists():
+        return None
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        generated_at = payload.get("generatedAt")
+    except (json.JSONDecodeError, OSError, AttributeError):
+        return None
+
+    if not generated_at:
+        return None
+
+    try:
+        parsed = datetime.fromisoformat(str(generated_at).replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return parsed.astimezone(CHICAGO)
+
+
+def _parse_finance_time(value: str) -> tuple[int, int]:
+    hour_text, minute_text = value.split(":", 1)
+    hour = int(hour_text)
+    minute = int(minute_text)
+    if not 0 <= hour <= 23 or not 0 <= minute <= 59:
+        raise ValueError(f"Invalid finance time: {value}")
+    return hour, minute
+
+
+def _finance_sort_timestamp(*, day: datetime, time_display: str) -> int:
+    hour, minute = _parse_finance_time(time_display)
+    parsed = day.replace(hour=hour, minute=minute, second=0, microsecond=0)
+    return int(parsed.timestamp())

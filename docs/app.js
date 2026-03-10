@@ -138,12 +138,14 @@ function createFilterButton(id, label, active) {
 
 function renderHead() {
   const financeView = isFinanceView();
+  const nextView = financeView ? "finance" : "ops";
   boardTitle.textContent = financeView ? "Finance View" : "Operations View";
   boardNote.textContent = "";
   boardNote.classList.add("hidden");
 
   if (financeView) {
     departuresHead.replaceChildren();
+    state.lastView = nextView;
     return;
   }
 
@@ -155,8 +157,8 @@ function renderHead() {
     tr.appendChild(th);
   });
   departuresHead.replaceChildren(tr);
-  animateHeaderTransition(state.lastView, financeView ? "finance" : "ops");
-  state.lastView = financeView ? "finance" : "ops";
+  animateHeaderTransition(state.lastView, nextView);
+  state.lastView = nextView;
 }
 
 function renderRows() {
@@ -327,7 +329,7 @@ function updateRowContent(row, departure) {
   gateCell.appendChild(badge);
   cells.push(gateCell);
 
-  cells.push(makeCell("", departure.destination));
+  cells.push(makeDestinationCell(departure));
 
   row.replaceChildren(...cells);
 }
@@ -338,6 +340,29 @@ function makeCell(className, text) {
     cell.className = className;
   }
   cell.textContent = text;
+  return cell;
+}
+
+function makeDestinationCell(departure) {
+  const cell = document.createElement("td");
+  cell.className = "destination-cell";
+
+  const wrap = document.createElement("div");
+  wrap.className = "destination-wrap";
+
+  const text = document.createElement("span");
+  text.className = "destination-text";
+  text.textContent = departure.destination;
+  wrap.appendChild(text);
+
+  if (departure.status) {
+    const badge = document.createElement("span");
+    badge.className = `status-badge status-${statusKind(departure.status)}`;
+    badge.textContent = departure.status;
+    wrap.appendChild(badge);
+  }
+
+  cell.appendChild(wrap);
   return cell;
 }
 
@@ -406,16 +431,17 @@ function animateRows(departures, financeView, oldPositions, existingRows, exitin
 }
 
 function renderFinancePlainText() {
-  visibleCount.textContent = `Flights: ${state.payload?.departures?.length ?? 0}`;
+  const financeText = state.financeText || renderFinanceTextFromPayload();
+  visibleCount.textContent = `Flights: ${parseFinanceTotal(financeText)}`;
   departuresBody.replaceChildren();
   emptyState.classList.add("hidden");
   tableWrap.classList.add("hidden");
-  financePlain.textContent = state.financeText || renderFinanceTextFromPayload();
+  financePlain.textContent = financeText;
   financePlain.classList.remove("hidden");
 }
 
 function renderFinanceTextFromPayload() {
-  const departures = sortDepartures(state.payload?.departures ?? []);
+  const departures = sortDepartures(state.payload?.departures ?? []).filter(isSameChicagoFinanceDay);
   const headers = ["Flight", "Gate", "Time"];
   const rows = departures.map((departure) => [
     departure.flightDisplay,
@@ -434,6 +460,11 @@ function renderFinanceTextFromPayload() {
     headers.map((header, index) => header.padEnd(widths[index], " ")).join(" | ").trimEnd(),
     ...rows.map((row) => row.map((value, index) => value.padEnd(widths[index], " ")).join(" | ").trimEnd()),
   ];
+  const totals = summarizeFinanceDepartures(departures);
+  lines.push("");
+  lines.push(`Total flights: ${totals.total}`);
+  lines.push(`AM flights: ${totals.am}`);
+  lines.push(`PM flights: ${totals.pm}`);
   return `${lines.join("\n")}\n`;
 }
 
@@ -546,6 +577,89 @@ function animateCriticalRow(row) {
 
 function setFlightsCount(count) {
   visibleCount.textContent = `Flights: ${count}`;
+}
+
+function parseFinanceTotal(financeText) {
+  const match = financeText.match(/^Total flights:\s*(\d+)\s*$/m);
+  if (match) {
+    return Number(match[1]);
+  }
+  return sortDepartures(state.payload?.departures ?? []).length;
+}
+
+function summarizeFinanceDepartures(departures) {
+  let am = 0;
+  let pm = 0;
+
+  departures.forEach((departure) => {
+    const minutes = chicagoMinutesForTimestamp(departure.sortTimestamp);
+    if (minutes < 270) {
+      return;
+    }
+    if (minutes < 780) {
+      am += 1;
+      return;
+    }
+    pm += 1;
+  });
+
+  return {
+    total: departures.length,
+    am,
+    pm,
+  };
+}
+
+function chicagoMinutesForTimestamp(timestampSeconds) {
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "America/Chicago",
+  });
+  const parts = formatter.formatToParts(new Date(timestampSeconds * 1000));
+  const hour = Number(parts.find((part) => part.type === "hour")?.value || "0");
+  const minute = Number(parts.find((part) => part.type === "minute")?.value || "0");
+  return hour * 60 + minute;
+}
+
+function isSameChicagoFinanceDay(departure) {
+  if (!state.payload?.generatedAt) {
+    return true;
+  }
+
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Chicago",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const generatedDay = formatter.format(new Date(state.payload.generatedAt));
+  const departureDay = formatter.format(new Date(departure.sortTimestamp * 1000));
+  return generatedDay === departureDay;
+}
+
+function statusKind(status) {
+  const normalized = String(status || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "-");
+  if (normalized.includes("cancel")) {
+    return "cancelled";
+  }
+  if (normalized.includes("delay")) {
+    return "delayed";
+  }
+  if (normalized.includes("board")) {
+    return "boarding";
+  }
+  if (normalized.includes("depart")) {
+    return "departed";
+  }
+  if (normalized.includes("on-time")) {
+    return "ontime";
+  }
+  return "default";
 }
 
 function readStorage(key) {

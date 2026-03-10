@@ -13,7 +13,7 @@ a GitHub Pages site plus a plain-text finance export.
 - Publishes:
   - `docs/index.html` for operations
   - `docs/ops.json` for the site data payload
-  - `docs/finance.txt` for finance
+  - `docs/finance.txt` as a same-day cumulative finance log
 
 The workflow is designed so GitHub Actions is the only scheduled source fetcher. No API key is required for the MSP public flights source.
 
@@ -30,9 +30,12 @@ Default mapping:
 
 ## Scheduling
 
-GitHub Actions cron uses UTC, so the workflow runs hourly and the generator only performs the MSP fetch when local Chicago time is inside the configured hours. Defaults:
+GitHub Actions cron uses UTC, so the workflow wakes hourly at minute `17` and the generator only performs the MSP fetch when local Chicago time is inside the configured hours. Automatic refreshes currently land around:
 
-- `4:00 AM`
-- `1:00 PM`
+- `3:17 AM`
+- `8:17 AM`
+- `1:17 PM`
+- `5:17 PM`
+- `8:17 PM`
 
 Manual workflow dispatch bypasses the schedule gate.

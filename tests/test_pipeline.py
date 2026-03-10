@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 import json
 from pathlib import Path
+from tempfile import TemporaryDirectory
 import unittest
 from zoneinfo import ZoneInfo
 
@@ -10,18 +11,25 @@ from mspage_gcon.config import load_pod_ranges
 from mspage_gcon.msp import (
     extract_ajax_markup,
     has_next_page,
+    is_suspicious_parse,
     parse_departure_rows,
+    parse_departure_rows_with_diagnostics,
     parse_departure_time,
     parse_destination,
     parse_flight_number,
+    parse_status,
 )
 from mspage_gcon.pipeline import (
+    FinanceEntry,
     build_departures,
     build_departures_from_now,
+    build_finance_entries,
     build_ops_payload,
     normalize_gate,
     render_finance_text,
     should_fetch_now,
+    summarize_finance_entries,
+    write_outputs,
 )
 
 
@@ -48,9 +56,11 @@ class PipelineTests(unittest.TestCase):
 
         self.assertEqual(parsed, datetime(2026, 3, 9, 10, 24, tzinfo=ZoneInfo("America/Chicago")))
 
-    def test_parse_helpers_extract_destination_and_flight_number(self) -> None:
+    def test_parse_helpers_extract_destination_flight_number_and_status(self) -> None:
         self.assertEqual(parse_destination("Los Cabos (SJD)"), "SJD")
         self.assertEqual(parse_flight_number("DeltaDL 1826"), "1826")
+        self.assertEqual(parse_status("boarding"), "Boarding")
+        self.assertEqual(parse_status("On Time"), "On Time")
         self.assertIsNone(parse_flight_number("UnitedUA 1220"))
 
     def test_has_next_page_detects_pagination_links(self) -> None:
@@ -82,7 +92,7 @@ class PipelineTests(unittest.TestCase):
 
     def test_finance_text_snapshot(self) -> None:
         departures = build_departures(self.rows, self.pods)
-        rendered = render_finance_text(departures)
+        rendered = render_finance_text(build_finance_entries(departures, day=self.now))
 
         expected = (
             "Flight | Gate | Time\n"
@@ -90,6 +100,10 @@ class PipelineTests(unittest.TestCase):
             "2208   | 22   | 10:00\n"
             "1476   | 5    | 10:24\n"
             "889    | 18   | 11:05\n"
+            "\n"
+            "Total flights: 4\n"
+            "AM flights: 4\n"
+            "PM flights: 0\n"
         )
         self.assertEqual(rendered, expected)
 
@@ -100,8 +114,10 @@ class PipelineTests(unittest.TestCase):
         numbers = [item.flight_display for item in departures]
         self.assertEqual(numbers, ["1476", "889"])
 
-    def test_ops_payload_contains_metadata_without_status(self) -> None:
-        departures = build_departures(self.rows, self.pods)
+    def test_ops_payload_contains_metadata_with_optional_status(self) -> None:
+        rows = list(self.rows)
+        rows[0] = {**rows[0], "status": "Boarding"}
+        departures = build_departures(rows, self.pods)
         generated_at = datetime(2026, 3, 9, 12, 0, tzinfo=ZoneInfo("UTC"))
 
         payload = build_ops_payload(departures, self.pods, generated_at=generated_at)
@@ -111,12 +127,117 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(payload["generatedAt"], "2026-03-09T12:00:00Z")
         self.assertEqual(len(payload["pods"]), 3)
         self.assertEqual(payload["departures"][0]["destination"], "SJD")
-        self.assertNotIn("status", payload["departures"][0])
+        self.assertEqual(payload["departures"][0]["status"], "Boarding")
+        self.assertNotIn("status", payload["departures"][1])
 
     def test_schedule_hours_are_checked_in_chicago_time(self) -> None:
-        now = datetime(2026, 3, 9, 4, 5, tzinfo=ZoneInfo("America/Chicago"))
-        self.assertTrue(should_fetch_now({4, 13}, now=now))
-        self.assertFalse(should_fetch_now({13}, now=now))
+        now = datetime(2026, 3, 9, 3, 5, tzinfo=ZoneInfo("America/Chicago"))
+        self.assertTrue(should_fetch_now({3, 8, 13, 17, 20}, now=now))
+        self.assertFalse(should_fetch_now({8, 13, 17, 20}, now=now))
+
+    def test_finance_summary_excludes_pre430_from_subtotals(self) -> None:
+        chicago = ZoneInfo("America/Chicago")
+        entries = [
+            FinanceEntry("1001", 1, "03:45", int(datetime(2026, 3, 9, 3, 45, tzinfo=chicago).timestamp())),
+            FinanceEntry("1002", 2, "05:10", int(datetime(2026, 3, 9, 5, 10, tzinfo=chicago).timestamp())),
+            FinanceEntry("1003", 3, "13:05", int(datetime(2026, 3, 9, 13, 5, tzinfo=chicago).timestamp())),
+        ]
+
+        self.assertEqual(summarize_finance_entries(entries), {"total": 3, "am": 1, "pm": 1})
+
+    def test_write_outputs_accumulates_finance_entries_same_day_without_duplicates(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            output_dir = Path(temp_dir)
+            first_departures = build_departures(self.rows[:2], self.pods)
+            second_departures = build_departures(self.rows, self.pods)
+
+            write_outputs(
+                output_dir=output_dir,
+                departures=first_departures,
+                pods=self.pods,
+                generated_at=datetime(2026, 3, 9, 14, 0, tzinfo=ZoneInfo("UTC")),
+            )
+            write_outputs(
+                output_dir=output_dir,
+                departures=second_departures,
+                pods=self.pods,
+                generated_at=datetime(2026, 3, 9, 20, 0, tzinfo=ZoneInfo("UTC")),
+            )
+
+            finance_text = (output_dir / "finance.txt").read_text(encoding="utf-8")
+            self.assertIn("1826   | 9    | 10:00", finance_text)
+            self.assertIn("2208   | 22   | 10:00", finance_text)
+            self.assertIn("1476   | 5    | 10:24", finance_text)
+            self.assertIn("889    | 18   | 11:05", finance_text)
+            self.assertIn("Total flights: 4", finance_text)
+            self.assertIn("AM flights: 4", finance_text)
+            self.assertIn("PM flights: 0", finance_text)
+
+    def test_write_outputs_resets_finance_log_on_new_chicago_day(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            output_dir = Path(temp_dir)
+            first_departures = build_departures(self.rows, self.pods)
+            next_day_rows = [
+                {
+                    "dep_gate": "T1G9",
+                    "dep_time": "2026-03-10 10:00",
+                    "dep_time_ts": int(datetime(2026, 3, 10, 10, 0, tzinfo=ZoneInfo("America/Chicago")).timestamp()),
+                    "arr_iata": "SJD",
+                    "flight_iata": "DL1826",
+                    "flight_number": "1826",
+                }
+            ]
+            next_day_departure = build_departures(next_day_rows, self.pods)
+
+            write_outputs(
+                output_dir=output_dir,
+                departures=first_departures,
+                pods=self.pods,
+                generated_at=datetime(2026, 3, 9, 20, 0, tzinfo=ZoneInfo("UTC")),
+            )
+            write_outputs(
+                output_dir=output_dir,
+                departures=next_day_departure,
+                pods=self.pods,
+                generated_at=datetime(2026, 3, 10, 14, 0, tzinfo=ZoneInfo("UTC")),
+            )
+
+            finance_text = (output_dir / "finance.txt").read_text(encoding="utf-8")
+            self.assertIn("1826   | 9    | 10:00", finance_text)
+            self.assertNotIn("2208   | 22   | 10:00", finance_text)
+            self.assertIn("Total flights: 1", finance_text)
+
+    def test_status_parsing_is_optional_and_non_blocking(self) -> None:
+        markup = (
+            "<table><tbody>"
+            "<tr>"
+            '<td class="views-field views-field-scheduled-time">Mar 09 — 9:55 p.m.</td>'
+            '<td class="views-field views-field-city-airport">Sioux Falls (FSD)</td>'
+            '<td class="views-field views-field-airline views-field-name">DeltaDL 1694</td>'
+            '<td class="flight-search-results__status views-field views-field-flight-status-1">Boarding</td>'
+            '<td class="views-field views-field-terminal-1 views-field-gate-1">T1G1</td>'
+            "</tr>"
+            "</tbody></table>"
+        )
+
+        rows, diagnostics = parse_departure_rows_with_diagnostics(markup, now=self.now)
+
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["status"], "Boarding")
+        self.assertEqual(diagnostics.status_rows, 1)
+
+    def test_suspicious_parse_is_detected(self) -> None:
+        markup = (
+            "<table><tbody>"
+            "<tr>"
+            '<td class="views-field views-field-airline views-field-name">DeltaDL 1694</td>'
+            '<td class="views-field views-field-terminal-1 views-field-gate-1">T1G1</td>'
+            "</tr>"
+            "</tbody></table>"
+        )
+
+        _, diagnostics = parse_departure_rows_with_diagnostics(markup, now=self.now)
+        self.assertTrue(is_suspicious_parse(diagnostics))
 
     def test_pages_shell_exists(self) -> None:
         index_html = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")

@@ -24,3 +24,7 @@ Flight | Gate | Time
 1711   | 8    | 21:50
 1694   | 1    | 21:55
 1599   | 6    | 21:55
+
+Total flights: 25
+AM flights: 0
+PM flights: 25

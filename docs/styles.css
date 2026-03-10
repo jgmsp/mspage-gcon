@@ -502,6 +502,67 @@ tbody td {
   font-weight: 700;
 }
 
+.destination-cell {
+  min-width: 0;
+}
+
+.destination-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.destination-text {
+  min-width: 0;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--panel-strong);
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.status-boarding {
+  border-color: rgba(15, 118, 110, 0.28);
+  background: rgba(15, 118, 110, 0.12);
+  color: var(--accent-strong);
+}
+
+.status-delayed {
+  border-color: rgba(202, 138, 4, 0.28);
+  background: rgba(234, 179, 8, 0.14);
+  color: #9a6700;
+}
+
+.status-cancelled {
+  border-color: rgba(185, 28, 28, 0.26);
+  background: rgba(239, 68, 68, 0.14);
+  color: #b91c1c;
+}
+
+.status-departed {
+  border-color: rgba(100, 116, 139, 0.22);
+  background: rgba(100, 116, 139, 0.1);
+  color: var(--muted);
+}
+
+.status-ontime {
+  border-color: rgba(34, 197, 94, 0.22);
+  background: rgba(34, 197, 94, 0.12);
+  color: #15803d;
+}
+
 .empty-state {
   padding: 24px 18px;
   color: var(--muted);

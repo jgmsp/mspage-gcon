@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from html import unescape
 import json
@@ -63,14 +64,42 @@ NEXT_PAGE_PATTERN = re.compile(r"[?&]page=(\d+)")
 MAX_PAGES = 6
 
 
-def fetch_delta_departures_html(timeout: float = 20.0) -> str:
+@dataclass(frozen=True)
+class FetchDiagnostics:
+    source: str
+    pages_fetched: int
+
+
+@dataclass(frozen=True)
+class ParseDiagnostics:
+    source: str
+    pages_fetched: int
+    rows_seen: int
+    candidate_rows: int
+    rows_kept: int
+    status_rows: int
+
+
+TIME_MARKERS = ("views-field-scheduled-time",)
+DESTINATION_MARKERS = ("views-field-city-airport",)
+FLIGHT_MARKERS = ("views-field-airline", "views-field-name")
+STATUS_MARKERS = ("views-field-flight-status-1", "flight-search-results__status")
+
+
+def fetch_delta_departures_source(timeout: float = 20.0) -> tuple[str, FetchDiagnostics]:
     pages: list[str] = []
     for page in range(MAX_PAGES):
         html = fetch_flights_page(page=page, timeout=timeout)
         pages.append(html)
         if not has_next_page(html, page):
             break
-    return "\n".join(pages)
+
+    return "\n".join(pages), FetchDiagnostics(source="page", pages_fetched=len(pages))
+
+
+def fetch_delta_departures_html(timeout: float = 20.0) -> str:
+    markup, _ = fetch_delta_departures_source(timeout=timeout)
+    return markup
 
 
 def fetch_flights_ajax(timeout: float = 20.0) -> list[dict]:
@@ -113,17 +142,36 @@ def fetch_flights_page(page: int = 0, timeout: float = 20.0) -> str:
 
 
 def parse_departure_rows(markup: str, now: datetime | None = None) -> list[dict]:
+    rows, _ = parse_departure_rows_with_diagnostics(markup, now=now)
+    return rows
+
+
+def parse_departure_rows_with_diagnostics(
+    markup: str,
+    now: datetime | None = None,
+    *,
+    source: str = "page",
+    pages_fetched: int = 1,
+) -> tuple[list[dict], ParseDiagnostics]:
     current = now.astimezone(CHICAGO) if now else datetime.now(CHICAGO)
     rows: list[dict] = []
+    rows_seen = 0
+    candidate_rows = 0
+    status_rows = 0
 
     for row_html in ROW_PATTERN.findall(markup):
+        rows_seen += 1
+        cells = _extract_cells(row_html)
         raw_gate = _extract_raw_gate(row_html)
         if raw_gate is None:
             continue
 
-        departure_time_text = _extract_cell_text(row_html, "views-field-scheduled-time")
-        destination_text = _extract_cell_text(row_html, "views-field-city-airport")
-        flight_text = _extract_cell_text(row_html, "views-field-airline")
+        departure_time_text = _extract_cell_text_any(row_html, TIME_MARKERS, cells=cells, fallback_index=0)
+        destination_text = _extract_cell_text_any(row_html, DESTINATION_MARKERS, cells=cells, fallback_index=1)
+        flight_text = _extract_cell_text_any(row_html, FLIGHT_MARKERS, cells=cells, fallback_index=2)
+        status_text = _extract_status_text(row_html, cells)
+        if raw_gate and flight_text and parse_flight_number(flight_text):
+            candidate_rows += 1
         if not departure_time_text or not destination_text or not flight_text:
             continue
 
@@ -146,8 +194,19 @@ def parse_departure_rows(markup: str, now: datetime | None = None) -> list[dict]
                 "flight_number": flight_number,
             }
         )
+        if status_text:
+            rows[-1]["status"] = status_text
+            status_rows += 1
 
-    return rows
+    diagnostics = ParseDiagnostics(
+        source=source,
+        pages_fetched=pages_fetched,
+        rows_seen=rows_seen,
+        candidate_rows=candidate_rows,
+        rows_kept=len(rows),
+        status_rows=status_rows,
+    )
+    return rows, diagnostics
 
 
 def has_gate_rows(markup: str) -> bool:
@@ -208,6 +267,32 @@ def parse_flight_number(value: str) -> str | None:
     return None
 
 
+def parse_status(value: str | None) -> str | None:
+    if value is None:
+        return None
+
+    cleaned = _clean_text(value)
+    if not cleaned:
+        return None
+
+    lowered = cleaned.lower()
+    if "cancel" in lowered:
+        return "Cancelled"
+    if "delay" in lowered:
+        return "Delayed"
+    if "board" in lowered:
+        return "Boarding"
+    if "on time" in lowered or lowered == "ontime":
+        return "On Time"
+    if "depart" in lowered:
+        return "Departed"
+    return cleaned
+
+
+def is_suspicious_parse(diagnostics: ParseDiagnostics) -> bool:
+    return diagnostics.candidate_rows > 0 and diagnostics.rows_kept == 0
+
+
 def _extract_raw_gate(row_html: str) -> str | None:
     match = RAW_GATE_PATTERN.search(_clean_text(row_html))
     if match:
@@ -220,6 +305,34 @@ def _extract_cell_text(row_html: str, marker: str) -> str | None:
     if not match:
         return None
     return _clean_text(match.group(1))
+
+
+def _extract_cell_text_any(
+    row_html: str,
+    markers: tuple[str, ...],
+    *,
+    cells: list[str] | None = None,
+    fallback_index: int | None = None,
+) -> str | None:
+    for marker in markers:
+        value = _extract_cell_text(row_html, marker)
+        if value:
+            return value
+
+    if cells is not None and fallback_index is not None and 0 <= fallback_index < len(cells):
+        return _clean_text(cells[fallback_index])
+    return None
+
+
+def _extract_status_text(row_html: str, cells: list[str]) -> str | None:
+    value = _extract_cell_text_any(row_html, STATUS_MARKERS)
+    if not value and len(cells) >= 5:
+        value = _clean_text(cells[-2])
+    return parse_status(value)
+
+
+def _extract_cells(row_html: str) -> list[str]:
+    return re.findall(r"<td\b[^>]*>(.*?)</td>", row_html, re.IGNORECASE | re.DOTALL)
 
 
 def _clean_text(value: str) -> str:
