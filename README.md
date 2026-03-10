@@ -30,7 +30,7 @@ Default mapping:
 
 ## Scheduling
 
-GitHub Actions cron uses UTC, so the workflow wakes hourly at minute `17` and the generator only performs the MSP fetch when local Chicago time is inside the configured hours. Automatic refreshes currently land around:
+GitHub Actions cron uses UTC, so the workflow wakes hourly at minute `17`. The site now refreshes Operations hourly, while Finance only updates on the primary report hours. Finance refreshes currently land around:
 
 - `3:17 AM`
 - `8:17 AM`

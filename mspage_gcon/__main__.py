@@ -31,9 +31,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     schedule_hours = _parse_schedule_hours(args.schedule_hours)
-    if args.respect_schedule and not should_fetch_now(schedule_hours):
-        print("Skipping fetch outside the configured Chicago schedule window.")
-        return 0
+    update_finance = True
+    if args.respect_schedule:
+        update_finance = should_fetch_now(schedule_hours)
 
     output_dir = Path(args.output_dir)
     pod_config = Path(args.pod_config)
@@ -53,7 +53,13 @@ def main(argv: list[str] | None = None) -> int:
         )
 
     departures = build_departures_from_now(rows=rows, pods=pods, now=generated_at.astimezone(CHICAGO))
-    write_outputs(output_dir=output_dir, departures=departures, pods=pods, generated_at=generated_at)
+    write_outputs(
+        output_dir=output_dir,
+        departures=departures,
+        pods=pods,
+        generated_at=generated_at,
+        update_finance=update_finance,
+    )
 
     print(
         "MSP diagnostics:"
@@ -64,6 +70,7 @@ def main(argv: list[str] | None = None) -> int:
         f" rows_kept={parse_diagnostics.rows_kept}"
         f" status_rows={parse_diagnostics.status_rows}"
     )
+    print(f"Finance update={'yes' if update_finance else 'no'}")
     print(f"Wrote {len(departures)} departures to {output_dir}.")
     return 0
 

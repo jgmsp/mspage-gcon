@@ -95,11 +95,15 @@ class PipelineTests(unittest.TestCase):
         rendered = render_finance_text(build_finance_entries(departures, day=self.now))
 
         expected = (
+            "AM\n"
             "Flight | Gate | Time\n"
             "1826   | 9    | 10:00\n"
             "2208   | 22   | 10:00\n"
             "1476   | 5    | 10:24\n"
             "889    | 18   | 11:05\n"
+            "\n"
+            "PM\n"
+            "Flight | Gate | Time\n"
             "\n"
             "Total flights: 4\n"
             "AM flights: 4\n"
@@ -165,6 +169,8 @@ class PipelineTests(unittest.TestCase):
             )
 
             finance_text = (output_dir / "finance.txt").read_text(encoding="utf-8")
+            self.assertIn("AM\nFlight | Gate | Time", finance_text)
+            self.assertIn("PM\nFlight | Gate | Time", finance_text)
             self.assertIn("1826   | 9    | 10:00", finance_text)
             self.assertIn("2208   | 22   | 10:00", finance_text)
             self.assertIn("1476   | 5    | 10:24", finance_text)
@@ -206,6 +212,29 @@ class PipelineTests(unittest.TestCase):
             self.assertIn("1826   | 9    | 10:00", finance_text)
             self.assertNotIn("2208   | 22   | 10:00", finance_text)
             self.assertIn("Total flights: 1", finance_text)
+
+    def test_write_outputs_can_skip_finance_updates_for_hourly_ops_refresh(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            output_dir = Path(temp_dir)
+            departures = build_departures(self.rows[:2], self.pods)
+
+            write_outputs(
+                output_dir=output_dir,
+                departures=departures,
+                pods=self.pods,
+                generated_at=datetime(2026, 3, 9, 14, 0, tzinfo=ZoneInfo("UTC")),
+            )
+            original_finance = (output_dir / "finance.txt").read_text(encoding="utf-8")
+
+            write_outputs(
+                output_dir=output_dir,
+                departures=build_departures(self.rows[2:], self.pods),
+                pods=self.pods,
+                generated_at=datetime(2026, 3, 9, 15, 0, tzinfo=ZoneInfo("UTC")),
+                update_finance=False,
+            )
+
+            self.assertEqual((output_dir / "finance.txt").read_text(encoding="utf-8"), original_finance)
 
     def test_status_parsing_is_optional_and_non_blocking(self) -> None:
         markup = (

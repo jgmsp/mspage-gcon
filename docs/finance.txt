@@ -1,3 +1,7 @@
+AM
+Flight | Gate | Time
+
+PM
 Flight | Gate | Time
 1028   | 15   | 16:41
 1476   | 10   | 16:55

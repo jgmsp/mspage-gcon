@@ -93,10 +93,14 @@ function renderMeta() {
 
 function renderPodFilters() {
   const pods = state.payload?.pods ?? [];
+  const includeFinance = !shouldHideFinanceFilter();
+  if (!includeFinance && state.activeFilter === "finance") {
+    state.activeFilter = "all";
+  }
   const definitions = [
     { id: "all", label: "All" },
     ...pods.map((pod) => ({ id: pod.id, label: pod.label })),
-    { id: "finance", label: "Finance" },
+    ...(includeFinance ? [{ id: "finance", label: "Finance" }] : []),
   ];
 
   const existingButtons = Array.from(podFilters.querySelectorAll("button"));
@@ -140,10 +144,10 @@ function renderHead() {
   const financeView = isFinanceView();
   const nextView = financeView ? "finance" : "ops";
   boardTitle.textContent = financeView ? "Finance View" : "Operations View";
-  boardNote.textContent = "";
-  boardNote.classList.add("hidden");
 
   if (financeView) {
+    boardNote.textContent = "";
+    boardNote.classList.add("hidden");
     departuresHead.replaceChildren();
     state.lastView = nextView;
     return;
@@ -178,6 +182,7 @@ function renderRows() {
   const exitingRows = previousRows.filter((row) => !desiredKeys.has(row.dataset.rowKey));
 
   setFlightsCount(departures.length);
+  updateOpsBoardNote(departures);
 
   if (departures.length === 0) {
     emptyState.classList.remove("hidden");
@@ -433,6 +438,8 @@ function animateRows(departures, financeView, oldPositions, existingRows, exitin
 function renderFinancePlainText() {
   const financeText = state.financeText || renderFinanceTextFromPayload();
   visibleCount.textContent = `Flights: ${parseFinanceTotal(financeText)}`;
+  boardNote.textContent = "";
+  boardNote.classList.add("hidden");
   departuresBody.replaceChildren();
   emptyState.classList.add("hidden");
   tableWrap.classList.add("hidden");
@@ -442,24 +449,7 @@ function renderFinancePlainText() {
 
 function renderFinanceTextFromPayload() {
   const departures = sortDepartures(state.payload?.departures ?? []).filter(isSameChicagoFinanceDay);
-  const headers = ["Flight", "Gate", "Time"];
-  const rows = departures.map((departure) => [
-    departure.flightDisplay,
-    String(departure.gateNumber),
-    departure.timeDisplayFinance,
-  ]);
-  const widths = headers.map((header) => header.length);
-
-  rows.forEach((row) => {
-    row.forEach((value, index) => {
-      widths[index] = Math.max(widths[index], value.length);
-    });
-  });
-
-  const lines = [
-    headers.map((header, index) => header.padEnd(widths[index], " ")).join(" | ").trimEnd(),
-    ...rows.map((row) => row.map((value, index) => value.padEnd(widths[index], " ")).join(" | ").trimEnd()),
-  ];
+  const lines = formatFinanceSections(departures);
   const totals = summarizeFinanceDepartures(departures);
   lines.push("");
   lines.push(`Total flights: ${totals.total}`);
@@ -610,6 +600,48 @@ function summarizeFinanceDepartures(departures) {
   };
 }
 
+function formatFinanceSections(departures) {
+  const headers = ["Flight", "Gate", "Time"];
+  const rows = departures.map((departure) => [
+    departure.flightDisplay,
+    String(departure.gateNumber),
+    departure.timeDisplayFinance,
+  ]);
+  const widths = headers.map((header) => header.length);
+
+  rows.forEach((row) => {
+    row.forEach((value, index) => {
+      widths[index] = Math.max(widths[index], value.length);
+    });
+  });
+
+  const amRows = departures.filter((departure) => {
+    const minutes = chicagoMinutesForTimestamp(departure.sortTimestamp);
+    return minutes >= 270 && minutes < 780;
+  });
+  const pmRows = departures.filter((departure) => chicagoMinutesForTimestamp(departure.sortTimestamp) >= 780);
+
+  return [
+    "AM",
+    headers.map((header, index) => header.padEnd(widths[index], " ")).join(" | ").trimEnd(),
+    ...amRows.map((departure) =>
+      [departure.flightDisplay, String(departure.gateNumber), departure.timeDisplayFinance]
+        .map((value, index) => value.padEnd(widths[index], " "))
+        .join(" | ")
+        .trimEnd()
+    ),
+    "",
+    "PM",
+    headers.map((header, index) => header.padEnd(widths[index], " ")).join(" | ").trimEnd(),
+    ...pmRows.map((departure) =>
+      [departure.flightDisplay, String(departure.gateNumber), departure.timeDisplayFinance]
+        .map((value, index) => value.padEnd(widths[index], " "))
+        .join(" | ")
+        .trimEnd()
+    ),
+  ];
+}
+
 function chicagoMinutesForTimestamp(timestampSeconds) {
   const formatter = new Intl.DateTimeFormat("en-US", {
     hour: "2-digit",
@@ -637,6 +669,38 @@ function isSameChicagoFinanceDay(departure) {
   const generatedDay = formatter.format(new Date(state.payload.generatedAt));
   const departureDay = formatter.format(new Date(departure.sortTimestamp * 1000));
   return generatedDay === departureDay;
+}
+
+function shouldHideFinanceFilter() {
+  if (!state.payload?.generatedAt) {
+    return false;
+  }
+
+  const generatedAt = new Date(state.payload.generatedAt);
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    hour: "2-digit",
+    hour12: false,
+    timeZone: "America/Chicago",
+  });
+  const hour = Number(formatter.format(generatedAt));
+  if (hour < 20) {
+    return false;
+  }
+
+  const departures = sortDepartures(state.payload?.departures ?? []);
+  if (!departures.length) {
+    return false;
+  }
+
+  return departures.every((departure) => !isSameChicagoFinanceDay(departure));
+}
+
+function updateOpsBoardNote(departures) {
+  const note = departures.some((departure) => !isSameChicagoFinanceDay(departure))
+    ? "Displaying next-day departures."
+    : "";
+  boardNote.textContent = note;
+  boardNote.classList.toggle("hidden", !note);
 }
 
 function statusKind(status) {

@@ -12,6 +12,8 @@ from .config import PodRange, assign_pod
 
 
 CHICAGO = ZoneInfo("America/Chicago")
+AM_START_MINUTES = 4 * 60 + 30
+PM_START_MINUTES = 13 * 60
 GATE_PATTERN = re.compile(r"(?i)\b(?:T1)?G\s*([0-9]{1,2})\b")
 DATE_PATTERNS = (
     "%Y-%m-%d %H:%M",
@@ -239,15 +241,18 @@ def render_finance_text(finance_entries: list[FinanceEntry]) -> str:
         (entry.flight_display, str(entry.gate_number), entry.time_display_finance)
         for entry in finance_entries
     ]
+    am_entries = [entry for entry in finance_entries if _finance_bucket(entry) == "am"]
+    pm_entries = [entry for entry in finance_entries if _finance_bucket(entry) == "pm"]
 
     widths = [len(header) for header in headers]
     for row in rows:
         for index, value in enumerate(row):
             widths[index] = max(widths[index], len(value))
 
-    lines = [" | ".join(header.ljust(widths[index]) for index, header in enumerate(headers)).rstrip()]
-    for row in rows:
-        lines.append(" | ".join(value.ljust(widths[index]) for index, value in enumerate(row)).rstrip())
+    lines: list[str] = []
+    lines.extend(_render_finance_section("AM", am_entries, widths))
+    lines.append("")
+    lines.extend(_render_finance_section("PM", pm_entries, widths))
 
     totals = summarize_finance_entries(finance_entries)
     lines.extend(
@@ -266,22 +271,27 @@ def write_outputs(
     departures: list[DepartureRecord],
     pods: list[PodRange],
     generated_at: datetime | None = None,
+    update_finance: bool = True,
 ) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     created = generated_at or datetime.now(timezone.utc)
     chicago_now = created.astimezone(CHICAGO)
-    finance_entries = _merge_finance_entries(
-        output_dir=output_dir,
-        new_entries=build_finance_entries(departures, day=chicago_now),
-        generated_at=chicago_now,
-    )
+    finance_text: str | None = None
+    if update_finance:
+        finance_entries = _merge_finance_entries(
+            output_dir=output_dir,
+            new_entries=build_finance_entries(departures, day=chicago_now),
+            generated_at=chicago_now,
+        )
+        finance_text = render_finance_text(finance_entries)
 
     ops_payload = build_ops_payload(departures=departures, pods=pods, generated_at=created)
     (output_dir / "ops.json").write_text(
         json.dumps(ops_payload, indent=2) + "\n",
         encoding="utf-8",
     )
-    (output_dir / "finance.txt").write_text(render_finance_text(finance_entries), encoding="utf-8")
+    if finance_text is not None:
+        (output_dir / "finance.txt").write_text(finance_text, encoding="utf-8")
 
 
 def _pick_exemplar(group_rows: list[dict]) -> dict:
@@ -357,13 +367,10 @@ def summarize_finance_entries(finance_entries: list[FinanceEntry]) -> dict[str, 
     pm = 0
 
     for entry in finance_entries:
-        hour, minute = _parse_finance_time(entry.time_display_finance)
-        total_minutes = hour * 60 + minute
-        if total_minutes < (4 * 60 + 30):
-            continue
-        if total_minutes < 13 * 60:
+        bucket = _finance_bucket(entry)
+        if bucket == "am":
             am += 1
-        else:
+        elif bucket == "pm":
             pm += 1
 
     return {"total": total, "am": am, "pm": pm}
@@ -377,7 +384,14 @@ def parse_finance_text(
     entries: list[FinanceEntry] = []
     for raw_line in text.splitlines():
         line = raw_line.strip()
-        if not line or line.startswith("Flight |") or line.startswith("Total flights:") or line.startswith("AM flights:") or line.startswith("PM flights:"):
+        if (
+            not line
+            or line in {"AM", "PM"}
+            or line.startswith("Flight |")
+            or line.startswith("Total flights:")
+            or line.startswith("AM flights:")
+            or line.startswith("PM flights:")
+        ):
             continue
 
         parts = [part.strip() for part in raw_line.split("|")]
@@ -422,6 +436,15 @@ def _merge_finance_entries(
         merged[entry.key] = entry
 
     return sorted(merged.values(), key=lambda entry: (entry.sort_timestamp, entry.gate_number, entry.flight_display))
+
+
+def _render_finance_section(title: str, entries: list[FinanceEntry], widths: list[int]) -> list[str]:
+    headers = ("Flight", "Gate", "Time")
+    lines = [title, " | ".join(header.ljust(widths[index]) for index, header in enumerate(headers)).rstrip()]
+    for entry in entries:
+        row = (entry.flight_display, str(entry.gate_number), entry.time_display_finance)
+        lines.append(" | ".join(value.ljust(widths[index]) for index, value in enumerate(row)).rstrip())
+    return lines
 
 
 def _extract_digits(value: str | None) -> str | None:
@@ -474,3 +497,13 @@ def _finance_sort_timestamp(*, day: datetime, time_display: str) -> int:
     hour, minute = _parse_finance_time(time_display)
     parsed = day.replace(hour=hour, minute=minute, second=0, microsecond=0)
     return int(parsed.timestamp())
+
+
+def _finance_bucket(entry: FinanceEntry) -> str | None:
+    hour, minute = _parse_finance_time(entry.time_display_finance)
+    total_minutes = hour * 60 + minute
+    if AM_START_MINUTES <= total_minutes < PM_START_MINUTES:
+        return "am"
+    if total_minutes >= PM_START_MINUTES:
+        return "pm"
+    return None
