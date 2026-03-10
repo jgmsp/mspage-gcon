@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-10T20:50:03.716570Z",
+  "generatedAt": "2026-03-10T21:42:55.242852Z",
   "pods": [
     {
       "id": "pod-1",
@@ -24,34 +24,6 @@
   ],
   "departures": [
     {
-      "id": "G8-1773178200-AMS",
-      "flightDisplay": "160",
-      "flightIata": "DL160",
-      "gateNumber": 8,
-      "gateLabel": "G8",
-      "destination": "AMS",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1630",
-      "timeDisplayFinance": "16:30",
-      "sortTimestamp": 1773178200,
-      "status": "On Time"
-    },
-    {
-      "id": "G15-1773178860-ATL",
-      "flightDisplay": "1028",
-      "flightIata": "DL1028",
-      "gateNumber": 15,
-      "gateLabel": "G15",
-      "destination": "ATL",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "1641",
-      "timeDisplayFinance": "16:41",
-      "sortTimestamp": 1773178860,
-      "status": "On Time"
-    },
-    {
       "id": "G10-1773179700-DTW",
       "flightDisplay": "1476",
       "flightIata": "DL1476",
@@ -63,7 +35,7 @@
       "timeDisplayOps": "1655",
       "timeDisplayFinance": "16:55",
       "sortTimestamp": 1773179700,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G4-1773181500-CDG",
