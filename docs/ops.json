@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-11T09:41:52.949252Z",
+  "generatedAt": "2026-03-11T10:39:03.494187Z",
   "pods": [
     {
       "id": "pod-1",
@@ -24,20 +24,6 @@
   ],
   "departures": [
     {
-      "id": "G3-1773224100-ATL",
-      "flightDisplay": "1062",
-      "flightIata": "DL1062",
-      "gateNumber": 3,
-      "gateLabel": "G3",
-      "destination": "ATL",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "0515",
-      "timeDisplayFinance": "05:15",
-      "sortTimestamp": 1773224100,
-      "status": "Boarding"
-    },
-    {
       "id": "G6-1773227400-TPA",
       "flightDisplay": "2301",
       "flightIata": "DL2301",
@@ -49,7 +35,7 @@
       "timeDisplayOps": "0610",
       "timeDisplayFinance": "06:10",
       "sortTimestamp": 1773227400,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G1-1773230100-DFW",
@@ -192,20 +178,6 @@
       "status": "On Time"
     },
     {
-      "id": "G9-1773237300-PUJ",
-      "flightDisplay": "1979",
-      "flightIata": "DL1979",
-      "gateNumber": 9,
-      "gateLabel": "G9",
-      "destination": "PUJ",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "0855",
-      "timeDisplayFinance": "08:55",
-      "sortTimestamp": 1773237300,
-      "status": "On Time"
-    },
-    {
       "id": "G19-1773237300-RSW",
       "flightDisplay": "2226",
       "flightIata": "DL2226",
@@ -301,6 +273,20 @@
       "timeDisplayOps": "1100",
       "timeDisplayFinance": "11:00",
       "sortTimestamp": 1773244800,
+      "status": "On Time"
+    },
+    {
+      "id": "G9-1773245520-SFO",
+      "flightDisplay": "2074",
+      "flightIata": "DL2074",
+      "gateNumber": 9,
+      "gateLabel": "G9",
+      "destination": "SFO",
+      "podId": "pod-1",
+      "podLabel": "Pod 1",
+      "timeDisplayOps": "1112",
+      "timeDisplayFinance": "11:12",
+      "sortTimestamp": 1773245520,
       "status": "On Time"
     },
     {
@@ -833,20 +819,6 @@
       "timeDisplayOps": "2155",
       "timeDisplayFinance": "21:55",
       "sortTimestamp": 1773284100,
-      "status": "On Time"
-    },
-    {
-      "id": "G20-1773284340-LAS",
-      "flightDisplay": "1442",
-      "flightIata": "DL1442",
-      "gateNumber": 20,
-      "gateLabel": "G20",
-      "destination": "LAS",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "2159",
-      "timeDisplayFinance": "21:59",
-      "sortTimestamp": 1773284340,
       "status": "On Time"
     },
     {
