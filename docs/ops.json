@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-11T08:38:22.620613Z",
+  "generatedAt": "2026-03-11T08:44:50.998590Z",
   "pods": [
     {
       "id": "pod-1",
@@ -276,6 +276,20 @@
       "status": "On Time"
     },
     {
+      "id": "G19-1773245760-LAX",
+      "flightDisplay": "2119",
+      "flightIata": "DL2119",
+      "gateNumber": 19,
+      "gateLabel": "G19",
+      "destination": "LAX",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
+      "timeDisplayOps": "1116",
+      "timeDisplayFinance": "11:16",
+      "sortTimestamp": 1773245760,
+      "status": "On Time"
+    },
+    {
       "id": "G6-1773246600-ICN",
       "flightDisplay": "171",
       "flightIata": "DL171",
@@ -458,14 +472,14 @@
       "status": "On Time"
     },
     {
-      "id": "G10-1773266100-DTW",
+      "id": "G6-1773266100-DTW",
       "flightDisplay": "1476",
       "flightIata": "DL1476",
-      "gateNumber": 10,
-      "gateLabel": "G10",
+      "gateNumber": 6,
+      "gateLabel": "G6",
       "destination": "DTW",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
+      "podId": "pod-1",
+      "podLabel": "Pod 1",
       "timeDisplayOps": "1655",
       "timeDisplayFinance": "16:55",
       "sortTimestamp": 1773266100,
