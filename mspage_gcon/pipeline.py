@@ -272,12 +272,15 @@ def write_outputs(
     pods: list[PodRange],
     generated_at: datetime | None = None,
     update_finance: bool = True,
+    clear_finance: bool = False,
 ) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     created = generated_at or datetime.now(timezone.utc)
     chicago_now = created.astimezone(CHICAGO)
     finance_text: str | None = None
-    if update_finance:
+    if clear_finance:
+        finance_text = render_finance_text([])
+    elif update_finance:
         finance_entries = _merge_finance_entries(
             output_dir=output_dir,
             new_entries=build_finance_entries(departures, day=chicago_now),

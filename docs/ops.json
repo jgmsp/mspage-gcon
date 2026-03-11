@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-11T07:55:36.481939Z",
+  "generatedAt": "2026-03-11T08:15:11.478551Z",
   "pods": [
     {
       "id": "pod-1",
@@ -35,20 +35,6 @@
       "timeDisplayOps": "0515",
       "timeDisplayFinance": "05:15",
       "sortTimestamp": 1773224100,
-      "status": "On Time"
-    },
-    {
-      "id": "G2-1773227160-CUN",
-      "flightDisplay": "399",
-      "flightIata": "DL399",
-      "gateNumber": 2,
-      "gateLabel": "G2",
-      "destination": "CUN",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "0606",
-      "timeDisplayFinance": "06:06",
-      "sortTimestamp": 1773227160,
       "status": "On Time"
     },
     {
@@ -147,20 +133,6 @@
       "timeDisplayOps": "0800",
       "timeDisplayFinance": "08:00",
       "sortTimestamp": 1773234000,
-      "status": "On Time"
-    },
-    {
-      "id": "G9-1773234840-LIR",
-      "flightDisplay": "1926",
-      "flightIata": "DL1926",
-      "gateNumber": 9,
-      "gateLabel": "G9",
-      "destination": "LIR",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "0814",
-      "timeDisplayFinance": "08:14",
-      "sortTimestamp": 1773234840,
       "status": "On Time"
     },
     {

@@ -30,12 +30,10 @@ Default mapping:
 
 ## Scheduling
 
-GitHub Actions cron uses UTC, so the workflow wakes hourly at minute `17`. The site now refreshes Operations hourly, while Finance only updates on the primary report hours. Finance refreshes currently land around:
+GitHub Actions cron uses UTC, so the workflow wakes hourly on the hour. The site now refreshes Operations hourly, while Finance only changes at these local Chicago times:
 
-- `3:17 AM`
-- `8:17 AM`
-- `1:17 PM`
-- `5:17 PM`
-- `8:17 PM`
+- `5:00 AM` snapshot
+- `1:00 PM` snapshot
+- `6:00 PM` clear/hide
 
-Manual workflow dispatch bypasses the schedule gate.
+Manual workflow dispatch still refreshes Ops immediately, but Finance follows the same `5 AM`, `1 PM`, and `6 PM` timing rules.

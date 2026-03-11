@@ -135,9 +135,9 @@ class PipelineTests(unittest.TestCase):
         self.assertNotIn("status", payload["departures"][1])
 
     def test_schedule_hours_are_checked_in_chicago_time(self) -> None:
-        now = datetime(2026, 3, 9, 3, 5, tzinfo=ZoneInfo("America/Chicago"))
-        self.assertTrue(should_fetch_now({3, 8, 13, 17, 20}, now=now))
-        self.assertFalse(should_fetch_now({8, 13, 17, 20}, now=now))
+        now = datetime(2026, 3, 9, 5, 5, tzinfo=ZoneInfo("America/Chicago"))
+        self.assertTrue(should_fetch_now({5, 13}, now=now))
+        self.assertFalse(should_fetch_now({13}, now=now))
 
     def test_finance_summary_excludes_pre430_from_subtotals(self) -> None:
         chicago = ZoneInfo("America/Chicago")
@@ -235,6 +235,32 @@ class PipelineTests(unittest.TestCase):
             )
 
             self.assertEqual((output_dir / "finance.txt").read_text(encoding="utf-8"), original_finance)
+
+    def test_write_outputs_can_clear_finance_at_six_pm(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            output_dir = Path(temp_dir)
+            departures = build_departures(self.rows, self.pods)
+
+            write_outputs(
+                output_dir=output_dir,
+                departures=departures,
+                pods=self.pods,
+                generated_at=datetime(2026, 3, 9, 13, 0, tzinfo=ZoneInfo("UTC")),
+            )
+            write_outputs(
+                output_dir=output_dir,
+                departures=departures,
+                pods=self.pods,
+                generated_at=datetime(2026, 3, 9, 23, 0, tzinfo=ZoneInfo("UTC")),
+                update_finance=False,
+                clear_finance=True,
+            )
+
+            finance_text = (output_dir / "finance.txt").read_text(encoding="utf-8")
+            self.assertEqual(
+                finance_text,
+                "AM\nFlight | Gate | Time\n\nPM\nFlight | Gate | Time\n\nTotal flights: 0\nAM flights: 0\nPM flights: 0\n",
+            )
 
     def test_status_parsing_is_optional_and_non_blocking(self) -> None:
         markup = (

@@ -683,16 +683,7 @@ function shouldHideFinanceFilter() {
     timeZone: "America/Chicago",
   });
   const hour = Number(formatter.format(generatedAt));
-  if (hour < 20) {
-    return false;
-  }
-
-  const departures = sortDepartures(state.payload?.departures ?? []);
-  if (!departures.length) {
-    return false;
-  }
-
-  return departures.every((departure) => !isSameChicagoFinanceDay(departure));
+  return hour >= 18;
 }
 
 function updateOpsBoardNote(departures) {

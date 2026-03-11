@@ -25,25 +25,28 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--schedule-hours",
-        default="3,8,13,17,20",
+        default="5,13",
         help="Comma-separated Chicago local hours used with --respect-schedule.",
     )
     args = parser.parse_args(argv)
 
     schedule_hours = _parse_schedule_hours(args.schedule_hours)
+    generated_at = datetime.now(timezone.utc)
+    chicago_now = generated_at.astimezone(CHICAGO)
     update_finance = True
+    clear_finance = False
     if args.respect_schedule:
-        update_finance = should_fetch_now(schedule_hours)
+        update_finance = should_fetch_now(schedule_hours, now=chicago_now)
+        clear_finance = chicago_now.hour == 18
 
     output_dir = Path(args.output_dir)
     pod_config = Path(args.pod_config)
     pods = load_pod_ranges(pod_config)
 
-    generated_at = datetime.now(timezone.utc)
     markup, fetch_diagnostics = fetch_delta_departures_source()
     rows, parse_diagnostics = parse_departure_rows_with_diagnostics(
         markup,
-        now=generated_at.astimezone(CHICAGO),
+        now=chicago_now,
         source=fetch_diagnostics.source,
         pages_fetched=fetch_diagnostics.pages_fetched,
     )
@@ -52,13 +55,14 @@ def main(argv: list[str] | None = None) -> int:
             "MSP parse looked suspiciously incomplete; refusing to replace the last good snapshot."
         )
 
-    departures = build_departures_from_now(rows=rows, pods=pods, now=generated_at.astimezone(CHICAGO))
+    departures = build_departures_from_now(rows=rows, pods=pods, now=chicago_now)
     write_outputs(
         output_dir=output_dir,
         departures=departures,
         pods=pods,
         generated_at=generated_at,
         update_finance=update_finance,
+        clear_finance=clear_finance,
     )
 
     print(
@@ -71,6 +75,7 @@ def main(argv: list[str] | None = None) -> int:
         f" status_rows={parse_diagnostics.status_rows}"
     )
     print(f"Finance update={'yes' if update_finance else 'no'}")
+    print(f"Finance clear={'yes' if clear_finance else 'no'}")
     print(f"Wrote {len(departures)} departures to {output_dir}.")
     return 0
 

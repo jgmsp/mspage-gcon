@@ -3,7 +3,7 @@ name: Publish MSP Snapshot
 on:
   workflow_dispatch:
   schedule:
-    - cron: "17 * * * *"
+    - cron: "0 * * * *"
 
 permissions:
   contents: write
@@ -24,14 +24,7 @@ jobs:
         run: python -m unittest discover -s tests -t .
 
       - name: Generate latest snapshot
-        env:
-          GITHUB_EVENT_NAME: ${{ github.event_name }}
-        run: |
-          EXTRA_ARGS=""
-          if [ "$GITHUB_EVENT_NAME" = "schedule" ]; then
-            EXTRA_ARGS="--respect-schedule"
-          fi
-          python -m mspage_gcon --output-dir docs --pod-config config/pods.json $EXTRA_ARGS
+        run: python -m mspage_gcon --output-dir docs --pod-config config/pods.json --respect-schedule
 
       - name: Commit generated files
         run: |
