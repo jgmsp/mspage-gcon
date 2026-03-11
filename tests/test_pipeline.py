@@ -95,15 +95,11 @@ class PipelineTests(unittest.TestCase):
         rendered = render_finance_text(build_finance_entries(departures, day=self.now))
 
         expected = (
-            "AM\n"
             "Flight | Gate | Time\n"
             "1826   | 9    | 10:00\n"
             "2208   | 22   | 10:00\n"
             "1476   | 5    | 10:24\n"
             "889    | 18   | 11:05\n"
-            "\n"
-            "PM\n"
-            "Flight | Gate | Time\n"
             "\n"
             "Total flights: 4\n"
             "AM flights: 4\n"
@@ -149,11 +145,11 @@ class PipelineTests(unittest.TestCase):
 
         self.assertEqual(summarize_finance_entries(entries), {"total": 3, "am": 1, "pm": 1})
 
-    def test_write_outputs_accumulates_finance_entries_same_day_without_duplicates(self) -> None:
+    def test_write_outputs_replaces_finance_snapshot_on_next_report_run(self) -> None:
         with TemporaryDirectory() as temp_dir:
             output_dir = Path(temp_dir)
             first_departures = build_departures(self.rows[:2], self.pods)
-            second_departures = build_departures(self.rows, self.pods)
+            second_departures = build_departures(self.rows[2:], self.pods)
 
             write_outputs(
                 output_dir=output_dir,
@@ -169,14 +165,12 @@ class PipelineTests(unittest.TestCase):
             )
 
             finance_text = (output_dir / "finance.txt").read_text(encoding="utf-8")
-            self.assertIn("AM\nFlight | Gate | Time", finance_text)
-            self.assertIn("PM\nFlight | Gate | Time", finance_text)
-            self.assertIn("1826   | 9    | 10:00", finance_text)
-            self.assertIn("2208   | 22   | 10:00", finance_text)
+            self.assertNotIn("1826   | 9    | 10:00", finance_text)
+            self.assertNotIn("2208   | 22   | 10:00", finance_text)
             self.assertIn("1476   | 5    | 10:24", finance_text)
             self.assertIn("889    | 18   | 11:05", finance_text)
-            self.assertIn("Total flights: 4", finance_text)
-            self.assertIn("AM flights: 4", finance_text)
+            self.assertIn("Total flights: 2", finance_text)
+            self.assertIn("AM flights: 2", finance_text)
             self.assertIn("PM flights: 0", finance_text)
 
     def test_write_outputs_resets_finance_log_on_new_chicago_day(self) -> None:
@@ -259,7 +253,7 @@ class PipelineTests(unittest.TestCase):
             finance_text = (output_dir / "finance.txt").read_text(encoding="utf-8")
             self.assertEqual(
                 finance_text,
-                "AM\nFlight | Gate | Time\n\nPM\nFlight | Gate | Time\n\nTotal flights: 0\nAM flights: 0\nPM flights: 0\n",
+                "Flight | Gate | Time\n\nTotal flights: 0\nAM flights: 0\nPM flights: 0\n",
             )
 
     def test_status_parsing_is_optional_and_non_blocking(self) -> None:

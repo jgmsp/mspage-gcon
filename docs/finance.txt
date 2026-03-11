@@ -1,7 +1,3 @@
-AM
-Flight | Gate | Time
-
-PM
 Flight | Gate | Time
 
 Total flights: 0

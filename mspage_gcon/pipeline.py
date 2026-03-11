@@ -241,18 +241,15 @@ def render_finance_text(finance_entries: list[FinanceEntry]) -> str:
         (entry.flight_display, str(entry.gate_number), entry.time_display_finance)
         for entry in finance_entries
     ]
-    am_entries = [entry for entry in finance_entries if _finance_bucket(entry) == "am"]
-    pm_entries = [entry for entry in finance_entries if _finance_bucket(entry) == "pm"]
 
     widths = [len(header) for header in headers]
     for row in rows:
         for index, value in enumerate(row):
             widths[index] = max(widths[index], len(value))
 
-    lines: list[str] = []
-    lines.extend(_render_finance_section("AM", am_entries, widths))
-    lines.append("")
-    lines.extend(_render_finance_section("PM", pm_entries, widths))
+    lines = [" | ".join(header.ljust(widths[index]) for index, header in enumerate(headers)).rstrip()]
+    for row in rows:
+        lines.append(" | ".join(value.ljust(widths[index]) for index, value in enumerate(row)).rstrip())
 
     totals = summarize_finance_entries(finance_entries)
     lines.extend(
@@ -281,11 +278,7 @@ def write_outputs(
     if clear_finance:
         finance_text = render_finance_text([])
     elif update_finance:
-        finance_entries = _merge_finance_entries(
-            output_dir=output_dir,
-            new_entries=build_finance_entries(departures, day=chicago_now),
-            generated_at=chicago_now,
-        )
+        finance_entries = build_finance_entries(departures, day=chicago_now)
         finance_text = render_finance_text(finance_entries)
 
     ops_payload = build_ops_payload(departures=departures, pods=pods, generated_at=created)
@@ -439,15 +432,6 @@ def _merge_finance_entries(
         merged[entry.key] = entry
 
     return sorted(merged.values(), key=lambda entry: (entry.sort_timestamp, entry.gate_number, entry.flight_display))
-
-
-def _render_finance_section(title: str, entries: list[FinanceEntry], widths: list[int]) -> list[str]:
-    headers = ("Flight", "Gate", "Time")
-    lines = [title, " | ".join(header.ljust(widths[index]) for index, header in enumerate(headers)).rstrip()]
-    for entry in entries:
-        row = (entry.flight_display, str(entry.gate_number), entry.time_display_finance)
-        lines.append(" | ".join(value.ljust(widths[index]) for index, value in enumerate(row)).rstrip())
-    return lines
 
 
 def _extract_digits(value: str | None) -> str | None:

@@ -1,6 +1,6 @@
 const state = {
   payload: null,
-  financeText: "",
+  financeText: null,
   activeFilter: "all",
   activeTheme: readStorage("mspage-gcon-theme") || "light",
   lastView: null,
@@ -17,6 +17,7 @@ const departuresHead = document.getElementById("departures-head");
 const departuresBody = document.getElementById("departures-body");
 const podFilters = document.getElementById("pod-filters");
 const tableWrap = document.querySelector(".table-wrap");
+const board = document.querySelector(".board");
 const lastUpdatedInline = document.getElementById("last-updated-inline");
 const visibleCount = document.getElementById("visible-count");
 const emptyState = document.getElementById("empty-state");
@@ -69,6 +70,7 @@ async function loadSnapshot() {
 }
 
 function render() {
+  board?.classList.toggle("finance-mode", isFinanceView());
   animateBoardTransition();
   renderMeta();
   renderPodFilters();
@@ -143,11 +145,11 @@ function createFilterButton(id, label, active) {
 function renderHead() {
   const financeView = isFinanceView();
   const nextView = financeView ? "finance" : "ops";
-  boardTitle.textContent = financeView ? "Finance View" : "Operations View";
+  boardTitle.textContent = financeView ? "Finance Report" : "Operations View";
 
   if (financeView) {
-    boardNote.textContent = "";
-    boardNote.classList.add("hidden");
+    boardNote.textContent = financeBoardNote();
+    boardNote.classList.toggle("hidden", !boardNote.textContent);
     departuresHead.replaceChildren();
     state.lastView = nextView;
     return;
@@ -436,10 +438,10 @@ function animateRows(departures, financeView, oldPositions, existingRows, exitin
 }
 
 function renderFinancePlainText() {
-  const financeText = state.financeText || renderFinanceTextFromPayload();
+  const financeText = state.financeText ?? renderFinanceTextFromPayload();
   visibleCount.textContent = `Flights: ${parseFinanceTotal(financeText)}`;
-  boardNote.textContent = "";
-  boardNote.classList.add("hidden");
+  boardNote.textContent = financeBoardNote();
+  boardNote.classList.toggle("hidden", !boardNote.textContent);
   departuresBody.replaceChildren();
   emptyState.classList.add("hidden");
   tableWrap.classList.add("hidden");
@@ -449,7 +451,7 @@ function renderFinancePlainText() {
 
 function renderFinanceTextFromPayload() {
   const departures = sortDepartures(state.payload?.departures ?? []).filter(isSameChicagoFinanceDay);
-  const lines = formatFinanceSections(departures);
+  const lines = formatFinanceRows(departures);
   const totals = summarizeFinanceDepartures(departures);
   lines.push("");
   lines.push(`Total flights: ${totals.total}`);
@@ -600,7 +602,7 @@ function summarizeFinanceDepartures(departures) {
   };
 }
 
-function formatFinanceSections(departures) {
+function formatFinanceRows(departures) {
   const headers = ["Flight", "Gate", "Time"];
   const rows = departures.map((departure) => [
     departure.flightDisplay,
@@ -615,30 +617,9 @@ function formatFinanceSections(departures) {
     });
   });
 
-  const amRows = departures.filter((departure) => {
-    const minutes = chicagoMinutesForTimestamp(departure.sortTimestamp);
-    return minutes >= 270 && minutes < 780;
-  });
-  const pmRows = departures.filter((departure) => chicagoMinutesForTimestamp(departure.sortTimestamp) >= 780);
-
   return [
-    "AM",
     headers.map((header, index) => header.padEnd(widths[index], " ")).join(" | ").trimEnd(),
-    ...amRows.map((departure) =>
-      [departure.flightDisplay, String(departure.gateNumber), departure.timeDisplayFinance]
-        .map((value, index) => value.padEnd(widths[index], " "))
-        .join(" | ")
-        .trimEnd()
-    ),
-    "",
-    "PM",
-    headers.map((header, index) => header.padEnd(widths[index], " ")).join(" | ").trimEnd(),
-    ...pmRows.map((departure) =>
-      [departure.flightDisplay, String(departure.gateNumber), departure.timeDisplayFinance]
-        .map((value, index) => value.padEnd(widths[index], " "))
-        .join(" | ")
-        .trimEnd()
-    ),
+    ...rows.map((row) => row.map((value, index) => value.padEnd(widths[index], " ")).join(" | ").trimEnd()),
   ];
 }
 
@@ -687,11 +668,78 @@ function shouldHideFinanceFilter() {
 }
 
 function updateOpsBoardNote(departures) {
-  const note = departures.some((departure) => !isSameChicagoFinanceDay(departure))
-    ? "Displaying next-day departures."
-    : "";
+  const notes = [];
+  if (departures.some((departure) => !isSameChicagoFinanceDay(departure))) {
+    notes.push("Displaying next-day departures.");
+  }
+  notes.push(`Next Run @ ${formatChicagoTime(nextOpsRefreshDate())}`);
+  const note = notes.join(" ");
   boardNote.textContent = note;
   boardNote.classList.toggle("hidden", !note);
+}
+
+function financeBoardNote() {
+  return `Next Run @ ${formatChicagoTime(nextFinanceEventDate())}`;
+}
+
+function nextOpsRefreshDate() {
+  const chicagoParts = getChicagoClockParts(new Date(currentTimeMs()));
+  const nextHour = chicagoParts.hour + 1;
+  const dayOffset = Math.floor(nextHour / 24);
+  return chicagoDateAt(chicagoParts, nextHour % 24, 0, dayOffset);
+}
+
+function nextFinanceEventDate() {
+  const chicagoParts = getChicagoClockParts(new Date(currentTimeMs()));
+  const currentMinutes = chicagoParts.hour * 60 + chicagoParts.minute;
+  const schedule = [
+    { hour: 5, minute: 0 },
+    { hour: 13, minute: 0 },
+    { hour: 18, minute: 0 },
+  ];
+
+  const next = schedule.find(({ hour, minute }) => currentMinutes < hour * 60 + minute);
+  if (next) {
+    return chicagoDateAt(chicagoParts, next.hour, next.minute, 0);
+  }
+  return chicagoDateAt(chicagoParts, 5, 0, 1);
+}
+
+function formatChicagoTime(date) {
+  return new Intl.DateTimeFormat("en-US", {
+    timeStyle: "short",
+    timeZone: "America/Chicago",
+  }).format(date);
+}
+
+function getChicagoClockParts(date) {
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Chicago",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
+  const parts = formatter.formatToParts(date);
+  return {
+    year: Number(parts.find((part) => part.type === "year")?.value || "0"),
+    month: Number(parts.find((part) => part.type === "month")?.value || "1"),
+    day: Number(parts.find((part) => part.type === "day")?.value || "1"),
+    hour: Number(parts.find((part) => part.type === "hour")?.value || "0"),
+    minute: Number(parts.find((part) => part.type === "minute")?.value || "0"),
+    second: Number(parts.find((part) => part.type === "second")?.value || "0"),
+  };
+}
+
+function chicagoDateAt(parts, hour, minute, dayOffset) {
+  const utcGuess = new Date(Date.UTC(parts.year, parts.month - 1, parts.day + dayOffset, hour + 6, minute, 0));
+  const corrected = getChicagoClockParts(utcGuess);
+  const offsetMinutes =
+    (corrected.hour * 60 + corrected.minute) - (hour * 60 + minute) + (corrected.day - (parts.day + dayOffset)) * 1440;
+  return new Date(utcGuess.getTime() - offsetMinutes * 60000);
 }
 
 function statusKind(status) {

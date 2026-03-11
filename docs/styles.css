@@ -338,6 +338,30 @@ h1 {
   margin-top: 20px;
   padding: 24px;
   animation: reveal-up 620ms cubic-bezier(0.2, 0.8, 0.2, 1) 80ms both;
+  transition: background 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
+}
+
+.board.finance-mode {
+  background:
+    linear-gradient(180deg, rgba(255, 252, 247, 0.96) 0%, rgba(250, 245, 236, 0.92) 100%);
+  border-color: rgba(34, 45, 38, 0.16);
+  box-shadow:
+    0 18px 40px rgba(32, 45, 38, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+html[data-theme="dark"] .board.finance-mode,
+html[data-theme="slate"] .board.finance-mode,
+html[data-theme="plum"] .board.finance-mode,
+html[data-theme="marine"] .board.finance-mode,
+html[data-theme="olive"] .board.finance-mode,
+html[data-theme="ember"] .board.finance-mode {
+  background:
+    linear-gradient(180deg, rgba(20, 27, 35, 0.96) 0%, rgba(15, 21, 28, 0.94) 100%);
+  border-color: rgba(226, 232, 240, 0.16);
+  box-shadow:
+    0 24px 54px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .board-header {
@@ -374,6 +398,12 @@ h1 {
   color: var(--muted);
   text-align: right;
   max-width: 40ch;
+  font-size: 0.84rem;
+  letter-spacing: 0.01em;
+}
+
+.board.finance-mode .board-note {
+  color: var(--accent-strong);
 }
 
 .flight-cell,
@@ -397,15 +427,35 @@ h1 {
 
 .finance-plain {
   margin: 0;
-  padding: 4px 0 0;
-  background: transparent;
-  border: 0;
+  padding: 22px 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.78) 0%, rgba(252, 249, 242, 0.92) 100%);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    inset 0 -1px 0 rgba(34, 45, 38, 0.04);
   color: var(--ink);
   font-family: "SFMono-Regular", "Menlo", "Monaco", "Consolas", monospace;
-  font-size: 0.98rem;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
+  font-size: 0.96rem;
+  line-height: 1.72;
+  letter-spacing: 0.01em;
+  white-space: pre;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+html[data-theme="dark"] .finance-plain,
+html[data-theme="slate"] .finance-plain,
+html[data-theme="plum"] .finance-plain,
+html[data-theme="marine"] .finance-plain,
+html[data-theme="olive"] .finance-plain,
+html[data-theme="ember"] .finance-plain {
+  background:
+    linear-gradient(180deg, rgba(9, 13, 18, 0.72) 0%, rgba(13, 18, 24, 0.9) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.22);
 }
 
 table {
@@ -617,6 +667,11 @@ tbody td {
 
   .board {
     padding: 18px;
+  }
+
+  .finance-plain {
+    padding: 18px 16px;
+    font-size: 0.9rem;
   }
 
   .board-header {
