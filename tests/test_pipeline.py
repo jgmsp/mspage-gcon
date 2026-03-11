@@ -8,6 +8,7 @@ import unittest
 from zoneinfo import ZoneInfo
 
 from mspage_gcon.config import load_pod_ranges
+from mspage_gcon.__main__ import resolve_finance_actions
 from mspage_gcon.msp import (
     extract_ajax_markup,
     has_next_page,
@@ -134,6 +135,19 @@ class PipelineTests(unittest.TestCase):
         now = datetime(2026, 3, 9, 5, 5, tzinfo=ZoneInfo("America/Chicago"))
         self.assertTrue(should_fetch_now({5, 13}, now=now))
         self.assertFalse(should_fetch_now({13}, now=now))
+
+    def test_force_finance_update_overrides_schedule_gate(self) -> None:
+        now = datetime(2026, 3, 9, 10, 5, tzinfo=ZoneInfo("America/Chicago"))
+
+        update_finance, clear_finance = resolve_finance_actions(
+            respect_schedule=True,
+            force_finance_update=True,
+            schedule_hours={5, 13},
+            now=now,
+        )
+
+        self.assertTrue(update_finance)
+        self.assertFalse(clear_finance)
 
     def test_finance_summary_excludes_pre430_from_subtotals(self) -> None:
         chicago = ZoneInfo("America/Chicago")

@@ -28,16 +28,22 @@ def main(argv: list[str] | None = None) -> int:
         default="5,13",
         help="Comma-separated Chicago local hours used with --respect-schedule.",
     )
+    parser.add_argument(
+        "--force-finance-update",
+        action="store_true",
+        help="Rewrite finance.txt from the current source immediately, ignoring finance schedule windows.",
+    )
     args = parser.parse_args(argv)
 
     schedule_hours = _parse_schedule_hours(args.schedule_hours)
     generated_at = datetime.now(timezone.utc)
     chicago_now = generated_at.astimezone(CHICAGO)
-    update_finance = True
-    clear_finance = False
-    if args.respect_schedule:
-        update_finance = should_fetch_now(schedule_hours, now=chicago_now)
-        clear_finance = chicago_now.hour == 18
+    update_finance, clear_finance = resolve_finance_actions(
+        respect_schedule=args.respect_schedule,
+        force_finance_update=args.force_finance_update,
+        schedule_hours=schedule_hours,
+        now=chicago_now,
+    )
 
     output_dir = Path(args.output_dir)
     pod_config = Path(args.pod_config)
@@ -93,6 +99,24 @@ def _parse_schedule_hours(raw: str) -> set[int]:
     if not hours:
         raise ValueError("At least one schedule hour must be provided.")
     return hours
+
+
+def resolve_finance_actions(
+    *,
+    respect_schedule: bool,
+    force_finance_update: bool,
+    schedule_hours: set[int],
+    now: datetime,
+) -> tuple[bool, bool]:
+    update_finance = True
+    clear_finance = False
+    if respect_schedule:
+        update_finance = should_fetch_now(schedule_hours, now=now)
+        clear_finance = now.hour == 18
+    if force_finance_update:
+        update_finance = True
+        clear_finance = False
+    return update_finance, clear_finance
 
 
 if __name__ == "__main__":
