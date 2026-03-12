@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-12T20:35:10.917062Z",
+  "generatedAt": "2026-03-12T21:32:38.286203Z",
   "pods": [
     {
       "id": "pod-1",
@@ -23,20 +23,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G20-1773347880-BNA",
-      "flightDisplay": "2612",
-      "flightIata": "DL2612",
-      "gateNumber": 20,
-      "gateLabel": "G20",
-      "destination": "BNA",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1538",
-      "timeDisplayFinance": "15:38",
-      "sortTimestamp": 1773347880,
-      "status": "Boarding"
-    },
     {
       "id": "G15-1773351660-ATL",
       "flightDisplay": "1028",
@@ -178,11 +164,11 @@
       "status": "On Time"
     },
     {
-      "id": "G20-1773360600-RSW",
+      "id": "G19-1773360600-RSW",
       "flightDisplay": "2268",
       "flightIata": "DL2268",
-      "gateNumber": 20,
-      "gateLabel": "G20",
+      "gateNumber": 19,
+      "gateLabel": "G19",
       "destination": "RSW",
       "podId": "pod-5",
       "podLabel": "Pod 5",
@@ -192,11 +178,11 @@
       "status": "On Time"
     },
     {
-      "id": "G19-1773363600-SLC",
+      "id": "G20-1773363600-SLC",
       "flightDisplay": "1051",
       "flightIata": "DL1051",
-      "gateNumber": 19,
-      "gateLabel": "G19",
+      "gateNumber": 20,
+      "gateLabel": "G20",
       "destination": "SLC",
       "podId": "pod-5",
       "podLabel": "Pod 5",
