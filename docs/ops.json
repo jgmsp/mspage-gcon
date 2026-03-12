@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-12T17:48:46.960777Z",
+  "generatedAt": "2026-03-12T18:54:10.503145Z",
   "pods": [
     {
       "id": "pod-1",
@@ -23,48 +23,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G4-1773337800-HND",
-      "flightDisplay": "121",
-      "flightIata": "DL121",
-      "gateNumber": 4,
-      "gateLabel": "G4",
-      "destination": "HND",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1250",
-      "timeDisplayFinance": "12:50",
-      "sortTimestamp": 1773337800,
-      "status": "On Time"
-    },
-    {
-      "id": "G17-1773337800-TPA",
-      "flightDisplay": "2264",
-      "flightIata": "DL2264",
-      "gateNumber": 17,
-      "gateLabel": "G17",
-      "destination": "TPA",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1250",
-      "timeDisplayFinance": "12:50",
-      "sortTimestamp": 1773337800,
-      "status": "On Time"
-    },
-    {
-      "id": "G14-1773338100-FLL",
-      "flightDisplay": "733",
-      "flightIata": "DL733",
-      "gateNumber": 14,
-      "gateLabel": "G14",
-      "destination": "FLL",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "1255",
-      "timeDisplayFinance": "12:55",
-      "sortTimestamp": 1773338100,
-      "status": "Boarding"
-    },
     {
       "id": "G17-1773343260-LAS",
       "flightDisplay": "1542",
