@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-12T19:42:11.810070Z",
+  "generatedAt": "2026-03-12T20:35:10.917062Z",
   "pods": [
     {
       "id": "pod-1",
@@ -24,62 +24,6 @@
   ],
   "departures": [
     {
-      "id": "G18-1773345360-ATL",
-      "flightDisplay": "1036",
-      "flightIata": "DL1036",
-      "gateNumber": 18,
-      "gateLabel": "G18",
-      "destination": "ATL",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1456",
-      "timeDisplayFinance": "14:56",
-      "sortTimestamp": 1773345360,
-      "status": "On Time"
-    },
-    {
-      "id": "G21-1773345480-LAX",
-      "flightDisplay": "2114",
-      "flightIata": "DL2114",
-      "gateNumber": 21,
-      "gateLabel": "G21",
-      "destination": "LAX",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1458",
-      "timeDisplayFinance": "14:58",
-      "sortTimestamp": 1773345480,
-      "status": "On Time"
-    },
-    {
-      "id": "G19-1773346980-LAS",
-      "flightDisplay": "643",
-      "flightIata": "DL643",
-      "gateNumber": 19,
-      "gateLabel": "G19",
-      "destination": "LAS",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1523",
-      "timeDisplayFinance": "15:23",
-      "sortTimestamp": 1773346980,
-      "status": "On Time"
-    },
-    {
-      "id": "G22-1773347280-RSW",
-      "flightDisplay": "308",
-      "flightIata": "DL308",
-      "gateNumber": 22,
-      "gateLabel": "G22",
-      "destination": "RSW",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1528",
-      "timeDisplayFinance": "15:28",
-      "sortTimestamp": 1773347280,
-      "status": "On Time"
-    },
-    {
       "id": "G20-1773347880-BNA",
       "flightDisplay": "2612",
       "flightIata": "DL2612",
@@ -91,7 +35,7 @@
       "timeDisplayOps": "1538",
       "timeDisplayFinance": "15:38",
       "sortTimestamp": 1773347880,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G15-1773351660-ATL",
