@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-13T20:35:03.684716Z",
+  "generatedAt": "2026-03-13T21:32:38.406490Z",
   "pods": [
     {
       "id": "pod-1",
@@ -24,20 +24,6 @@
   ],
   "departures": [
     {
-      "id": "G9-1773437400-AMS",
-      "flightDisplay": "160",
-      "flightIata": "DL160",
-      "gateNumber": 9,
-      "gateLabel": "G9",
-      "destination": "AMS",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1630",
-      "timeDisplayFinance": "16:30",
-      "sortTimestamp": 1773437400,
-      "status": "On Time"
-    },
-    {
       "id": "G20-1773438060-ATL",
       "flightDisplay": "1028",
       "flightIata": "DL1028",
@@ -49,7 +35,7 @@
       "timeDisplayOps": "1641",
       "timeDisplayFinance": "16:41",
       "sortTimestamp": 1773438060,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G2-1773438900-DTW",
@@ -80,11 +66,11 @@
       "status": "On Time"
     },
     {
-      "id": "G8-1773443400-SLC",
+      "id": "G9-1773443400-SLC",
       "flightDisplay": "2607",
       "flightIata": "DL2607",
-      "gateNumber": 8,
-      "gateLabel": "G8",
+      "gateNumber": 9,
+      "gateLabel": "G9",
       "destination": "SLC",
       "podId": "pod-1",
       "podLabel": "Pod 1",
@@ -248,14 +234,14 @@
       "status": "On Time"
     },
     {
-      "id": "G10-1773452700-BNA",
+      "id": "G8-1773452700-BNA",
       "flightDisplay": "1144",
       "flightIata": "DL1144",
-      "gateNumber": 10,
-      "gateLabel": "G10",
+      "gateNumber": 8,
+      "gateLabel": "G8",
       "destination": "BNA",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
+      "podId": "pod-1",
+      "podLabel": "Pod 1",
       "timeDisplayOps": "2045",
       "timeDisplayFinance": "20:45",
       "sortTimestamp": 1773452700,
@@ -374,14 +360,14 @@
       "status": "On Time"
     },
     {
-      "id": "G8-1773457140-LAS",
+      "id": "G10-1773457140-LAS",
       "flightDisplay": "1442",
       "flightIata": "DL1442",
-      "gateNumber": 8,
-      "gateLabel": "G8",
+      "gateNumber": 10,
+      "gateLabel": "G10",
       "destination": "LAS",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
+      "podId": "pod-4",
+      "podLabel": "Pod 4",
       "timeDisplayOps": "2159",
       "timeDisplayFinance": "21:59",
       "sortTimestamp": 1773457140,
