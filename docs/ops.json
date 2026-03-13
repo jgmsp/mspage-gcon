@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-13T10:36:51.441712Z",
+  "generatedAt": "2026-03-13T11:31:02.335557Z",
   "pods": [
     {
       "id": "pod-1",
@@ -22,34 +22,5 @@
       "end_gate": 22
     }
   ],
-  "departures": [
-    {
-      "id": "G14-1773399600-DTW",
-      "flightDisplay": "1461",
-      "flightIata": "DL1461",
-      "gateNumber": 14,
-      "gateLabel": "G14",
-      "destination": "DTW",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "0600",
-      "timeDisplayFinance": "06:00",
-      "sortTimestamp": 1773399600,
-      "status": "Boarding"
-    },
-    {
-      "id": "G21-1773399600-MCO",
-      "flightDisplay": "954",
-      "flightIata": "DL954",
-      "gateNumber": 21,
-      "gateLabel": "G21",
-      "destination": "MCO",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0600",
-      "timeDisplayFinance": "06:00",
-      "sortTimestamp": 1773399600,
-      "status": "On Time"
-    }
-  ]
+  "departures": []
 }
