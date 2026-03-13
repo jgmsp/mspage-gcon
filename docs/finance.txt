@@ -1,5 +1,7 @@
 Flight | Gate | Time
+1461   | 14   | 06:00
+954    | 21   | 06:00
 
-Total flights: 0
-AM flights: 0
+Total flights: 2
+AM flights: 2
 PM flights: 0
