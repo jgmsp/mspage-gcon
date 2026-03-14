@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-14T20:28:11.741095Z",
+  "generatedAt": "2026-03-14T21:27:04.535183Z",
   "pods": [
     {
       "id": "pod-1",
@@ -24,20 +24,6 @@
   ],
   "departures": [
     {
-      "id": "G22-1773520080-RSW",
-      "flightDisplay": "308",
-      "flightIata": "DL308",
-      "gateNumber": 22,
-      "gateLabel": "G22",
-      "destination": "RSW",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1528",
-      "timeDisplayFinance": "15:28",
-      "sortTimestamp": 1773520080,
-      "status": "On Time"
-    },
-    {
       "id": "G3-1773523800-AMS",
       "flightDisplay": "160",
       "flightIata": "DL160",
@@ -49,7 +35,7 @@
       "timeDisplayOps": "1630",
       "timeDisplayFinance": "16:30",
       "sortTimestamp": 1773523800,
-      "status": "On Time"
+      "status": "Departed"
     },
     {
       "id": "G20-1773524460-ATL",
