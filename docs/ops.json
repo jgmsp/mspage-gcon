@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-14T21:27:04.535183Z",
+  "generatedAt": "2026-03-14T22:26:29.287881Z",
   "pods": [
     {
       "id": "pod-1",
@@ -23,48 +23,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G3-1773523800-AMS",
-      "flightDisplay": "160",
-      "flightIata": "DL160",
-      "gateNumber": 3,
-      "gateLabel": "G3",
-      "destination": "AMS",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1630",
-      "timeDisplayFinance": "16:30",
-      "sortTimestamp": 1773523800,
-      "status": "Departed"
-    },
-    {
-      "id": "G20-1773524460-ATL",
-      "flightDisplay": "1028",
-      "flightIata": "DL1028",
-      "gateNumber": 20,
-      "gateLabel": "G20",
-      "destination": "ATL",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1641",
-      "timeDisplayFinance": "16:41",
-      "sortTimestamp": 1773524460,
-      "status": "On Time"
-    },
-    {
-      "id": "G6-1773527100-CDG",
-      "flightDisplay": "152",
-      "flightIata": "DL152",
-      "gateNumber": 6,
-      "gateLabel": "G6",
-      "destination": "CDG",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1725",
-      "timeDisplayFinance": "17:25",
-      "sortTimestamp": 1773527100,
-      "status": "On Time"
-    },
     {
       "id": "G4-1773529500-LHR",
       "flightDisplay": "10",
@@ -136,14 +94,14 @@
       "status": "On Time"
     },
     {
-      "id": "G2-1773535680-DTW",
+      "id": "G17-1773535680-DTW",
       "flightDisplay": "1484",
       "flightIata": "DL1484",
-      "gateNumber": 2,
-      "gateLabel": "G2",
+      "gateNumber": 17,
+      "gateLabel": "G17",
       "destination": "DTW",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
       "timeDisplayOps": "1948",
       "timeDisplayFinance": "19:48",
       "sortTimestamp": 1773535680,
@@ -161,20 +119,6 @@
       "timeDisplayOps": "1950",
       "timeDisplayFinance": "19:50",
       "sortTimestamp": 1773535800,
-      "status": "On Time"
-    },
-    {
-      "id": "G15-1773536340-BOS",
-      "flightDisplay": "2614",
-      "flightIata": "DL2614",
-      "gateNumber": 15,
-      "gateLabel": "G15",
-      "destination": "BOS",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "1959",
-      "timeDisplayFinance": "19:59",
-      "sortTimestamp": 1773536340,
       "status": "On Time"
     },
     {
