@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-14T07:35:01.986021Z",
+  "generatedAt": "2026-03-14T08:35:00.189434Z",
   "pods": [
     {
       "id": "pod-1",
@@ -119,20 +119,6 @@
       "timeDisplayOps": "0800",
       "timeDisplayFinance": "08:00",
       "sortTimestamp": 1773493200,
-      "status": "On Time"
-    },
-    {
-      "id": "G10-1773493320-SJU",
-      "flightDisplay": "1925",
-      "flightIata": "DL1925",
-      "gateNumber": 10,
-      "gateLabel": "G10",
-      "destination": "SJU",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "0802",
-      "timeDisplayFinance": "08:02",
-      "sortTimestamp": 1773493320,
       "status": "On Time"
     },
     {
@@ -357,6 +343,20 @@
       "timeDisplayOps": "1255",
       "timeDisplayFinance": "12:55",
       "sortTimestamp": 1773510900,
+      "status": "On Time"
+    },
+    {
+      "id": "G2-1773511140-ATL",
+      "flightDisplay": "1048",
+      "flightIata": "DL1048",
+      "gateNumber": 2,
+      "gateLabel": "G2",
+      "destination": "ATL",
+      "podId": "pod-1",
+      "podLabel": "Pod 1",
+      "timeDisplayOps": "1259",
+      "timeDisplayFinance": "12:59",
+      "sortTimestamp": 1773511140,
       "status": "On Time"
     },
     {
