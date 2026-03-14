@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-14T22:26:29.287881Z",
+  "generatedAt": "2026-03-14T23:27:22.328578Z",
   "pods": [
     {
       "id": "pod-1",
@@ -24,62 +24,6 @@
   ],
   "departures": [
     {
-      "id": "G4-1773529500-LHR",
-      "flightDisplay": "10",
-      "flightIata": "DL10",
-      "gateNumber": 4,
-      "gateLabel": "G4",
-      "destination": "LHR",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1805",
-      "timeDisplayFinance": "18:05",
-      "sortTimestamp": 1773529500,
-      "status": "On Time"
-    },
-    {
-      "id": "G18-1773529800-SLC",
-      "flightDisplay": "2607",
-      "flightIata": "DL2607",
-      "gateNumber": 18,
-      "gateLabel": "G18",
-      "destination": "SLC",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1810",
-      "timeDisplayFinance": "18:10",
-      "sortTimestamp": 1773529800,
-      "status": "On Time"
-    },
-    {
-      "id": "G15-1773529920-ATL",
-      "flightDisplay": "1026",
-      "flightIata": "DL1026",
-      "gateNumber": 15,
-      "gateLabel": "G15",
-      "destination": "ATL",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "1812",
-      "timeDisplayFinance": "18:12",
-      "sortTimestamp": 1773529920,
-      "status": "On Time"
-    },
-    {
-      "id": "G19-1773530100-MCO",
-      "flightDisplay": "942",
-      "flightIata": "DL942",
-      "gateNumber": 19,
-      "gateLabel": "G19",
-      "destination": "MCO",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1815",
-      "timeDisplayFinance": "18:15",
-      "sortTimestamp": 1773530100,
-      "status": "On Time"
-    },
-    {
       "id": "G20-1773533400-RSW",
       "flightDisplay": "2268",
       "flightIata": "DL2268",
@@ -94,11 +38,11 @@
       "status": "On Time"
     },
     {
-      "id": "G17-1773535680-DTW",
+      "id": "G18-1773535680-DTW",
       "flightDisplay": "1484",
       "flightIata": "DL1484",
-      "gateNumber": 17,
-      "gateLabel": "G17",
+      "gateNumber": 18,
+      "gateLabel": "G18",
       "destination": "DTW",
       "podId": "pod-5",
       "podLabel": "Pod 5",
