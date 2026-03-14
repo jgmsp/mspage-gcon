@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-14T19:26:47.679849Z",
+  "generatedAt": "2026-03-14T20:28:11.741095Z",
   "pods": [
     {
       "id": "pod-1",
@@ -23,48 +23,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G21-1773517740-SLC",
-      "flightDisplay": "2658",
-      "flightIata": "DL2658",
-      "gateNumber": 21,
-      "gateLabel": "G21",
-      "destination": "SLC",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1449",
-      "timeDisplayFinance": "14:49",
-      "sortTimestamp": 1773517740,
-      "status": "Boarding"
-    },
-    {
-      "id": "G20-1773518280-LAX",
-      "flightDisplay": "2114",
-      "flightIata": "DL2114",
-      "gateNumber": 20,
-      "gateLabel": "G20",
-      "destination": "LAX",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1458",
-      "timeDisplayFinance": "14:58",
-      "sortTimestamp": 1773518280,
-      "status": "On Time"
-    },
-    {
-      "id": "G19-1773519780-LAS",
-      "flightDisplay": "643",
-      "flightIata": "DL643",
-      "gateNumber": 19,
-      "gateLabel": "G19",
-      "destination": "LAS",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1523",
-      "timeDisplayFinance": "15:23",
-      "sortTimestamp": 1773519780,
-      "status": "On Time"
-    },
     {
       "id": "G22-1773520080-RSW",
       "flightDisplay": "308",
@@ -175,20 +133,6 @@
       "timeDisplayOps": "1815",
       "timeDisplayFinance": "18:15",
       "sortTimestamp": 1773530100,
-      "status": "On Time"
-    },
-    {
-      "id": "G10-1773531600-PDX",
-      "flightDisplay": "2151",
-      "flightIata": "DL2151",
-      "gateNumber": 10,
-      "gateLabel": "G10",
-      "destination": "PDX",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "1840",
-      "timeDisplayFinance": "18:40",
-      "sortTimestamp": 1773531600,
       "status": "On Time"
     },
     {
