@@ -1,26 +1,89 @@
 # mspage-gcon
 
-Latest-only MSP Terminal 1 Concourse G departures, 
-a GitHub Pages site plus a plain-text finance export.
+MSP Terminal 1 Concourse G departures for in-house operations and finance.
 
-## What It Does
+This project is intentionally small. It turns public MSP Delta departure data into a single canonical site payload plus one frozen finance snapshot used as a foot-traffic planning signal.
 
-- Fetches MSP flights from the public flights view for:
-  - `departures`
-  - airline `DL`
-- Parses returned Delta departures and keeps only `T1G1` through `T1G22`
-- Assigns each gate to a configurable pod
-- Publishes:
-  - `docs/index.html` for operations
-  - `docs/ops.json` for the site data payload
-  - `docs/finance.txt` as a same-day cumulative finance log
+## Canonical Contract
 
-The workflow is designed so GitHub Actions is the only scheduled source fetcher. No API key is required for the MSP public flights source.
+- `docs/ops.json` is the canonical source of truth.
+- `docs/finance.txt` is the official frozen finance snapshot rendered from the same canonical departures model.
+- `docs/diagnostics.json` publishes minimal freshness data used by the site footer:
+  - current health status
+  - last successful publish time
+  - stale threshold in minutes
+- The site is a live operations board.
+- The finance view is a frozen planning artifact, not a continuously updating live report.
 
+## Data Scope
+
+- Source: MSP public flights page
+- Airline: `DL`
+- Concourse scope: `T1G1` through `T1G22`
+- Pod mapping: `config/pods.json`
+
+## Publish Rules
+
+GitHub Actions runs hourly on the hour in UTC. The generator always refreshes the canonical ops payload on each run.
+
+Finance follows fixed America/Chicago rules:
+
+- `5:00 AM` local: publish the AM finance snapshot
+- `12:00 PM` local: publish the PM finance snapshot
+- `6:00 PM` local: clear/hide finance for the rest of the day
+
+Manual workflow dispatch follows the same finance rules:
+
+- ops refreshes immediately
+- finance changes only at `5:00 AM`, `12:00 PM`, or `6:00 PM` local
+
+## Failure Handling
+
+- If fetch or parse fails, the project keeps the last known good published outputs.
+- A failed refresh updates diagnostics so the site can show degraded or stale state.
+- The site warns on stale data after `180 minutes` without a successful publish.
+- Suspiciously incomplete parses are rejected instead of replacing the last good snapshot.
+
+## Finance Review Tool
+
+The site includes a finance compare tool during finance working windows.
+
+- Trigger: `Check for diffs`
+- Availability: finance windows only
+- Behavior: refetch the latest `ops.json`, derive a candidate finance view, and compare it against the official frozen finance snapshot
+- Diff mode is read-only
+- The browser does not publish or rewrite `finance.txt`
+
+### Diff Contract
+
+The finance diff is layered on top of the official frozen finance snapshot.
+
+- Base layer: unchanged official `finance.txt` rows remain plain and visible.
+- Green means the current flights run has a new truth not present in the official snapshot.
+  - new flight
+  - moved flight replacement row
+  - changed gate/time replacement row
+- Red means the official snapshot contains a truth that is no longer current.
+  - removed flight
+  - cancelled flight
+  - old gate/time row being replaced
+- Changed gate or time: render the official row as the base, then attach:
+  - one red overlay row for the old value
+  - one green overlay row for the new value
+- Diff mode stays static and red/green only. It does not use inline token diffs, browser-side mutation, or row-reveal animation.
 
 ## Pod Configuration
 
-Edit `config/pods.json` to change gate ranges.
+`config/pods.json` must cover every gate from `G1` through `G22` exactly once.
+
+The loader rejects:
+
+- overlapping ranges
+- duplicate pod IDs
+- reversed ranges
+- invalid fields
+- out-of-scope gates
+- incomplete coverage
 
 Default mapping:
 
@@ -28,12 +91,22 @@ Default mapping:
 - Pod 4: `G10-G16`
 - Pod 5: `G17-G22`
 
-## Scheduling
+## Local Preview
 
-GitHub Actions cron uses UTC, so the workflow wakes hourly on the hour. The site now refreshes Operations hourly, while Finance only changes at these local Chicago times:
+Use a simple local server from the repo root:
 
-- `5:00 AM` snapshot
-- `1:00 PM` snapshot
-- `6:00 PM` clear/hide
+```bash
+cd /Users/grim/p-projects/mspage-gcon
+python3 -m http.server
+```
 
-Manual workflow dispatch still refreshes Ops immediately, but Finance follows the same `5 AM`, `1 PM`, and `6 PM` timing rules.
+Then open:
+
+- `http://localhost:8000/docs/`
+
+## Development Check
+
+```bash
+cd /Users/grim/p-projects/mspage-gcon
+python3 -m unittest discover -s tests -t .
+```

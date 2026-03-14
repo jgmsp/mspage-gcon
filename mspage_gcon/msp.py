@@ -3,7 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from html import unescape
-import json
 import re
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
@@ -11,32 +10,12 @@ from urllib.request import Request, urlopen
 from .pipeline import CHICAGO
 
 
-MSP_AJAX_URL = "https://www.mspairport.com/views/ajax"
 MSP_FLIGHTS_URL = "https://www.mspairport.com/flights-and-airlines/flights"
-MSP_VIEW_PARAMS = {
-    "view_name": "flights",
-    "view_display_id": "default",
-    "view_args": "",
-    "view_path": "/node/1391",
-    "view_base_path": "flights-and-airlines/flights",
-    "view_dom_id": "ad37adf97e60a1ba08e197e0c47820b03846c9d7d3b0b31eb11758e648374ed2",
-    "pager_element": "0",
-    "_drupal_ajax": "1",
-    "flight_type": "departures",
-    "text": "",
-}
 MSP_QUERY_PARAMS = {
     "flight_type": "departures",
     "text": "",
 }
-MSP_HEADERS = {
-    "User-Agent": "mspage-gcon/0.1",
-    "Referer": f"{MSP_FLIGHTS_URL}?{urlencode(MSP_QUERY_PARAMS)}",
-}
-AJAX_HEADERS = {
-    **MSP_HEADERS,
-    "X-Requested-With": "XMLHttpRequest",
-}
+MSP_HEADERS = {"User-Agent": "mspage-gcon/0.1", "Referer": f"{MSP_FLIGHTS_URL}?{urlencode(MSP_QUERY_PARAMS)}"}
 
 ROW_PATTERN = re.compile(r"<tr[^>]*>(.*?)</tr>", re.IGNORECASE | re.DOTALL)
 CELL_TEMPLATE = r'<td[^>]*class="[^"]*{marker}[^"]*"[^>]*>(.*?)</td>'
@@ -100,19 +79,6 @@ def fetch_delta_departures_source(timeout: float = 20.0) -> tuple[str, FetchDiag
 def fetch_delta_departures_html(timeout: float = 20.0) -> str:
     markup, _ = fetch_delta_departures_source(timeout=timeout)
     return markup
-
-
-def fetch_flights_ajax(timeout: float = 20.0) -> list[dict]:
-    request = Request(
-        f"{MSP_AJAX_URL}?{urlencode(MSP_VIEW_PARAMS)}",
-        headers=AJAX_HEADERS,
-    )
-    with urlopen(request, timeout=timeout) as response:
-        payload = json.load(response)
-
-    if not isinstance(payload, list):
-        raise RuntimeError("MSP AJAX response was not a JSON array.")
-    return payload
 
 
 def extract_ajax_markup(commands: list[dict]) -> str:
@@ -289,8 +255,27 @@ def parse_status(value: str | None) -> str | None:
     return cleaned
 
 
-def is_suspicious_parse(diagnostics: ParseDiagnostics) -> bool:
-    return diagnostics.candidate_rows > 0 and diagnostics.rows_kept == 0
+def is_suspicious_parse(
+    diagnostics: ParseDiagnostics,
+    *,
+    previous_departure_count: int | None = None,
+) -> bool:
+    if diagnostics.candidate_rows > 0 and diagnostics.rows_kept == 0:
+        return True
+
+    if diagnostics.candidate_rows >= 8 and diagnostics.rows_kept * 2 < diagnostics.candidate_rows:
+        return True
+
+    if (
+        previous_departure_count is not None
+        and previous_departure_count >= 8
+        and diagnostics.rows_kept > 0
+        and diagnostics.rows_kept * 3 < previous_departure_count
+        and diagnostics.candidate_rows >= diagnostics.rows_kept
+    ):
+        return True
+
+    return False
 
 
 def _extract_raw_gate(row_html: str) -> str | None:

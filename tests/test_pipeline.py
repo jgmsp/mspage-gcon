@@ -5,11 +5,13 @@ import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
+from unittest.mock import patch
 from zoneinfo import ZoneInfo
 
 from mspage_gcon.config import load_pod_ranges
-from mspage_gcon.__main__ import resolve_finance_actions
+from mspage_gcon.__main__ import main, resolve_finance_actions
 from mspage_gcon.msp import (
+    ParseDiagnostics,
     extract_ajax_markup,
     has_next_page,
     is_suspicious_parse,
@@ -21,15 +23,17 @@ from mspage_gcon.msp import (
     parse_status,
 )
 from mspage_gcon.pipeline import (
+    DIAGNOSTICS_FILENAME,
     FinanceEntry,
     build_departures,
     build_departures_from_now,
     build_finance_entries,
     build_ops_payload,
     normalize_gate,
+    read_last_success_at,
     render_finance_text,
     should_fetch_now,
-    summarize_finance_entries,
+    write_failure_diagnostics,
     write_outputs,
 )
 
@@ -101,10 +105,6 @@ class PipelineTests(unittest.TestCase):
             "2208   | 22   | 10:00\n"
             "1476   | 5    | 10:24\n"
             "889    | 18   | 11:05\n"
-            "\n"
-            "Total flights: 4\n"
-            "AM flights: 4\n"
-            "PM flights: 0\n"
         )
         self.assertEqual(rendered, expected)
 
@@ -133,31 +133,19 @@ class PipelineTests(unittest.TestCase):
 
     def test_schedule_hours_are_checked_in_chicago_time(self) -> None:
         now = datetime(2026, 3, 9, 5, 5, tzinfo=ZoneInfo("America/Chicago"))
-        self.assertTrue(should_fetch_now({5, 13}, now=now))
-        self.assertFalse(should_fetch_now({13}, now=now))
+        self.assertTrue(should_fetch_now({5, 12}, now=now))
+        self.assertFalse(should_fetch_now({12}, now=now))
 
-    def test_force_finance_update_overrides_schedule_gate(self) -> None:
-        now = datetime(2026, 3, 9, 10, 5, tzinfo=ZoneInfo("America/Chicago"))
+    def test_finance_actions_freeze_outside_snapshot_windows(self) -> None:
+        morning = datetime(2026, 3, 9, 5, 5, tzinfo=ZoneInfo("America/Chicago"))
+        midday = datetime(2026, 3, 9, 12, 15, tzinfo=ZoneInfo("America/Chicago"))
+        off_window = datetime(2026, 3, 9, 10, 5, tzinfo=ZoneInfo("America/Chicago"))
+        clear_window = datetime(2026, 3, 9, 18, 0, tzinfo=ZoneInfo("America/Chicago"))
 
-        update_finance, clear_finance = resolve_finance_actions(
-            respect_schedule=True,
-            force_finance_update=True,
-            schedule_hours={5, 13},
-            now=now,
-        )
-
-        self.assertTrue(update_finance)
-        self.assertFalse(clear_finance)
-
-    def test_finance_summary_excludes_pre430_from_subtotals(self) -> None:
-        chicago = ZoneInfo("America/Chicago")
-        entries = [
-            FinanceEntry("1001", 1, "03:45", int(datetime(2026, 3, 9, 3, 45, tzinfo=chicago).timestamp())),
-            FinanceEntry("1002", 2, "05:10", int(datetime(2026, 3, 9, 5, 10, tzinfo=chicago).timestamp())),
-            FinanceEntry("1003", 3, "13:05", int(datetime(2026, 3, 9, 13, 5, tzinfo=chicago).timestamp())),
-        ]
-
-        self.assertEqual(summarize_finance_entries(entries), {"total": 3, "am": 1, "pm": 1})
+        self.assertEqual(resolve_finance_actions(now=morning), (True, False))
+        self.assertEqual(resolve_finance_actions(now=midday), (True, False))
+        self.assertEqual(resolve_finance_actions(now=off_window), (False, False))
+        self.assertEqual(resolve_finance_actions(now=clear_window), (False, True))
 
     def test_write_outputs_replaces_finance_snapshot_on_next_report_run(self) -> None:
         with TemporaryDirectory() as temp_dir:
@@ -183,9 +171,9 @@ class PipelineTests(unittest.TestCase):
             self.assertNotIn("2208   | 22   | 10:00", finance_text)
             self.assertIn("1476   | 5    | 10:24", finance_text)
             self.assertIn("889    | 18   | 11:05", finance_text)
-            self.assertIn("Total flights: 2", finance_text)
-            self.assertIn("AM flights: 2", finance_text)
-            self.assertIn("PM flights: 0", finance_text)
+            self.assertNotIn("Total flights:", finance_text)
+            self.assertNotIn("AM flights:", finance_text)
+            self.assertNotIn("PM flights:", finance_text)
 
     def test_write_outputs_resets_finance_log_on_new_chicago_day(self) -> None:
         with TemporaryDirectory() as temp_dir:
@@ -219,7 +207,7 @@ class PipelineTests(unittest.TestCase):
             finance_text = (output_dir / "finance.txt").read_text(encoding="utf-8")
             self.assertIn("1826   | 9    | 10:00", finance_text)
             self.assertNotIn("2208   | 22   | 10:00", finance_text)
-            self.assertIn("Total flights: 1", finance_text)
+            self.assertNotIn("Total flights:", finance_text)
 
     def test_write_outputs_can_skip_finance_updates_for_hourly_ops_refresh(self) -> None:
         with TemporaryDirectory() as temp_dir:
@@ -243,6 +231,9 @@ class PipelineTests(unittest.TestCase):
             )
 
             self.assertEqual((output_dir / "finance.txt").read_text(encoding="utf-8"), original_finance)
+            diagnostics = json.loads((output_dir / DIAGNOSTICS_FILENAME).read_text(encoding="utf-8"))
+            self.assertEqual(diagnostics["status"], "healthy")
+            self.assertEqual(diagnostics["lastSuccessAt"], "2026-03-09T15:00:00Z")
 
     def test_write_outputs_can_clear_finance_at_six_pm(self) -> None:
         with TemporaryDirectory() as temp_dir:
@@ -265,10 +256,82 @@ class PipelineTests(unittest.TestCase):
             )
 
             finance_text = (output_dir / "finance.txt").read_text(encoding="utf-8")
-            self.assertEqual(
-                finance_text,
-                "Flight | Gate | Time\n\nTotal flights: 0\nAM flights: 0\nPM flights: 0\n",
+            self.assertEqual(finance_text, "Flight | Gate | Time\n")
+
+    def test_repo_finance_snapshots_do_not_include_deprecated_summary_counts(self) -> None:
+        finance_paths = [ROOT / "docs" / "finance.txt", *sorted((ROOT / "docs" / "fixtures").glob("**/finance.txt"))]
+
+        for path in finance_paths:
+            text = path.read_text(encoding="utf-8")
+            self.assertNotIn("Total flights:", text, path.as_posix())
+            self.assertNotIn("AM flights:", text, path.as_posix())
+            self.assertNotIn("PM flights:", text, path.as_posix())
+
+    def test_local_review_assets_are_ignored_and_not_documented_for_release(self) -> None:
+        gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+
+        self.assertIn("docs/fixtures/", gitignore)
+        self.assertIn("docs/preview-checkpoints.md", gitignore)
+        self.assertIn("docs/review-checklist.html", gitignore)
+        self.assertNotIn("preview-checkpoints", readme)
+        self.assertNotIn("docs/fixtures/", readme)
+
+    def test_write_outputs_publish_diagnostics_and_last_success(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            output_dir = Path(temp_dir)
+            departures = build_departures(self.rows, self.pods)
+            generated_at = datetime(2026, 3, 9, 17, 0, tzinfo=ZoneInfo("UTC"))
+
+            write_outputs(
+                output_dir=output_dir,
+                departures=departures,
+                pods=self.pods,
+                generated_at=generated_at,
             )
+
+            diagnostics = json.loads((output_dir / DIAGNOSTICS_FILENAME).read_text(encoding="utf-8"))
+            self.assertEqual(diagnostics["status"], "healthy")
+            self.assertEqual(diagnostics["lastSuccessAt"], "2026-03-09T17:00:00Z")
+            self.assertEqual(read_last_success_at(output_dir), datetime(2026, 3, 9, 12, 0, tzinfo=ZoneInfo("America/Chicago")))
+
+    def test_degraded_diagnostics_reuse_last_known_success(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            output_dir = Path(temp_dir)
+            write_outputs(
+                output_dir=output_dir,
+                departures=build_departures(self.rows[:2], self.pods),
+                pods=self.pods,
+                generated_at=datetime(2026, 3, 9, 14, 0, tzinfo=ZoneInfo("UTC")),
+            )
+            diagnostics = write_failure_diagnostics(
+                output_dir,
+                attempted_at=datetime(2026, 3, 9, 15, 0, tzinfo=ZoneInfo("UTC")),
+            )
+
+            self.assertEqual(diagnostics.status, "degraded")
+            payload = json.loads((output_dir / DIAGNOSTICS_FILENAME).read_text(encoding="utf-8"))
+            self.assertEqual(payload["status"], "degraded")
+            self.assertEqual(payload["lastSuccessAt"], "2026-03-09T14:00:00Z")
+
+    def test_failure_diagnostics_become_stale_after_threshold(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            output_dir = Path(temp_dir)
+            write_outputs(
+                output_dir=output_dir,
+                departures=build_departures(self.rows[:2], self.pods),
+                pods=self.pods,
+                generated_at=datetime(2026, 3, 9, 14, 0, tzinfo=ZoneInfo("UTC")),
+            )
+
+            diagnostics = write_failure_diagnostics(
+                output_dir,
+                attempted_at=datetime(2026, 3, 9, 17, 1, tzinfo=ZoneInfo("UTC")),
+            )
+
+            self.assertEqual(diagnostics.status, "stale")
+            payload = json.loads((output_dir / DIAGNOSTICS_FILENAME).read_text(encoding="utf-8"))
+            self.assertEqual(payload["status"], "stale")
 
     def test_status_parsing_is_optional_and_non_blocking(self) -> None:
         markup = (
@@ -302,9 +365,90 @@ class PipelineTests(unittest.TestCase):
         _, diagnostics = parse_departure_rows_with_diagnostics(markup, now=self.now)
         self.assertTrue(is_suspicious_parse(diagnostics))
 
+    def test_suspicious_parse_detects_partial_degradation(self) -> None:
+        diagnostics = ParseDiagnostics(
+            source="page",
+            pages_fetched=4,
+            rows_seen=40,
+            candidate_rows=12,
+            rows_kept=4,
+            status_rows=0,
+        )
+
+        self.assertTrue(is_suspicious_parse(diagnostics))
+
+    def test_main_reuses_last_good_snapshot_when_refresh_fails(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            output_dir = Path(temp_dir)
+            departures = build_departures(self.rows, self.pods)
+            original_generated_at = datetime.now(ZoneInfo("UTC")).replace(minute=0, second=0, microsecond=0)
+            write_outputs(
+                output_dir=output_dir,
+                departures=departures,
+                pods=self.pods,
+                generated_at=original_generated_at,
+            )
+            original_ops = (output_dir / "ops.json").read_text(encoding="utf-8")
+            original_finance = (output_dir / "finance.txt").read_text(encoding="utf-8")
+
+            with patch("mspage_gcon.__main__.fetch_delta_departures_source", side_effect=RuntimeError("boom")):
+                exit_code = main(
+                    [
+                        "--output-dir",
+                        str(output_dir),
+                        "--pod-config",
+                        str(ROOT / "config" / "pods.json"),
+                    ]
+                )
+
+            self.assertEqual(exit_code, 0)
+            self.assertEqual((output_dir / "ops.json").read_text(encoding="utf-8"), original_ops)
+            self.assertEqual((output_dir / "finance.txt").read_text(encoding="utf-8"), original_finance)
+            diagnostics = json.loads((output_dir / DIAGNOSTICS_FILENAME).read_text(encoding="utf-8"))
+            self.assertEqual(diagnostics["status"], "degraded")
+            self.assertEqual(diagnostics["lastSuccessAt"], original_generated_at.isoformat().replace("+00:00", "Z"))
+
+    def test_pod_config_rejects_overlap(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "pods.json"
+            path.write_text(
+                json.dumps(
+                    {
+                        "pods": [
+                            {"id": "pod-1", "label": "Pod 1", "start_gate": 1, "end_gate": 9},
+                            {"id": "pod-2", "label": "Pod 2", "start_gate": 9, "end_gate": 22},
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(ValueError, "overlaps"):
+                load_pod_ranges(path)
+
+    def test_pod_config_requires_full_coverage(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "pods.json"
+            path.write_text(
+                json.dumps(
+                    {
+                        "pods": [
+                            {"id": "pod-1", "label": "Pod 1", "start_gate": 1, "end_gate": 9},
+                            {"id": "pod-4", "label": "Pod 4", "start_gate": 10, "end_gate": 16},
+                            {"id": "pod-5", "label": "Pod 5", "start_gate": 18, "end_gate": 22},
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(ValueError, "missing G17"):
+                load_pod_ranges(path)
+
     def test_pages_shell_exists(self) -> None:
         index_html = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
         app_js = (ROOT / "docs" / "app.js").read_text(encoding="utf-8")
+        styles_css = (ROOT / "docs" / "styles.css").read_text(encoding="utf-8")
         anime_js = (ROOT / "docs" / "vendor" / "anime.iife.min.js").read_text(encoding="utf-8")
 
         self.assertIn("Concourse G", index_html)
@@ -312,11 +456,64 @@ class PipelineTests(unittest.TestCase):
         self.assertIn("theme-cycle", index_html)
         self.assertIn("Board filters", index_html)
         self.assertIn("finance-plain", index_html)
+        self.assertIn("finance-subpill", app_js)
+        self.assertIn("Finance - Diffs", app_js)
+        self.assertIn("finance-cue-particle", app_js)
+        self.assertIn("finance-pill-absorb", app_js)
+        self.assertIn("emitAnimeFinanceCue", app_js)
+        self.assertIn("index < 50", app_js)
+        self.assertIn("syncFilterButtons", app_js)
+        self.assertIn("status-line", index_html)
         self.assertIn("vendor/anime.iife.min.js", index_html)
         self.assertIn("window.anime", app_js)
         self.assertIn("./finance.txt", app_js)
+        self.assertIn("./diagnostics.json", app_js)
         self.assertIn("renderFinancePlainText", app_js)
-        self.assertIn("anime.js - IIFE", anime_js)
+        self.assertIn('"Diffs"', app_js)
+        self.assertIn("AM Review Window", app_js)
+        self.assertIn("PM Review Window", app_js)
+        self.assertIn("Status unavailable", app_js)
+        self.assertIn("Updated ", app_js)
+        self.assertIn("buildFinanceDiffRecords", app_js)
+        self.assertIn("buildFinanceLayeredNodes", app_js)
+        self.assertIn("animateRedAlertSweep", app_js)
+        self.assertIn("diff-strike-draw", styles_css)
+        self.assertIn("diff-line-prefix-added", styles_css)
+        self.assertIn("diff-line-prefix-removed", styles_css)
+        self.assertIn("red-alert-cell", styles_css)
+        self.assertNotIn("function animateRows", app_js)
+        self.assertNotIn("function animateBoardTransition", app_js)
+        self.assertNotIn("function animateHeaderTransition", app_js)
+        self.assertNotIn("function animateFilterPress", app_js)
+        self.assertNotIn("animateFinanceDiffReveal", app_js)
+
+    def test_finance_diff_is_static_layered_rendering(self) -> None:
+        app_js = (ROOT / "docs" / "app.js").read_text(encoding="utf-8")
+        styles_css = (ROOT / "docs" / "styles.css").read_text(encoding="utf-8")
+
+        self.assertIn("diff-line-prefix", styles_css)
+        self.assertIn("finance-overlay-line-added", styles_css)
+        self.assertIn("finance-overlay-line-removed", styles_css)
+        self.assertIn("diff-line-content-removed", styles_css)
+        self.assertIn('join(" | ")', app_js)
+        self.assertIn("buildFinanceOverlayLineNode", app_js)
+        self.assertIn('prefix.textContent = `${item.kind === "added" ? "+" : "-"} `;', app_js)
+        self.assertNotIn("lastDiffRevealKey", app_js)
+        self.assertNotIn("animateDiffPrefix", app_js)
+        self.assertNotIn("animateRemovedDiffLine", app_js)
+        self.assertNotIn("animateAddedDiffLine", app_js)
+        self.assertNotIn("diff-token-changed", styles_css)
+
+    def test_finance_diff_uses_layered_base_and_overlay_rows(self) -> None:
+        index_html = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
+        app_js = (ROOT / "docs" / "app.js").read_text(encoding="utf-8")
+        styles_css = (ROOT / "docs" / "styles.css").read_text(encoding="utf-8")
+
+        self.assertIn('<div class="finance-plain hidden" id="finance-plain"', index_html)
+        self.assertIn("finance-record-base", app_js)
+        self.assertIn("finance-record-overlays", app_js)
+        self.assertIn("finance-overlay-line-added", styles_css)
+        self.assertIn("finance-overlay-line-removed", styles_css)
 
 
 if __name__ == "__main__":

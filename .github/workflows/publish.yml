@@ -2,15 +2,6 @@ name: Publish MSP Snapshot
 
 on:
   workflow_dispatch:
-    inputs:
-      run_mode:
-        description: "Run in scheduled mode or force a fresh publish now"
-        required: true
-        default: fresh
-        type: choice
-        options:
-          - fresh
-          - scheduled
   schedule:
     - cron: "0 * * * *"
 
@@ -30,17 +21,10 @@ jobs:
           python-version: "3.12"
 
       - name: Run tests
-        run: python -m unittest discover -s tests -t .
+        run: python3 -m unittest discover -s tests -t .
 
       - name: Generate latest snapshot
-        env:
-          RUN_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.run_mode || 'scheduled' }}
-        run: |
-          if [ "$RUN_MODE" = "fresh" ]; then
-            python -m mspage_gcon --output-dir docs --pod-config config/pods.json --force-finance-update
-          else
-            python -m mspage_gcon --output-dir docs --pod-config config/pods.json --respect-schedule
-          fi
+        run: python3 -m mspage_gcon --output-dir docs --pod-config config/pods.json
 
       - name: Commit generated files
         run: |

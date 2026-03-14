@@ -23,7 +23,3 @@ Flight | Gate | Time
 2967   | 14   | 21:00
 1694   | 1    | 21:55
 1442   | 18   | 21:59
-
-Total flights: 24
-AM flights: 0
-PM flights: 24

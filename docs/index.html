@@ -61,8 +61,24 @@
           </table>
           <div class="empty-state hidden" id="empty-state">No departures match this view.</div>
         </div>
-        <pre class="finance-plain hidden" id="finance-plain" aria-live="polite"></pre>
+        <div class="finance-stack">
+          <div class="finance-plain hidden" id="finance-plain" aria-live="polite"></div>
+          <section class="finance-diff hidden" id="finance-diff" aria-live="polite">
+            <div class="finance-diff-head">
+              <div>
+                <p class="finance-diff-kicker">Current vs Recent Flights Run</p>
+                <h3 id="finance-diff-title">No changes detected</h3>
+              </div>
+              <p class="finance-diff-meta" id="finance-diff-meta"></p>
+            </div>
+            <div class="finance-diff-summary" id="finance-diff-summary"></div>
+            <div class="finance-diff-list" id="finance-diff-list"></div>
+          </section>
+        </div>
       </section>
+      <footer class="status-footer">
+        <p class="status-line" id="status-line">Status: Awaiting snapshot</p>
+      </footer>
     </main>
 
     <script src="./vendor/anime.iife.min.js" defer></script>

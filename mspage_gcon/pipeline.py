@@ -4,16 +4,20 @@ from collections import defaultdict
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 import json
+import os
 from pathlib import Path
 import re
+import tempfile
 from zoneinfo import ZoneInfo
 
 from .config import PodRange, assign_pod
 
 
 CHICAGO = ZoneInfo("America/Chicago")
-AM_START_MINUTES = 4 * 60 + 30
-PM_START_MINUTES = 13 * 60
+FINANCE_SNAPSHOT_HOURS = frozenset({5, 12})
+FINANCE_CLEAR_HOUR = 18
+STALE_THRESHOLD_MINUTES = 180
+DIAGNOSTICS_FILENAME = "diagnostics.json"
 GATE_PATTERN = re.compile(r"(?i)\b(?:T1)?G\s*([0-9]{1,2})\b")
 DATE_PATTERNS = (
     "%Y-%m-%d %H:%M",
@@ -50,6 +54,12 @@ class FinanceEntry:
     @property
     def key(self) -> tuple[str, int, str]:
         return (self.flight_display, self.gate_number, self.time_display_finance)
+
+
+@dataclass(frozen=True)
+class PublishDiagnostics:
+    status: str
+    last_success_at: datetime | None
 
 
 def normalize_gate(raw_gate: str | None) -> int | None:
@@ -250,17 +260,49 @@ def render_finance_text(finance_entries: list[FinanceEntry]) -> str:
     lines = [" | ".join(header.ljust(widths[index]) for index, header in enumerate(headers)).rstrip()]
     for row in rows:
         lines.append(" | ".join(value.ljust(widths[index]) for index, value in enumerate(row)).rstrip())
-
-    totals = summarize_finance_entries(finance_entries)
-    lines.extend(
-        [
-            "",
-            f"Total flights: {totals['total']}",
-            f"AM flights: {totals['am']}",
-            f"PM flights: {totals['pm']}",
-        ]
-    )
     return "\n".join(lines) + "\n"
+
+
+def build_publish_diagnostics(
+    *,
+    status: str,
+    last_success_at: datetime | None,
+) -> PublishDiagnostics:
+    return PublishDiagnostics(status=status, last_success_at=last_success_at)
+
+
+def build_diagnostics_payload(diagnostics: PublishDiagnostics) -> dict[str, str | None]:
+    return {
+        "status": diagnostics.status,
+        "lastSuccessAt": _isoformat_utc(diagnostics.last_success_at) if diagnostics.last_success_at else None,
+        "staleAfterMinutes": STALE_THRESHOLD_MINUTES,
+    }
+
+
+def write_diagnostics(
+    output_dir: Path,
+    diagnostics: PublishDiagnostics,
+) -> None:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    payload = build_diagnostics_payload(diagnostics)
+    _atomic_write_text(
+        output_dir / DIAGNOSTICS_FILENAME,
+        json.dumps(payload, indent=2) + "\n",
+    )
+
+
+def write_failure_diagnostics(
+    output_dir: Path,
+    *,
+    attempted_at: datetime,
+) -> PublishDiagnostics:
+    last_success_at = read_last_success_at(output_dir)
+    diagnostics = build_publish_diagnostics(
+        status=_failure_status(attempted_at=attempted_at, last_success_at=last_success_at),
+        last_success_at=last_success_at,
+    )
+    write_diagnostics(output_dir, diagnostics)
+    return diagnostics
 
 
 def write_outputs(
@@ -282,12 +324,35 @@ def write_outputs(
         finance_text = render_finance_text(finance_entries)
 
     ops_payload = build_ops_payload(departures=departures, pods=pods, generated_at=created)
-    (output_dir / "ops.json").write_text(
-        json.dumps(ops_payload, indent=2) + "\n",
-        encoding="utf-8",
-    )
+    _atomic_write_text(output_dir / "ops.json", json.dumps(ops_payload, indent=2) + "\n")
     if finance_text is not None:
-        (output_dir / "finance.txt").write_text(finance_text, encoding="utf-8")
+        _atomic_write_text(output_dir / "finance.txt", finance_text)
+    write_diagnostics(
+        output_dir,
+        build_publish_diagnostics(status="healthy", last_success_at=created),
+    )
+
+
+def read_last_success_at(output_dir: Path) -> datetime | None:
+    diagnostics_path = output_dir / DIAGNOSTICS_FILENAME
+    diagnostics = _read_diagnostics(diagnostics_path)
+    if diagnostics and diagnostics.last_success_at:
+        return diagnostics.last_success_at
+    return _read_existing_generated_at(output_dir / "ops.json")
+
+
+def has_last_good_snapshot(output_dir: Path) -> bool:
+    return (output_dir / "ops.json").exists()
+
+
+def read_departure_count(path: Path) -> int | None:
+    payload = _read_ops_payload(path)
+    if payload is None:
+        return None
+    departures = payload.get("departures")
+    if not isinstance(departures, list):
+        return None
+    return len(departures)
 
 
 def _pick_exemplar(group_rows: list[dict]) -> dict:
@@ -357,83 +422,6 @@ def _choose_status(group_rows: list[dict]) -> str | None:
     return max(statuses, key=lambda status: priorities.get(status, 0))
 
 
-def summarize_finance_entries(finance_entries: list[FinanceEntry]) -> dict[str, int]:
-    total = len(finance_entries)
-    am = 0
-    pm = 0
-
-    for entry in finance_entries:
-        bucket = _finance_bucket(entry)
-        if bucket == "am":
-            am += 1
-        elif bucket == "pm":
-            pm += 1
-
-    return {"total": total, "am": am, "pm": pm}
-
-
-def parse_finance_text(
-    text: str,
-    *,
-    day: datetime,
-) -> list[FinanceEntry]:
-    entries: list[FinanceEntry] = []
-    for raw_line in text.splitlines():
-        line = raw_line.strip()
-        if (
-            not line
-            or line in {"AM", "PM"}
-            or line.startswith("Flight |")
-            or line.startswith("Total flights:")
-            or line.startswith("AM flights:")
-            or line.startswith("PM flights:")
-        ):
-            continue
-
-        parts = [part.strip() for part in raw_line.split("|")]
-        if len(parts) != 3:
-            continue
-
-        flight_display, gate_text, time_text = parts
-        if not gate_text.isdigit():
-            continue
-        try:
-            sort_timestamp = _finance_sort_timestamp(day=day, time_display=time_text)
-        except ValueError:
-            continue
-
-        entries.append(
-            FinanceEntry(
-                flight_display=flight_display,
-                gate_number=int(gate_text),
-                time_display_finance=time_text,
-                sort_timestamp=sort_timestamp,
-            )
-        )
-
-    entries.sort(key=lambda entry: (entry.sort_timestamp, entry.gate_number, entry.flight_display))
-    return entries
-
-
-def _merge_finance_entries(
-    output_dir: Path,
-    new_entries: list[FinanceEntry],
-    generated_at: datetime,
-) -> list[FinanceEntry]:
-    merged: dict[tuple[str, int, str], FinanceEntry] = {}
-
-    existing_generated_at = _read_existing_generated_at(output_dir / "ops.json")
-    if existing_generated_at and existing_generated_at.date() == generated_at.date():
-        existing_text = (output_dir / "finance.txt").read_text(encoding="utf-8") if (output_dir / "finance.txt").exists() else ""
-        for entry in parse_finance_text(existing_text, day=generated_at):
-            merged[entry.key] = entry
-
-    for entry in new_entries:
-        merged[entry.key] = entry
-
-    return sorted(merged.values(), key=lambda entry: (entry.sort_timestamp, entry.gate_number, entry.flight_display))
-
-
 def _extract_digits(value: str | None) -> str | None:
     if not value:
         return None
@@ -453,44 +441,73 @@ def _minute_epoch(value: datetime) -> int:
 
 
 def _read_existing_generated_at(path: Path) -> datetime | None:
+    payload = _read_ops_payload(path)
+    if payload is None:
+        return None
+    generated_at = payload.get("generatedAt")
+    if not generated_at:
+        return None
+    return _parse_datetime_value(str(generated_at))
+
+
+def _read_ops_payload(path: Path) -> dict | None:
     if not path.exists():
         return None
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
-        generated_at = payload.get("generatedAt")
-    except (json.JSONDecodeError, OSError, AttributeError):
+    except (json.JSONDecodeError, OSError):
         return None
-
-    if not generated_at:
+    if not isinstance(payload, dict):
         return None
+    return payload
 
+
+def _read_diagnostics(path: Path) -> PublishDiagnostics | None:
+    if not path.exists():
+        return None
     try:
-        parsed = datetime.fromisoformat(str(generated_at).replace("Z", "+00:00"))
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return None
+    if not isinstance(payload, dict):
+        return None
+
+    status = _clean_string(payload.get("status"))
+    if status is None:
+        return None
+    last_success_raw = payload.get("lastSuccessAt")
+    last_success_at = _parse_datetime_value(str(last_success_raw)) if last_success_raw else None
+    return PublishDiagnostics(status=status, last_success_at=last_success_at)
+
+
+def _parse_datetime_value(value: str) -> datetime | None:
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
     except ValueError:
         return None
     return parsed.astimezone(CHICAGO)
 
 
-def _parse_finance_time(value: str) -> tuple[int, int]:
-    hour_text, minute_text = value.split(":", 1)
-    hour = int(hour_text)
-    minute = int(minute_text)
-    if not 0 <= hour <= 23 or not 0 <= minute <= 59:
-        raise ValueError(f"Invalid finance time: {value}")
-    return hour, minute
+def _isoformat_utc(value: datetime) -> str:
+    return value.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
-def _finance_sort_timestamp(*, day: datetime, time_display: str) -> int:
-    hour, minute = _parse_finance_time(time_display)
-    parsed = day.replace(hour=hour, minute=minute, second=0, microsecond=0)
-    return int(parsed.timestamp())
+def _atomic_write_text(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    descriptor, temp_path = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
+    try:
+        with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
+            handle.write(text)
+        os.replace(temp_path, path)
+    finally:
+        if os.path.exists(temp_path):
+            os.unlink(temp_path)
 
 
-def _finance_bucket(entry: FinanceEntry) -> str | None:
-    hour, minute = _parse_finance_time(entry.time_display_finance)
-    total_minutes = hour * 60 + minute
-    if AM_START_MINUTES <= total_minutes < PM_START_MINUTES:
-        return "am"
-    if total_minutes >= PM_START_MINUTES:
-        return "pm"
-    return None
+def _failure_status(*, attempted_at: datetime, last_success_at: datetime | None) -> str:
+    if last_success_at is None:
+        return "stale"
+    age_minutes = int((attempted_at.astimezone(timezone.utc) - last_success_at.astimezone(timezone.utc)).total_seconds() // 60)
+    if age_minutes > STALE_THRESHOLD_MINUTES:
+        return "stale"
+    return "degraded"

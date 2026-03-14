@@ -1,13 +1,21 @@
 const state = {
   payload: null,
   financeText: null,
+  diagnostics: null,
   activeFilter: "all",
   activeTheme: readStorage("mspage-gcon-theme") || "light",
   lastView: null,
+  diffOpen: false,
+  diffLoading: false,
+  diffResult: null,
+  lastDiffCueState: null,
 };
 
 const params = new URLSearchParams(window.location.search);
-const snapshotPath = params.get("snapshot") || "ops.json";
+const snapshotPath = params.get("snapshot") || "./ops.json";
+const financePath = params.get("finance") || "./finance.txt";
+const diagnosticsPath = params.get("diagnostics") || "./diagnostics.json";
+const compareSnapshotPath = params.get("compareSnapshot") || snapshotPath;
 const previewNow = readPreviewNow(params.get("previewNow"));
 const animeApi = window.anime || {};
 const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
@@ -16,6 +24,7 @@ const themeCycle = document.getElementById("theme-cycle");
 const departuresHead = document.getElementById("departures-head");
 const departuresBody = document.getElementById("departures-body");
 const podFilters = document.getElementById("pod-filters");
+const heroToolbar = document.querySelector(".hero-toolbar");
 const tableWrap = document.querySelector(".table-wrap");
 const board = document.querySelector(".board");
 const lastUpdatedInline = document.getElementById("last-updated-inline");
@@ -24,6 +33,12 @@ const emptyState = document.getElementById("empty-state");
 const boardTitle = document.getElementById("board-title");
 const boardNote = document.getElementById("board-note");
 const financePlain = document.getElementById("finance-plain");
+const financeDiff = document.getElementById("finance-diff");
+const financeDiffTitle = document.getElementById("finance-diff-title");
+const financeDiffMeta = document.getElementById("finance-diff-meta");
+const financeDiffSummary = document.getElementById("finance-diff-summary");
+const financeDiffList = document.getElementById("finance-diff-list");
+const statusLine = document.getElementById("status-line");
 
 const THEMES = [
   { id: "light", label: "Light" },
@@ -52,12 +67,38 @@ const THEME_ICONS = {
     '<svg viewBox="0 0 24 24" role="presentation" focusable="false"><path d="M12.2 3.8c1.1 2 1.2 3.4.2 5.1c1.9-.5 3.4-1.8 4.2-3.8c2.4 2.2 3.7 4.8 3.7 7.6c0 4.2-3.2 7.4-7.7 7.4c-4.8 0-8-3.4-8-7.8c0-3 1.4-5.7 4.2-8.2c.1 2 .8 3.4 2 4.5c1-1.2 1.4-2.8 1.4-4.8Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/></svg>',
 };
 
+const FINANCE_VISIBLE_START = 5 * 60;
+const FINANCE_VISIBLE_END = 18 * 60;
+const FINANCE_COMPARE_WINDOWS = [
+  { start: 5 * 60, end: 9 * 60, label: "AM Review Window" },
+  { start: 12 * 60, end: 15 * 60, label: "PM Review Window" },
+];
+
 applyTheme(state.activeTheme);
+bindEvents();
+loadSnapshot().catch((error) => {
+  console.error(error);
+  emptyState.classList.remove("hidden");
+  emptyState.textContent = "Unable to load the current snapshot.";
+  renderStatusFooter();
+});
+
+setInterval(() => {
+  if (!state.payload) {
+    return;
+  }
+  render();
+}, 60000);
+
+function bindEvents() {
+  themeCycle?.addEventListener("click", cycleTheme);
+}
 
 async function loadSnapshot() {
-  const [snapshotResponse, financeResponse] = await Promise.all([
-    fetch(`./${snapshotPath}?ts=${Date.now()}`, { cache: "no-store" }),
-    fetch(`./finance.txt?ts=${Date.now()}`, { cache: "no-store" }),
+  const [snapshotResponse, financeResponse, diagnosticsResponse] = await Promise.all([
+    fetchAsset(snapshotPath),
+    fetchAsset(financePath),
+    fetchAsset(diagnosticsPath),
   ]);
 
   if (!snapshotResponse.ok) {
@@ -65,17 +106,19 @@ async function loadSnapshot() {
   }
 
   state.payload = await snapshotResponse.json();
-  state.financeText = financeResponse.ok ? await financeResponse.text() : renderFinanceTextFromPayload();
+  state.financeText = financeResponse.ok ? await financeResponse.text() : renderFinanceTextFromPayload(state.payload);
+  state.diagnostics = diagnosticsResponse.ok ? await diagnosticsResponse.json() : buildFallbackDiagnostics();
   render();
 }
 
 function render() {
   board?.classList.toggle("finance-mode", isFinanceView());
-  animateBoardTransition();
   renderMeta();
   renderPodFilters();
   renderHead();
   renderRows();
+  renderFinanceTools();
+  renderStatusFooter();
 }
 
 function renderMeta() {
@@ -86,11 +129,7 @@ function renderMeta() {
     return;
   }
 
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    timeStyle: "short",
-    timeZone: "America/Chicago",
-  });
-  lastUpdatedInline.textContent = `Updated ${formatter.format(new Date(generatedAt))} · MSP DL`;
+  lastUpdatedInline.textContent = `Updated ${formatChicagoTime(new Date(generatedAt))} · MSP DL`;
 }
 
 function renderPodFilters() {
@@ -98,109 +137,138 @@ function renderPodFilters() {
   const includeFinance = !shouldHideFinanceFilter();
   if (!includeFinance && state.activeFilter === "finance") {
     state.activeFilter = "all";
+    state.diffOpen = false;
   }
+
   const definitions = [
     { id: "all", label: "All" },
     ...pods.map((pod) => ({ id: pod.id, label: pod.label })),
     ...(includeFinance ? [{ id: "finance", label: "Finance" }] : []),
   ];
-
-  const existingButtons = Array.from(podFilters.querySelectorAll("button"));
-  if (existingButtons.length !== definitions.length) {
-    podFilters.replaceChildren(
-      ...definitions.map((definition) =>
-        createFilterButton(definition.id, definition.label, state.activeFilter === definition.id)
-      )
-    );
-  } else {
-    existingButtons.forEach((button, index) => {
-      const definition = definitions[index];
-      button.textContent = definition.label;
-      button.dataset.filterId = definition.id;
-      button.className = state.activeFilter === definition.id ? "pill active" : "pill";
-    });
-  }
+  syncFilterButtons(definitions);
 
   ensureFilterIndicator();
   updateFilterIndicator();
+  animateFinancePillCue();
+}
+
+function syncFilterButtons(definitions) {
+  const existing = new Map(
+    Array.from(podFilters.querySelectorAll("button")).map((button) => [filterButtonKey(button), button])
+  );
+  const orderedButtons = definitions.map((definition) => {
+    const key = `filter:${definition.id}`;
+    const button = existing.get(key) || createFilterButton();
+    updateFilterButton(button, definition.id, definition.label, state.activeFilter === definition.id);
+    existing.delete(key);
+    return button;
+  });
+
+  if (isFinanceView() && isFinanceCompareAvailable() && !state.diffOpen) {
+    const subpill = existing.get("control:finance-subpill") || createFinanceSubpill();
+    orderedButtons.push(subpill);
+    existing.delete("control:finance-subpill");
+  }
+
+  orderedButtons.forEach((button) => podFilters.appendChild(button));
+  existing.forEach((button) => button.remove());
+}
+
+function filterButtonKey(button) {
+  if (button.dataset.controlId) {
+    return `control:${button.dataset.controlId}`;
+  }
+  return `filter:${button.dataset.filterId}`;
 }
 
 function createFilterButton(id, label, active) {
   const button = document.createElement("button");
   button.type = "button";
-  button.dataset.filterId = id;
-  button.className = active ? "pill active" : "pill";
-  button.textContent = label;
   button.addEventListener("click", () => {
-    if (state.activeFilter === id) {
+    const filterId = button.dataset.filterId;
+    if (filterId === "finance" && state.activeFilter === filterId && state.diffOpen) {
+      closeFinanceDiff();
       return;
     }
-    state.activeFilter = id;
-    animateFilterPress(button);
+    if (state.activeFilter === filterId) {
+      return;
+    }
+    state.activeFilter = filterId;
+    if (filterId !== "finance") {
+      state.diffOpen = false;
+    }
     render();
   });
   return button;
 }
 
+function updateFilterButton(button, id, label, active) {
+  button.dataset.filterId = id;
+  button.dataset.controlId = "";
+  button.className = active ? "pill active" : "pill";
+  button.textContent = financeFilterLabel(id, label, active);
+}
+
+function financeFilterLabel(id, label, active) {
+  if (id === "finance" && active && state.diffOpen) {
+    return "Finance - Diffs";
+  }
+  return label;
+}
+
 function renderHead() {
   const financeView = isFinanceView();
   const nextView = financeView ? "finance" : "ops";
-  boardTitle.textContent = financeView ? "Finance Report" : "Operations View";
+  boardTitle.textContent = financeView ? "Finance View" : "Operations View";
 
   if (financeView) {
-    boardNote.textContent = financeBoardNote();
-    boardNote.classList.toggle("hidden", !boardNote.textContent);
+    setFinanceHeading(financeBoardNote());
+    boardNote.classList.add("hidden");
+    visibleCount.classList.add("hidden");
     departuresHead.replaceChildren();
     state.lastView = nextView;
     return;
   }
 
+  visibleCount.classList.remove("hidden");
   const tr = document.createElement("tr");
-  const headers = ["Time", "Gate", "Dest"];
-  headers.forEach((header) => {
+  ["Time", "Gate", "Dest"].forEach((header) => {
     const th = document.createElement("th");
     th.textContent = header;
     tr.appendChild(th);
   });
   departuresHead.replaceChildren(tr);
-  animateHeaderTransition(state.lastView, nextView);
   state.lastView = nextView;
 }
 
 function renderRows() {
   const departures = getVisibleDepartures();
-  const financeView = isFinanceView();
-  if (financeView) {
+  if (isFinanceView()) {
     renderFinancePlainText();
     return;
   }
 
   financePlain.classList.add("hidden");
+  financeDiff.classList.add("hidden");
   tableWrap.classList.remove("hidden");
-  const previousRows = Array.from(departuresBody.querySelectorAll(".board-row"));
-  const oldPositions = new Map(previousRows.map((row) => [row.dataset.rowKey, row.getBoundingClientRect().top]));
-  const existingRows = new Map(previousRows.map((row) => [row.dataset.rowKey, row]));
-  const desiredKeys = new Set(departures.map((departure) => rowKeyFor(departure, financeView)));
-  const exitingRows = previousRows.filter((row) => !desiredKeys.has(row.dataset.rowKey));
+
+  const existingRows = new Map(
+    Array.from(departuresBody.querySelectorAll(".board-row")).map((row) => [row.dataset.rowKey, row])
+  );
 
   setFlightsCount(departures.length);
   updateOpsBoardNote(departures);
 
-  if (departures.length === 0) {
-    emptyState.classList.remove("hidden");
-  } else {
-    emptyState.classList.add("hidden");
-  }
+  emptyState.classList.toggle("hidden", departures.length > 0);
 
   const fragment = document.createDocumentFragment();
   departures.forEach((departure, index) => {
-    const key = rowKeyFor(departure, financeView);
-    const row = existingRows.get(key) || document.createElement("tr");
-    row.dataset.rowKey = key;
+    const row = existingRows.get(departure.id) || document.createElement("tr");
+    row.dataset.rowKey = departure.id;
     row.dataset.rowIndex = String(index);
     row.className = "board-row";
 
-    const urgencyBand = financeView ? null : getUrgencyBand(departure);
+    const urgencyBand = getUrgencyBand(departure);
     if (urgencyBand) {
       row.classList.add("is-window", `is-window-${urgencyBand}`);
     }
@@ -209,8 +277,495 @@ function renderRows() {
     fragment.appendChild(row);
   });
 
-  departuresBody.replaceChildren(fragment, ...exitingRows);
-  animateRows(departures, financeView, oldPositions, existingRows, exitingRows);
+  departuresBody.replaceChildren(fragment);
+  animateRedAlertSweep();
+}
+
+function renderFinancePlainText() {
+  const financeText = state.financeText ?? renderFinanceTextFromPayload(state.payload);
+  const officialEntries = parseFinanceRows(financeText);
+  departuresBody.replaceChildren();
+  emptyState.classList.add("hidden");
+  tableWrap.classList.add("hidden");
+  financePlain.classList.remove("hidden");
+  if (state.diffOpen && !state.diffLoading && state.diffResult?.hasChanges) {
+    financePlain.classList.add("is-diff");
+    const nodes = buildFinanceLayeredNodes(state.diffResult.records);
+    financePlain.replaceChildren(...nodes);
+  } else {
+    financePlain.classList.remove("is-diff");
+    if (officialEntries.length) {
+      financePlain.replaceChildren(...buildFinanceBaseNodes(officialEntries));
+    } else {
+      financePlain.textContent = financeText;
+    }
+  }
+  renderFinanceDiff();
+}
+
+function renderFinanceTools() {
+  heroToolbar?.classList.toggle("finance-toolbar", isFinanceView() && isFinanceCompareAvailable());
+}
+
+async function runFinanceDiff() {
+  if (!isFinanceCompareAvailable()) {
+    return;
+  }
+
+  state.diffLoading = true;
+  state.diffOpen = true;
+  state.diffResult = {
+    title: "Checking for changes",
+    meta: "Fetching the current flights run...",
+    summary: [],
+    records: [],
+    hasChanges: false,
+  };
+  render();
+
+  try {
+    const response = await fetchAsset(compareSnapshotPath);
+    if (!response.ok) {
+      throw new Error(`Unable to refetch ops snapshot (${response.status})`);
+    }
+
+    const candidatePayload = await response.json();
+    const officialEntries = parseFinanceRows(state.financeText ?? renderFinanceTextFromPayload(state.payload));
+    const candidateEntries = buildFinanceEntriesFromPayload(candidatePayload);
+    const diff = diffFinanceEntries(officialEntries, candidateEntries);
+    const generatedAt = candidatePayload?.generatedAt ? new Date(candidatePayload.generatedAt) : null;
+
+    state.diffResult = buildDiffResult(diff, officialEntries, candidateEntries, generatedAt);
+  } catch (error) {
+    state.diffResult = {
+      title: "Unable to compare right now",
+      meta: String(error?.message || error),
+      summary: [],
+      records: [],
+      hasChanges: false,
+      error: true,
+    };
+  } finally {
+    state.diffLoading = false;
+    render();
+  }
+}
+
+function closeFinanceDiff() {
+  state.diffOpen = false;
+  render();
+}
+
+function createFinanceSubpill() {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.dataset.controlId = "finance-subpill";
+  button.className = state.diffOpen ? "pill finance-subpill active" : "pill finance-subpill";
+  button.textContent = state.diffLoading ? "Checking..." : "Diffs";
+  button.disabled = state.diffLoading;
+  button.setAttribute("aria-pressed", state.diffOpen ? "true" : "false");
+  button.addEventListener("click", () => {
+    if (state.diffLoading) {
+      return;
+    }
+    if (state.diffOpen) {
+      closeFinanceDiff();
+      return;
+    }
+    runFinanceDiff();
+  });
+  return button;
+}
+
+function renderFinanceDiff() {
+  if (!state.diffOpen || (state.diffResult?.hasChanges && !state.diffResult?.error)) {
+    financeDiff.classList.add("hidden");
+    return;
+  }
+
+  const result =
+    state.diffResult ||
+    {
+      title: "No changes detected",
+      meta: "Official finance snapshot matches the recent flights run.",
+      summary: [],
+      records: [],
+      hasChanges: false,
+    };
+
+  financeDiffTitle.textContent = result.title;
+  financeDiffMeta.textContent = result.meta || "";
+  financeDiffSummary.replaceChildren();
+  financeDiffList.replaceChildren();
+
+  financeDiff.classList.remove("hidden");
+}
+
+function buildDiffResult(diff, officialEntries, candidateEntries, generatedAt) {
+  const meta = generatedAt
+    ? `Recent flights run from ${formatChicagoTime(generatedAt)}`
+    : "Recent flights run loaded for comparison.";
+
+  const hasChanges = diff.changed.length + diff.added.length + diff.removed.length > 0;
+
+  if (!hasChanges) {
+    return {
+      title: "No changes detected",
+      meta,
+      summary: [],
+      records: [],
+      hasChanges: false,
+    };
+  }
+
+  return {
+    title: "Differences found",
+    meta,
+    summary: [],
+    records: buildFinanceDiffRecords(officialEntries, candidateEntries),
+    hasChanges: true,
+  };
+}
+
+function buildFinanceBaseNodes(entries) {
+  const widths = measureFinanceWidths(entries);
+  const header = document.createElement("span");
+  header.className = "finance-table-line finance-table-line-header";
+  header.textContent = formatFinanceHeader(widths);
+
+  const rows = entries.map((entry) => {
+    const row = document.createElement("span");
+    row.className = "finance-table-line finance-record-base";
+    row.textContent = formatFinanceLine(entry, widths);
+    return row;
+  });
+
+  return [header, ...rows];
+}
+
+function buildFinanceLayeredNodes(layered) {
+  const header = document.createElement("span");
+  header.className = "finance-table-line finance-table-line-header";
+  header.textContent = layered.headerLine;
+
+  const rows = layered.records.map((record) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "finance-record";
+
+    if (record.baseLine) {
+      const base = document.createElement("span");
+      base.className = "finance-record-base";
+      base.textContent = record.baseLine;
+      wrapper.appendChild(base);
+    }
+
+    if (record.overlays.length) {
+      const overlays = document.createElement("div");
+      overlays.className = "finance-record-overlays";
+      record.overlays.forEach((item) => overlays.appendChild(buildFinanceOverlayLineNode(item)));
+      wrapper.appendChild(overlays);
+    }
+
+    return wrapper;
+  });
+
+  return [header, ...rows];
+}
+
+function buildFinanceOverlayLineNode(item) {
+  const row = document.createElement("span");
+  row.className = `finance-overlay-line finance-overlay-line-${item.kind}`;
+
+  const prefix = document.createElement("span");
+  prefix.className = `diff-line-prefix diff-line-prefix-${item.kind}`;
+  prefix.textContent = `${item.kind === "added" ? "+" : "-"} `;
+
+  const content = document.createElement("span");
+  content.className = `diff-line-content diff-line-content-${item.kind}`;
+  const text = document.createElement("span");
+  text.className = item.kind === "removed" ? "diff-line-text diff-line-text-removed" : "diff-line-text";
+  text.textContent = item.line;
+  content.appendChild(text);
+
+  if (item.kind === "removed") {
+    const strike = document.createElement("span");
+    strike.className = "diff-strike-draw";
+    strike.setAttribute("aria-hidden", "true");
+    content.appendChild(strike);
+  }
+
+  row.classList.add("diff-reveal-line");
+  row.dataset.diffKind = item.kind;
+  row.append(prefix, content);
+  return row;
+}
+
+function buildFinanceDiffRecords(officialEntries, candidateEntries) {
+  const widths = measureFinanceWidths([...officialEntries, ...candidateEntries]);
+  const officialMap = new Map(keyFinanceEntries(officialEntries).map((entry) => [entry.key, entry]));
+  const candidateMap = new Map(keyFinanceEntries(candidateEntries).map((entry) => [entry.key, entry]));
+  const records = [];
+  const keys = new Set([...officialMap.keys(), ...candidateMap.keys()]);
+
+  for (const key of keys) {
+    const official = officialMap.get(key);
+    const candidate = candidateMap.get(key);
+
+    if (official && candidate) {
+      if (sameFinanceEntry(official, candidate)) {
+        records.push({
+          sortKey: financeEntrySortKey(candidate),
+          baseLine: formatFinanceLine(candidate, widths),
+          overlays: [],
+        });
+        continue;
+      }
+
+      records.push({
+        sortKey: [financeEntrySortKey(official), financeEntrySortKey(candidate)].sort()[0],
+        baseLine: formatFinanceLine(official, widths),
+        overlays: [
+          { kind: "removed", line: formatFinanceLine(official, widths) },
+          { kind: "added", line: formatFinanceLine(candidate, widths) },
+        ],
+      });
+      continue;
+    }
+
+    if (candidate) {
+      records.push({
+        sortKey: financeEntrySortKey(candidate),
+        baseLine: "",
+        overlays: [{ kind: "added", line: formatFinanceLine(candidate, widths) }],
+      });
+      continue;
+    }
+
+    if (official) {
+      records.push({
+        sortKey: financeEntrySortKey(official),
+        baseLine: formatFinanceLine(official, widths),
+        overlays: [{ kind: "removed", line: formatFinanceLine(official, widths) }],
+      });
+    }
+  }
+
+  records.sort((left, right) => left.sortKey.localeCompare(right.sortKey));
+
+  return {
+    headerLine: formatFinanceHeader(widths),
+    records,
+  };
+}
+
+function measureFinanceWidths(entries) {
+  const headers = ["Flight", "Gate", "Time"];
+  const widths = headers.map((header) => header.length);
+
+  entries.forEach((entry) => {
+    [entry.flightDisplay, String(entry.gateNumber), entry.timeDisplayFinance].forEach((value, index) => {
+      widths[index] = Math.max(widths[index], value.length);
+    });
+  });
+
+  return widths;
+}
+
+function formatFinanceHeader(widths) {
+  return ["Flight", "Gate", "Time"]
+    .map((header, index) => header.padEnd(widths[index], " "))
+    .join(" | ")
+    .trimEnd();
+}
+
+function formatFinanceLine(entry, widths) {
+  return [entry.flightDisplay, String(entry.gateNumber), entry.timeDisplayFinance]
+    .map((value, index) => value.padEnd(widths[index], " "))
+    .join(" | ")
+    .trimEnd();
+}
+
+function financeEntrySortKey(entry) {
+  return `${entry.timeDisplayFinance}\t${String(entry.gateNumber).padStart(2, "0")}\t${entry.flightDisplay}`;
+}
+
+function sameFinanceEntry(left, right) {
+  return (
+    left.flightDisplay === right.flightDisplay &&
+    left.gateNumber === right.gateNumber &&
+    left.timeDisplayFinance === right.timeDisplayFinance
+  );
+}
+
+function diffFinanceEntries(officialEntries, candidateEntries) {
+  const keyedOfficial = keyFinanceEntries(officialEntries);
+  const keyedCandidate = keyFinanceEntries(candidateEntries);
+  const officialMap = new Map(keyedOfficial.map((entry) => [entry.key, entry]));
+  const candidateMap = new Map(keyedCandidate.map((entry) => [entry.key, entry]));
+
+  const changed = [];
+  const added = [];
+  const removed = [];
+
+  const seen = new Set([...officialMap.keys(), ...candidateMap.keys()]);
+  for (const key of seen) {
+    const official = officialMap.get(key);
+    const candidate = candidateMap.get(key);
+    if (official && candidate) {
+      if (
+        official.gateNumber !== candidate.gateNumber ||
+        official.timeDisplayFinance !== candidate.timeDisplayFinance
+      ) {
+        changed.push({
+          flightDisplay: official.flightDisplay,
+          official,
+          candidate,
+        });
+      }
+      continue;
+    }
+
+    if (candidate) {
+      added.push(candidate);
+      continue;
+    }
+
+    if (official) {
+      removed.push(official);
+    }
+  }
+
+  return {
+    changed: sortDiffItems(changed),
+    added: sortFinanceEntries(added),
+    removed: sortFinanceEntries(removed),
+  };
+}
+
+function keyFinanceEntries(entries) {
+  const counts = new Map();
+  return sortFinanceEntries(entries).map((entry) => {
+    const index = (counts.get(entry.flightDisplay) || 0) + 1;
+    counts.set(entry.flightDisplay, index);
+    return { ...entry, key: `${entry.flightDisplay}#${index}` };
+  });
+}
+
+function buildFinanceEntriesFromPayload(payload) {
+  const departures = sortDepartures(payload?.departures ?? []).filter((departure) => isSameChicagoFinanceDay(departure, payload));
+  return departures.map((departure) => ({
+    flightDisplay: departure.flightDisplay,
+    gateNumber: departure.gateNumber,
+    timeDisplayFinance: departure.timeDisplayFinance,
+  }));
+}
+
+function parseFinanceRows(financeText) {
+  const entries = [];
+  financeText.split(/\r?\n/).forEach((rawLine) => {
+    const line = rawLine.trim();
+    if (
+      !line ||
+      line.startsWith("Flight |")
+    ) {
+      return;
+    }
+
+    const parts = rawLine.split("|").map((part) => part.trim());
+    if (parts.length !== 3 || !/^\d+$/.test(parts[1])) {
+      return;
+    }
+
+    entries.push({
+      flightDisplay: parts[0],
+      gateNumber: Number(parts[1]),
+      timeDisplayFinance: parts[2],
+    });
+  });
+  return sortFinanceEntries(entries);
+}
+
+function renderFinanceTextFromPayload(payload = state.payload) {
+  const entries = buildFinanceEntriesFromPayload(payload);
+  return `${formatFinanceRows(entries).join("\n")}\n`;
+}
+
+function formatFinanceRows(entries) {
+  const widths = measureFinanceWidths(entries);
+  return [formatFinanceHeader(widths), ...entries.map((entry) => formatFinanceLine(entry, widths))];
+}
+
+function renderStatusFooter() {
+  const diagnostics = normalizeDiagnostics(state.diagnostics);
+  const status = diagnostics.status || "healthy";
+  const lastSuccess = diagnostics.lastSuccessAt ? new Date(diagnostics.lastSuccessAt) : null;
+  const nextRefresh = formatChicagoTime(nextOpsRefreshDate());
+  const relative = lastSuccess ? formatRelativeAge(lastSuccess) : null;
+
+  if (!lastSuccess && status !== "healthy") {
+    statusLine.textContent = "✖ Status unavailable";
+    return;
+  }
+
+  if (status === "healthy") {
+    statusLine.textContent = `● Healthy · Updated ${relative || "just now"} · Last update ${formatChicagoTime(lastSuccess)} · Next update ${nextRefresh}`;
+    return;
+  }
+
+  if (status === "degraded") {
+    statusLine.textContent = `▲ Some data may be delayed · Updated ${relative || "recently"} · Last update ${formatChicagoTime(lastSuccess)} · Next update ${nextRefresh}`;
+    return;
+  }
+
+  statusLine.textContent = `◐ Updated ${relative || "earlier"} · Last update ${formatChicagoTime(lastSuccess)} · Next update ${nextRefresh}`;
+}
+
+function normalizeDiagnostics(diagnostics) {
+  if (diagnostics && typeof diagnostics === "object" && typeof diagnostics.status === "string") {
+    const normalized = { ...diagnostics };
+    const lastSuccess = normalized.lastSuccessAt ? new Date(normalized.lastSuccessAt) : null;
+    const staleAfterMinutes = Number(normalized.staleAfterMinutes || 180);
+    if (
+      normalized.status !== "degraded" &&
+      lastSuccess &&
+      Math.floor((currentTimeMs() - lastSuccess.getTime()) / 60000) > staleAfterMinutes
+    ) {
+      normalized.status = "stale";
+    }
+    return normalized;
+  }
+  return buildFallbackDiagnostics();
+}
+
+function buildFallbackDiagnostics() {
+  const generatedAt = state.payload?.generatedAt;
+  if (!generatedAt) {
+    return { status: "critical", lastSuccessAt: null, staleAfterMinutes: 180 };
+  }
+
+  const generatedDate = new Date(generatedAt);
+  const ageMinutes = Math.floor((currentTimeMs() - generatedDate.getTime()) / 60000);
+  return {
+    status: ageMinutes > 180 ? "stale" : "healthy",
+    lastSuccessAt: generatedAt,
+    staleAfterMinutes: 180,
+  };
+}
+
+function formatRelativeAge(date) {
+  const diffMinutes = Math.max(0, Math.floor((currentTimeMs() - date.getTime()) / 60000));
+  if (diffMinutes < 1) {
+    return "just now";
+  }
+  if (diffMinutes < 60) {
+    return `${diffMinutes}m ago`;
+  }
+  const hours = Math.floor(diffMinutes / 60);
+  const minutes = diffMinutes % 60;
+  if (minutes === 0) {
+    return `${hours}h ago`;
+  }
+  return `${hours}h ${minutes}m ago`;
 }
 
 function getVisibleDepartures() {
@@ -234,68 +789,6 @@ function isVisibleInOps(departure) {
   return currentMinute <= departureMinute;
 }
 
-function getUrgencyBand(departure) {
-  const currentMinute = Math.floor(currentTimeMs() / 60000);
-  const departureMinute = Math.floor(departure.sortTimestamp / 60);
-  const delta = departureMinute - currentMinute;
-  if (delta < 0 || delta > 180) {
-    return null;
-  }
-  if (delta <= 10) {
-    return "red-4";
-  }
-  if (delta <= 25) {
-    return "red-3";
-  }
-  if (delta <= 45) {
-    return "red-2";
-  }
-  if (delta <= 60) {
-    return "red-1";
-  }
-  if (delta <= 90) {
-    return "yellow-3";
-  }
-  if (delta <= 135) {
-    return "yellow-2";
-  }
-  return "yellow-1";
-}
-
-setInterval(() => {
-  if (state.payload) {
-    renderRows();
-  }
-}, 60000);
-
-loadSnapshot().catch((error) => {
-  console.error(error);
-  emptyState.classList.remove("hidden");
-  emptyState.textContent = "Unable to load the current snapshot.";
-});
-
-function applyTheme(themeId) {
-  document.documentElement.dataset.theme = themeId;
-}
-
-themeCycle.addEventListener("click", () => {
-  const currentIndex = THEMES.findIndex((theme) => theme.id === state.activeTheme);
-  const nextTheme = THEMES[(currentIndex + 1) % THEMES.length];
-  state.activeTheme = nextTheme.id;
-  writeStorage("mspage-gcon-theme", nextTheme.id);
-  applyTheme(nextTheme.id);
-  animateThemeCycle();
-  updateThemeControl(nextTheme);
-});
-
-function currentTheme() {
-  return THEMES.find((theme) => theme.id === state.activeTheme) || THEMES[0];
-}
-
-function isFinanceView() {
-  return state.activeFilter === "finance";
-}
-
 function sortDepartures(departures) {
   return departures
     .slice()
@@ -307,22 +800,88 @@ function sortDepartures(departures) {
     );
 }
 
-function animateBoardTransition() {
-  if (!tableWrap) {
-    return;
-  }
-
-  stopAnimations(tableWrap);
-  animateTargets(tableWrap, {
-    opacity: [0.84, 1],
-    translateY: [6, 0],
-    duration: 320,
-    ease: "cubic-bezier(0.2, 0.8, 0.2, 1)",
-  });
+function sortFinanceEntries(entries) {
+  return entries
+    .slice()
+    .sort(
+      (left, right) =>
+        left.timeDisplayFinance.localeCompare(right.timeDisplayFinance) ||
+        left.gateNumber - right.gateNumber ||
+        left.flightDisplay.localeCompare(right.flightDisplay)
+    );
 }
 
-function rowKeyFor(departure, financeView) {
-  return `${financeView ? "finance" : "ops"}:${departure.id}`;
+function sortDiffItems(items) {
+  return items
+    .slice()
+    .sort(
+      (left, right) =>
+        left.official.timeDisplayFinance.localeCompare(right.official.timeDisplayFinance) ||
+        left.official.gateNumber - right.official.gateNumber ||
+        left.flightDisplay.localeCompare(right.flightDisplay)
+    );
+}
+
+function updateOpsBoardNote(departures) {
+  const notes = [];
+  if (departures.some((departure) => !isSameChicagoFinanceDay(departure, state.payload))) {
+    notes.push("Displaying next-day departures.");
+  }
+  notes.push(`Next ops refresh ${formatChicagoTime(nextOpsRefreshDate())}`);
+  boardNote.textContent = notes.join(" · ");
+  boardNote.classList.toggle("hidden", !boardNote.textContent);
+}
+
+function financeBoardNote() {
+  if (isFinanceCompareAvailable()) {
+    return `${currentCompareWindowLabel()} Open`;
+  }
+  return `Next Finance Event ${formatChicagoTime(nextFinanceEventDate())}`;
+}
+
+function setFinanceHeading(note) {
+  const suffix = document.createElement("span");
+  suffix.className = "board-title-note";
+  suffix.textContent = `- ${note}`;
+  boardTitle.replaceChildren(document.createTextNode("Finance View "), suffix);
+}
+
+function shouldHideFinanceFilter() {
+  const minutes = currentChicagoMinutes();
+  return minutes < FINANCE_VISIBLE_START || minutes >= FINANCE_VISIBLE_END;
+}
+
+function isFinanceCompareAvailable() {
+  return !shouldHideFinanceFilter() && FINANCE_COMPARE_WINDOWS.some((window) => currentChicagoMinutes() >= window.start && currentChicagoMinutes() < window.end);
+}
+
+function currentCompareWindowLabel() {
+  const minutes = currentChicagoMinutes();
+  const active = FINANCE_COMPARE_WINDOWS.find((window) => minutes >= window.start && minutes < window.end);
+  return active?.label || "Finance Review Window";
+}
+
+function nextOpsRefreshDate() {
+  const chicago = getChicagoClockParts(new Date(currentTimeMs()));
+  const nextHour = chicago.hour + 1;
+  const dayOffset = Math.floor(nextHour / 24);
+  return chicagoDateAt(chicago, nextHour % 24, 0, dayOffset);
+}
+
+function nextFinanceEventDate() {
+  const chicago = getChicagoClockParts(new Date(currentTimeMs()));
+  const currentMinutes = chicago.hour * 60 + chicago.minute;
+  const schedule = [
+    { hour: 5, minute: 0 },
+    { hour: 12, minute: 0 },
+    { hour: 18, minute: 0 },
+  ];
+
+  const next = schedule.find(({ hour, minute }) => currentMinutes < hour * 60 + minute);
+  if (next) {
+    return chicagoDateAt(chicago, next.hour, next.minute, 0);
+  }
+  return chicagoDateAt(chicago, 5, 0, 1);
 }
 
 function updateRowContent(row, departure) {
@@ -335,9 +894,7 @@ function updateRowContent(row, departure) {
   badge.textContent = departure.gateLabel;
   gateCell.appendChild(badge);
   cells.push(gateCell);
-
   cells.push(makeDestinationCell(departure));
-
   row.replaceChildren(...cells);
 }
 
@@ -373,106 +930,192 @@ function makeDestinationCell(departure) {
   return cell;
 }
 
-function animateRows(departures, financeView, oldPositions, existingRows, exitingRows) {
-  const stagger = createStagger(28, 0);
-  const rows = Array.from(departuresBody.querySelectorAll(".board-row")).filter(
-    (row) => !exitingRows.includes(row)
-  );
+function animateTargets(target, params) {
+  if (!target) {
+    return;
+  }
 
-  rows.forEach((row, index) => {
-    const key = row.dataset.rowKey;
-    const previousTop = oldPositions.get(key);
-    const nextTop = row.getBoundingClientRect().top;
-    const isExisting = existingRows.has(key);
+  if (!prefersReducedMotion && typeof animeApi.animate === "function") {
+    try {
+      animeApi.animate([target], { duration: 240, ease: "cubic-bezier(0.2, 0.8, 0.2, 1)", ...params });
+      return;
+    } catch (error) {
+      // Fall back to WAAPI.
+    }
+  }
 
-    stopAnimations(row);
+  if (typeof target.animate !== "function") {
+    return;
+  }
 
-    if (!isExisting) {
-      animateTargets(row, {
-        opacity: [0, 1],
-        translateY: [14, 0],
-        scale: [0.985, 1],
-        duration: 560,
-        delay: stagger(index),
-        ease: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+  const frames = buildKeyframes(params);
+  const animation = target.animate(frames, {
+    duration: params.duration ?? 240,
+    easing: params.ease || "ease-out",
+    fill: "both",
+  });
+  if (typeof params.onComplete === "function") {
+    animation.addEventListener("finish", () => params.onComplete(), { once: true });
+  }
+}
+
+function buildKeyframes(params) {
+  const from = {};
+  const to = {};
+  if (params.opacity) {
+    from.opacity = params.opacity[0];
+    to.opacity = params.opacity[1];
+  }
+
+  const transforms = [[], []];
+  if (params.translateY) {
+    transforms[0].push(`translateY(${params.translateY[0]}px)`);
+    transforms[1].push(`translateY(${params.translateY[1]}px)`);
+  }
+  if (params.scale) {
+    transforms[0].push(`scale(${params.scale[0]})`);
+    transforms[1].push(`scale(${params.scale[1]})`);
+  }
+  if (transforms[0].length) {
+    from.transform = transforms[0].join(" ");
+    to.transform = transforms[1].join(" ");
+  }
+  return [from, to];
+}
+
+function animateRedAlertSweep() {
+  if (prefersReducedMotion) {
+    return;
+  }
+
+  const rows = Array.from(departuresBody.querySelectorAll(".board-row.is-window-red-4"));
+  rows.forEach((row, rowIndex) => {
+    const cells = Array.from(row.querySelectorAll("td"));
+    cells.forEach((cell, cellIndex) => {
+      cell.classList.add("red-alert-cell");
+      const sweep = ensureRedAlertSweep(cell);
+      animateRedAlertCell(sweep, rowIndex * 120 + cellIndex * 95);
+    });
+  });
+}
+
+function ensureRedAlertSweep(cell) {
+  const existing = cell.querySelector(".red-alert-sweep");
+  if (existing) {
+    return existing;
+  }
+
+  const sweep = document.createElement("span");
+  sweep.className = "red-alert-sweep";
+  sweep.setAttribute("aria-hidden", "true");
+  cell.appendChild(sweep);
+  return sweep;
+}
+
+function animateRedAlertCell(sweep, delay) {
+  if (typeof sweep.getAnimations === "function") {
+    sweep.getAnimations().forEach((animation) => animation.cancel());
+  }
+  sweep.style.opacity = "0";
+  sweep.style.transform = "translateX(-140%)";
+
+  if (typeof animeApi.animate === "function") {
+    try {
+      animeApi.animate([sweep], {
+        opacity: [0, 1, 0],
+        translateX: ["-140%", "190%"],
+        duration: 760,
+        delay,
+        ease: "cubic-bezier(0.22, 1, 0.36, 1)",
       });
       return;
+    } catch (error) {
+      // Fall through to WAAPI.
     }
-
-    if (previousTop == null) {
-      return;
-    }
-
-    const delta = previousTop - nextTop;
-    if (Math.abs(delta) < 1) {
-      return;
-    }
-
-    animateTargets(row, {
-      translateY: [delta, 0],
-      duration: 900,
-      delay: Math.min(index, 5) * 24,
-      ease: "cubic-bezier(0.16, 1, 0.3, 1)",
-    });
-  });
-
-  exitingRows.forEach((row) => {
-    row.classList.add("is-exiting");
-    stopAnimations(row);
-    animateTargets(row, {
-      opacity: [1, 0],
-      translateY: [0, -10],
-      scale: [1, 0.985],
-      duration: 420,
-      ease: "cubic-bezier(0.4, 0, 0.2, 1)",
-      onComplete: () => row.remove(),
-    });
-  });
-
-  if (!financeView && rows.length) {
-    const criticalRows = rows.filter((row) => row.classList.contains("is-window-red-4"));
-    criticalRows.forEach((row) => {
-      animateCriticalRow(row);
-    });
   }
-}
 
-function renderFinancePlainText() {
-  const financeText = state.financeText ?? renderFinanceTextFromPayload();
-  visibleCount.textContent = `Flights: ${parseFinanceTotal(financeText)}`;
-  boardNote.textContent = financeBoardNote();
-  boardNote.classList.toggle("hidden", !boardNote.textContent);
-  departuresBody.replaceChildren();
-  emptyState.classList.add("hidden");
-  tableWrap.classList.add("hidden");
-  financePlain.textContent = financeText;
-  financePlain.classList.remove("hidden");
-}
-
-function renderFinanceTextFromPayload() {
-  const departures = sortDepartures(state.payload?.departures ?? []).filter(isSameChicagoFinanceDay);
-  const lines = formatFinanceRows(departures);
-  const totals = summarizeFinanceDepartures(departures);
-  lines.push("");
-  lines.push(`Total flights: ${totals.total}`);
-  lines.push(`AM flights: ${totals.am}`);
-  lines.push(`PM flights: ${totals.pm}`);
-  return `${lines.join("\n")}\n`;
-}
-
-function animateThemeCycle() {
-  themeCycle.classList.add("is-spinning");
-  const icon = themeCycle.querySelector("svg");
-  if (icon) {
-    stopAnimations(icon);
-    animateTargets(icon, {
-      rotate: [-24, 0],
-      scale: [0.86, 1],
-      duration: 440,
-      ease: "cubic-bezier(0.16, 1, 0.3, 1)",
-      onComplete: () => themeCycle.classList.remove("is-spinning"),
-    });
+  if (typeof sweep.animate !== "function") {
+    return;
   }
+
+  sweep.animate(
+    [
+      { opacity: 0, transform: "translateX(-140%)" },
+      { opacity: 1, transform: "translateX(-8%)", offset: 0.24 },
+      { opacity: 0, transform: "translateX(190%)" },
+    ],
+    {
+      duration: 760,
+      delay,
+      easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+      fill: "both",
+    }
+  );
+}
+
+function getUrgencyBand(departure) {
+  const currentMinute = Math.floor(currentTimeMs() / 60000);
+  const departureMinute = Math.floor(departure.sortTimestamp / 60);
+  const delta = departureMinute - currentMinute;
+  if (delta < 0 || delta > 180) {
+    return null;
+  }
+  if (delta <= 10) {
+    return "red-4";
+  }
+  if (delta <= 25) {
+    return "red-3";
+  }
+  if (delta <= 45) {
+    return "red-2";
+  }
+  if (delta <= 60) {
+    return "red-1";
+  }
+  if (delta <= 90) {
+    return "yellow-3";
+  }
+  if (delta <= 135) {
+    return "yellow-2";
+  }
+  return "yellow-1";
+}
+
+function setFlightsCount(count) {
+  visibleCount.textContent = `Flights: ${count}`;
+}
+
+function isSameChicagoFinanceDay(departure, payload = state.payload) {
+  if (!payload?.generatedAt) {
+    return true;
+  }
+
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Chicago",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const generatedDay = formatter.format(new Date(payload.generatedAt));
+  const departureDay = formatter.format(new Date(departure.sortTimestamp * 1000));
+  return generatedDay === departureDay;
+}
+
+function cycleTheme() {
+  const currentIndex = THEMES.findIndex((theme) => theme.id === state.activeTheme);
+  const nextTheme = THEMES[(currentIndex + 1) % THEMES.length];
+  state.activeTheme = nextTheme.id;
+  writeStorage("mspage-gcon-theme", nextTheme.id);
+  applyTheme(nextTheme.id);
+  updateThemeControl(nextTheme);
+}
+
+function applyTheme(themeId) {
+  document.documentElement.dataset.theme = themeId;
+}
+
+function currentTheme() {
+  return THEMES.find((theme) => theme.id === state.activeTheme) || THEMES[0];
 }
 
 function updateThemeControl(theme) {
@@ -491,7 +1134,7 @@ function ensureFilterIndicator() {
   podFilters.prepend(indicator);
 }
 
-function updateFilterIndicator(instant = false) {
+function updateFilterIndicator() {
   const indicator = podFilters.querySelector(".filter-indicator");
   const activeButton = podFilters.querySelector(".pill.active");
   if (!indicator || !activeButton) {
@@ -500,209 +1143,142 @@ function updateFilterIndicator(instant = false) {
 
   const containerRect = podFilters.getBoundingClientRect();
   const buttonRect = activeButton.getBoundingClientRect();
-  const left = buttonRect.left - containerRect.left;
-  const top = buttonRect.top - containerRect.top;
+  indicator.style.width = `${buttonRect.width}px`;
+  indicator.style.height = `${buttonRect.height}px`;
+  indicator.style.transform = `translate(${buttonRect.left - containerRect.left}px, ${buttonRect.top - containerRect.top}px)`;
+}
 
-  if (!indicator.dataset.ready || instant || prefersReducedMotion) {
-    indicator.style.width = `${buttonRect.width}px`;
-    indicator.style.height = `${buttonRect.height}px`;
-    indicator.style.transform = `translate(${left}px, ${top}px)`;
-    indicator.dataset.ready = "true";
+function animateFinancePillCue() {
+  if (!isFinanceView()) {
+    state.lastDiffCueState = null;
     return;
   }
 
-  stopAnimations(indicator);
-  animateTargets(indicator, {
-    width: [indicator.offsetWidth, buttonRect.width],
-    height: [indicator.offsetHeight, buttonRect.height],
-    translateX: [getTranslateAxis(indicator, "x"), left],
-    translateY: [getTranslateAxis(indicator, "y"), top],
-    duration: 540,
-    ease: "cubic-bezier(0.16, 1, 0.3, 1)",
-    onComplete: () => {
-      indicator.style.width = `${buttonRect.width}px`;
-      indicator.style.height = `${buttonRect.height}px`;
-      indicator.style.transform = `translate(${left}px, ${top}px)`;
-    },
-  });
+  const activeFinanceButton = podFilters.querySelector('[data-filter-id="finance"].pill.active');
+  if (!activeFinanceButton) {
+    state.lastDiffCueState = state.diffOpen;
+    return;
+  }
+
+  if (state.lastDiffCueState == null) {
+    state.lastDiffCueState = state.diffOpen;
+    return;
+  }
+
+  if (state.lastDiffCueState === state.diffOpen) {
+    return;
+  }
+
+  const enteringDiff = state.diffOpen;
+  state.lastDiffCueState = state.diffOpen;
+  activeFinanceButton.classList.remove("finance-pill-pop");
+  activeFinanceButton.classList.remove("finance-pill-absorb");
+  void activeFinanceButton.offsetWidth;
+  emitAnimeFinanceCue(activeFinanceButton, enteringDiff ? "open" : "close");
+  window.setTimeout(() => {
+    activeFinanceButton.classList.remove("finance-pill-pop");
+    activeFinanceButton.classList.remove("finance-pill-absorb");
+  }, 620);
 }
 
-function animateHeaderTransition(previousView, nextView) {
-  const headers = Array.from(departuresHead.querySelectorAll("th"));
-  headers.forEach((header, index) => {
-    stopAnimations(header);
-    animateTargets(header, {
-      opacity: [previousView && previousView !== nextView ? 0.3 : 0, 1],
-      translateY: [previousView && previousView !== nextView ? -12 : -6, 0],
-      duration: previousView && previousView !== nextView ? 360 : 240,
-      delay: index * 36,
-      ease: "cubic-bezier(0.2, 0.8, 0.2, 1)",
-    });
-  });
-}
-
-function animateFilterPress(button) {
-  stopAnimations(button);
+function emitAnimeFinanceCue(button, mode) {
+  const opening = mode === "open";
+  button.classList.add(opening ? "finance-pill-pop" : "finance-pill-absorb");
   animateTargets(button, {
-    scale: [1, 0.96, 1],
-    duration: 260,
-    ease: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+    scale: opening ? [0.84, 1.24, 1] : [1.2, 0.86, 1],
+    duration: 600,
   });
+  if (typeof animeApi.animate === "function") {
+    try {
+      animeApi.animate([button], {
+        scaleX: opening ? [0.78, 1.34, 1] : [1.28, 0.8, 1],
+        scaleY: opening ? [0.92, 1.1, 1] : [1.12, 0.9, 1],
+        rotate: opening ? [0, -5, 0] : [0, 5, 0],
+        duration: 600,
+        ease: "cubic-bezier(0.16, 1, 0.3, 1)",
+      });
+    } catch (error) {
+      // Base animation already applied above.
+    }
+  }
+  emitFinanceCueParticles(button, opening ? "out" : "in");
 }
 
-function animateCriticalRow(row) {
-  const cells = Array.from(row.children);
-  if (!cells.length || prefersReducedMotion) {
+function emitFinanceCueParticles(button, mode) {
+  if (prefersReducedMotion) {
     return;
   }
 
-  cells.forEach((cell) => {
-    stopAnimations(cell);
-    animateTargets(cell, {
-      backgroundPositionX: ["130%", "-20%"],
-      duration: 760,
-      ease: "linear",
-      loop: true,
-    });
-  });
-}
-
-function setFlightsCount(count) {
-  visibleCount.textContent = `Flights: ${count}`;
-}
-
-function parseFinanceTotal(financeText) {
-  const match = financeText.match(/^Total flights:\s*(\d+)\s*$/m);
-  if (match) {
-    return Number(match[1]);
-  }
-  return sortDepartures(state.payload?.departures ?? []).length;
-}
-
-function summarizeFinanceDepartures(departures) {
-  let am = 0;
-  let pm = 0;
-
-  departures.forEach((departure) => {
-    const minutes = chicagoMinutesForTimestamp(departure.sortTimestamp);
-    if (minutes < 270) {
-      return;
-    }
-    if (minutes < 780) {
-      am += 1;
-      return;
-    }
-    pm += 1;
-  });
-
-  return {
-    total: departures.length,
-    am,
-    pm,
-  };
-}
-
-function formatFinanceRows(departures) {
-  const headers = ["Flight", "Gate", "Time"];
-  const rows = departures.map((departure) => [
-    departure.flightDisplay,
-    String(departure.gateNumber),
-    departure.timeDisplayFinance,
-  ]);
-  const widths = headers.map((header) => header.length);
-
-  rows.forEach((row) => {
-    row.forEach((value, index) => {
-      widths[index] = Math.max(widths[index], value.length);
-    });
-  });
-
-  return [
-    headers.map((header, index) => header.padEnd(widths[index], " ")).join(" | ").trimEnd(),
-    ...rows.map((row) => row.map((value, index) => value.padEnd(widths[index], " ")).join(" | ").trimEnd()),
+  const rect = button.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+  const palette = [
+    "var(--accent)",
+    "var(--accent-strong)",
+    "rgba(15, 118, 110, 0.62)",
+    "rgba(21, 94, 117, 0.48)",
   ];
-}
+  const particles = [];
 
-function chicagoMinutesForTimestamp(timestampSeconds) {
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-    timeZone: "America/Chicago",
-  });
-  const parts = formatter.formatToParts(new Date(timestampSeconds * 1000));
-  const hour = Number(parts.find((part) => part.type === "hour")?.value || "0");
-  const minute = Number(parts.find((part) => part.type === "minute")?.value || "0");
-  return hour * 60 + minute;
-}
-
-function isSameChicagoFinanceDay(departure) {
-  if (!state.payload?.generatedAt) {
-    return true;
+  for (let index = 0; index < 50; index += 1) {
+    const particle = document.createElement("span");
+    particle.className = "finance-cue-particle";
+    particle.style.left = `${centerX}px`;
+    particle.style.top = `${centerY}px`;
+    particle.style.background = palette[index % palette.length];
+    particle.style.setProperty("--finance-cue-x", `${Math.cos((Math.PI * 2 * index) / 50) * 164}px`);
+    particle.style.setProperty("--finance-cue-y", `${Math.sin((Math.PI * 2 * index) / 50) * 108}px`);
+    particle.style.setProperty("--finance-cue-rotation", `${index % 2 === 0 ? 76 : -76}deg`);
+    if (mode === "in") {
+      particle.classList.add("finance-cue-particle-in");
+    }
+    document.body.appendChild(particle);
+    particles.push(particle);
+    window.setTimeout(() => particle.remove(), 640);
   }
 
-  const formatter = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Chicago",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-  const generatedDay = formatter.format(new Date(state.payload.generatedAt));
-  const departureDay = formatter.format(new Date(departure.sortTimestamp * 1000));
-  return generatedDay === departureDay;
-}
-
-function shouldHideFinanceFilter() {
-  if (!state.payload?.generatedAt) {
-    return false;
+  if (typeof animeApi.animate === "function") {
+    try {
+      animeApi.animate(particles, {
+        opacity: mode === "in" ? [0, 1, 0] : [0, 1, 0],
+        scale: mode === "in" ? [1.6, 1.02, 0.18] : [0.76, 1.7, 0.98],
+        translateX: (_, index) => {
+          const direction = Math.cos((Math.PI * 2 * index) / particles.length) * 188;
+          return mode === "in" ? [direction, 0] : [0, direction];
+        },
+        translateY: (_, index) => {
+          const direction = Math.sin((Math.PI * 2 * index) / particles.length) * 124;
+          return mode === "in" ? [direction, 0] : [0, direction];
+        },
+        rotate: (_, index) => (mode === "in" ? [index % 2 === 0 ? 76 : -76, 0] : [0, index % 2 === 0 ? 76 : -76]),
+        delay: (_, index) => index * 4,
+        duration: 600,
+        ease: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+      });
+    } catch (error) {
+      // CSS keyframes remain as fallback.
+    }
   }
-
-  const generatedAt = new Date(state.payload.generatedAt);
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    hour: "2-digit",
-    hour12: false,
-    timeZone: "America/Chicago",
-  });
-  const hour = Number(formatter.format(generatedAt));
-  return hour >= 18;
 }
 
-function updateOpsBoardNote(departures) {
-  const notes = [];
-  if (departures.some((departure) => !isSameChicagoFinanceDay(departure))) {
-    notes.push("Displaying next-day departures.");
+function isFinanceView() {
+  return state.activeFilter === "finance";
+}
+
+function fetchAsset(path) {
+  return fetch(withCacheBust(resolveAssetPath(path)), { cache: "no-store" });
+}
+
+function resolveAssetPath(path) {
+  if (/^(https?:)?\/\//.test(path) || path.startsWith("/")) {
+    return path;
   }
-  notes.push(`Next Run @ ${formatChicagoTime(nextOpsRefreshDate())}`);
-  const note = notes.join(" ");
-  boardNote.textContent = note;
-  boardNote.classList.toggle("hidden", !note);
+  return `./${path.replace(/^\.\//, "")}`;
 }
 
-function financeBoardNote() {
-  return `Next Run @ ${formatChicagoTime(nextFinanceEventDate())}`;
-}
-
-function nextOpsRefreshDate() {
-  const chicagoParts = getChicagoClockParts(new Date(currentTimeMs()));
-  const nextHour = chicagoParts.hour + 1;
-  const dayOffset = Math.floor(nextHour / 24);
-  return chicagoDateAt(chicagoParts, nextHour % 24, 0, dayOffset);
-}
-
-function nextFinanceEventDate() {
-  const chicagoParts = getChicagoClockParts(new Date(currentTimeMs()));
-  const currentMinutes = chicagoParts.hour * 60 + chicagoParts.minute;
-  const schedule = [
-    { hour: 5, minute: 0 },
-    { hour: 13, minute: 0 },
-    { hour: 18, minute: 0 },
-  ];
-
-  const next = schedule.find(({ hour, minute }) => currentMinutes < hour * 60 + minute);
-  if (next) {
-    return chicagoDateAt(chicagoParts, next.hour, next.minute, 0);
-  }
-  return chicagoDateAt(chicagoParts, 5, 0, 1);
+function withCacheBust(path) {
+  const separator = path.includes("?") ? "&" : "?";
+  return `${path}${separator}ts=${Date.now()}`;
 }
 
 function formatChicagoTime(date) {
@@ -710,6 +1286,21 @@ function formatChicagoTime(date) {
     timeStyle: "short",
     timeZone: "America/Chicago",
   }).format(date);
+}
+
+function formatChicagoDateTime(date) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "America/Chicago",
+  }).format(date);
+}
+
+function currentChicagoMinutes() {
+  const parts = getChicagoClockParts(new Date(currentTimeMs()));
+  return parts.hour * 60 + parts.minute;
 }
 
 function getChicagoClockParts(date) {
@@ -801,157 +1392,4 @@ function readPreviewNow(rawValue) {
   }
 
   return null;
-}
-
-function animateTargets(targets, params) {
-  const items = Array.isArray(targets) ? targets : [targets];
-  if (!items.length) {
-    return null;
-  }
-
-  if (!prefersReducedMotion && typeof animeApi.animate === "function") {
-    try {
-      return animeApi.animate(items, params);
-    } catch (error) {
-      try {
-        return animeApi.animate({ targets: items, ...params });
-      } catch (fallbackError) {
-        return animateFallback(items, params);
-      }
-    }
-  }
-
-  return animateFallback(items, params);
-}
-
-function animateFallback(targets, params) {
-  const duration = params.duration ?? 0;
-  const delayValue = params.delay;
-  const easing = params.ease || "ease-out";
-  const loop = Boolean(params.loop);
-
-  targets.forEach((target, index) => {
-    const delay = typeof delayValue === "function" ? delayValue(index, target, targets) : delayValue || 0;
-    const keyframes = buildKeyframesFromParams(params, target);
-    if (!keyframes.length) {
-      return;
-    }
-
-    const animation = target.animate(keyframes, {
-      duration,
-      delay,
-      easing,
-      iterations: loop ? Number.POSITIVE_INFINITY : 1,
-      fill: "both",
-    });
-
-    if (typeof params.onComplete === "function" && !loop) {
-      animation.addEventListener("finish", () => params.onComplete());
-    }
-  });
-
-  return null;
-}
-
-function buildKeyframesFromParams(params, target) {
-  const frames = [{}, {}];
-  let hasFrame = false;
-
-  for (const [key, value] of Object.entries(params)) {
-    if (["duration", "delay", "ease", "loop", "onComplete", "onUpdate"].includes(key)) {
-      continue;
-    }
-
-    const values = Array.isArray(value) ? value : [null, value];
-    const start = values[0];
-    const end = values[values.length - 1];
-
-    if (key === "translateY") {
-      frames[0].transform = mergeTransform(frames[0].transform, `translateY(${asUnit(start || 0, "px")})`);
-      frames[1].transform = mergeTransform(frames[1].transform, `translateY(${asUnit(end || 0, "px")})`);
-      hasFrame = true;
-      continue;
-    }
-
-    if (key === "translateX") {
-      frames[0].transform = mergeTransform(frames[0].transform, `translateX(${asUnit(start || 0, "px")})`);
-      frames[1].transform = mergeTransform(frames[1].transform, `translateX(${asUnit(end || 0, "px")})`);
-      hasFrame = true;
-      continue;
-    }
-
-    if (key === "scale") {
-      frames[0].transform = mergeTransform(frames[0].transform, `scale(${start ?? 1})`);
-      frames[1].transform = mergeTransform(frames[1].transform, `scale(${end ?? 1})`);
-      hasFrame = true;
-      continue;
-    }
-
-    if (key === "rotate") {
-      frames[0].transform = mergeTransform(frames[0].transform, `rotate(${asUnit(start || 0, "deg")})`);
-      frames[1].transform = mergeTransform(frames[1].transform, `rotate(${asUnit(end || 0, "deg")})`);
-      hasFrame = true;
-      continue;
-    }
-
-    if (key === "backgroundPositionX") {
-      frames[0].backgroundPositionX = start ?? getComputedStyle(target).backgroundPositionX;
-      frames[1].backgroundPositionX = end ?? getComputedStyle(target).backgroundPositionX;
-      hasFrame = true;
-      continue;
-    }
-
-    frames[0][key] = start;
-    frames[1][key] = end;
-    hasFrame = true;
-  }
-
-  return hasFrame ? frames : [];
-}
-
-function stopAnimations(target) {
-  if (typeof animeApi.remove === "function") {
-    try {
-      animeApi.remove(target);
-    } catch (error) {
-      // Ignore; fallback animations are handled by WAAPI below.
-    }
-  }
-
-  if (typeof target.getAnimations === "function") {
-    target.getAnimations().forEach((animation) => animation.cancel());
-  }
-}
-
-function createStagger(step, start) {
-  if (!prefersReducedMotion && typeof animeApi.stagger === "function") {
-    try {
-      return animeApi.stagger(step, { start });
-    } catch (error) {
-      try {
-        return animeApi.stagger(step, start);
-      } catch (fallbackError) {
-        return (index) => start + index * step;
-      }
-    }
-  }
-
-  return (index) => start + index * step;
-}
-
-function getTranslateAxis(element, axis) {
-  const transform = element.style.transform || "";
-  const match = transform.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
-  if (!match) {
-    return 0;
-  }
-  return axis === "x" ? Number(match[1]) : Number(match[2]);
-}
-
-function mergeTransform(current, addition) {
-  return current ? `${current} ${addition}` : addition;
-}
-
-function asUnit(value, unit) {
-  return typeof value === "number" ? `${value}${unit}` : value;
 }

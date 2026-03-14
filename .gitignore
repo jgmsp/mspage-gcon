@@ -5,3 +5,7 @@ __pycache__/
 .pytest_cache/
 .env
 .env.*
+docs/fixtures/
+docs/preview-checkpoints.md
+docs/review-checklist.html
+docs/superpowers/
