@@ -827,7 +827,6 @@ function updateOpsBoardNote(departures) {
   if (departures.some((departure) => !isSameChicagoFinanceDay(departure, state.payload))) {
     notes.push("Displaying next-day departures.");
   }
-  notes.push(`Next ops refresh ${formatChicagoTime(nextOpsRefreshDate())}`);
   boardNote.textContent = notes.join(" · ");
   boardNote.classList.toggle("hidden", !boardNote.textContent);
 }
@@ -840,10 +839,7 @@ function financeBoardNote() {
 }
 
 function setFinanceHeading(note) {
-  const suffix = document.createElement("span");
-  suffix.className = "board-title-note";
-  suffix.textContent = `- ${note}`;
-  boardTitle.replaceChildren(document.createTextNode("Finance View "), suffix);
+  boardTitle.textContent = "Finance Review";
 }
 
 function shouldHideFinanceFilter() {
