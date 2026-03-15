@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-15T14:29:55.737826Z",
+  "generatedAt": "2026-03-15T15:28:33.148273Z",
   "pods": [
     {
       "id": "pod-1",
@@ -66,6 +66,20 @@
       "status": "On Time"
     },
     {
+      "id": "G15-1773608100-PDX",
+      "flightDisplay": "2415",
+      "flightIata": "DL2415",
+      "gateNumber": 15,
+      "gateLabel": "G15",
+      "destination": "PDX",
+      "podId": "pod-4",
+      "podLabel": "Pod 4",
+      "timeDisplayOps": "1555",
+      "timeDisplayFinance": "15:55",
+      "sortTimestamp": 1773608100,
+      "status": "On Time"
+    },
+    {
       "id": "G8-1773610200-AMS",
       "flightDisplay": "160",
       "flightIata": "DL160",
@@ -105,20 +119,6 @@
       "timeDisplayOps": "1810",
       "timeDisplayFinance": "18:10",
       "sortTimestamp": 1773616200,
-      "status": "On Time"
-    },
-    {
-      "id": "G15-1773618000-PDX",
-      "flightDisplay": "2151",
-      "flightIata": "DL2151",
-      "gateNumber": 15,
-      "gateLabel": "G15",
-      "destination": "PDX",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "1840",
-      "timeDisplayFinance": "18:40",
-      "sortTimestamp": 1773618000,
       "status": "On Time"
     },
     {
