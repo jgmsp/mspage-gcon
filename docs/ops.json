@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-15T20:29:16.630732Z",
+  "generatedAt": "2026-03-15T21:28:07.293808Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,34 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G19-1773607080-BNA",
-      "flightDisplay": "2612",
-      "flightIata": "DL2612",
-      "gateNumber": 19,
-      "gateLabel": "G19",
-      "destination": "BNA",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1538",
-      "timeDisplayFinance": "15:38",
-      "sortTimestamp": 1773607080,
-      "status": "Boarding"
-    },
-    {
-      "id": "G15-1773608100-PDX",
-      "flightDisplay": "2415",
-      "flightIata": "DL2415",
-      "gateNumber": 15,
-      "gateLabel": "G15",
-      "destination": "PDX",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "1555",
-      "timeDisplayFinance": "15:55",
-      "sortTimestamp": 1773608100,
-      "status": "On Time"
-    },
-    {
       "id": "G8-1773610200-AMS",
       "flightDisplay": "160",
       "flightIata": "DL160",
@@ -76,6 +48,20 @@
       "timeDisplayFinance": "16:30",
       "sortTimestamp": 1773610200,
       "status": "On Time"
+    },
+    {
+      "id": "G14-1773610200-DFW",
+      "flightDisplay": "9894",
+      "flightIata": "DL9894",
+      "gateNumber": 14,
+      "gateLabel": "G14",
+      "destination": "DFW",
+      "podId": "pod-4",
+      "podLabel": "Pod 4",
+      "timeDisplayOps": "1630",
+      "timeDisplayFinance": "16:30",
+      "sortTimestamp": 1773610200,
+      "status": "Boarding"
     },
     {
       "id": "G4-1773615900-LHR",
