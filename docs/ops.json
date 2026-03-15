@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-15T21:28:07.293808Z",
+  "generatedAt": "2026-03-15T22:28:26.615401Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,34 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G8-1773610200-AMS",
-      "flightDisplay": "160",
-      "flightIata": "DL160",
-      "gateNumber": 8,
-      "gateLabel": "G8",
-      "destination": "AMS",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1630",
-      "timeDisplayFinance": "16:30",
-      "sortTimestamp": 1773610200,
-      "status": "On Time"
-    },
-    {
-      "id": "G14-1773610200-DFW",
-      "flightDisplay": "9894",
-      "flightIata": "DL9894",
-      "gateNumber": 14,
-      "gateLabel": "G14",
-      "destination": "DFW",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "1630",
-      "timeDisplayFinance": "16:30",
-      "sortTimestamp": 1773610200,
-      "status": "Boarding"
-    },
-    {
       "id": "G4-1773615900-LHR",
       "flightDisplay": "10",
       "flightIata": "DL10",
@@ -75,7 +47,7 @@
       "timeDisplayOps": "1805",
       "timeDisplayFinance": "18:05",
       "sortTimestamp": 1773615900,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G17-1773616200-SLC",
@@ -134,11 +106,11 @@
       "status": "On Time"
     },
     {
-      "id": "G14-1773622740-BOS",
+      "id": "G15-1773622740-BOS",
       "flightDisplay": "2614",
       "flightIata": "DL2614",
-      "gateNumber": 14,
-      "gateLabel": "G14",
+      "gateNumber": 15,
+      "gateLabel": "G15",
       "destination": "BOS",
       "podId": "pod-4",
       "podLabel": "Pod 4",
@@ -218,11 +190,11 @@
       "status": "On Time"
     },
     {
-      "id": "G15-1773629400-LAX",
+      "id": "G14-1773629400-LAX",
       "flightDisplay": "2103",
       "flightIata": "DL2103",
-      "gateNumber": 15,
-      "gateLabel": "G15",
+      "gateNumber": 14,
+      "gateLabel": "G14",
       "destination": "LAX",
       "podId": "pod-4",
       "podLabel": "Pod 4",
