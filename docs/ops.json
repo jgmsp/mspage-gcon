@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-15T09:34:18.544860Z",
+  "generatedAt": "2026-03-15T10:29:28.411770Z",
   "pods": [
     {
       "id": "pod-1",
@@ -133,20 +133,6 @@
       "timeDisplayOps": "1845",
       "timeDisplayFinance": "18:45",
       "sortTimestamp": 1773618300,
-      "status": "On Time"
-    },
-    {
-      "id": "G21-1773619140-FLL",
-      "flightDisplay": "1683",
-      "flightIata": "DL1683",
-      "gateNumber": 21,
-      "gateLabel": "G21",
-      "destination": "FLL",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1859",
-      "timeDisplayFinance": "18:59",
-      "sortTimestamp": 1773619140,
       "status": "On Time"
     },
     {
