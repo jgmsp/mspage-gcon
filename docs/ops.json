@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-15T11:25:41.721712Z",
+  "generatedAt": "2026-03-15T12:53:11.838902Z",
   "pods": [
     {
       "id": "pod-1",
@@ -108,6 +108,20 @@
       "status": "On Time"
     },
     {
+      "id": "G15-1773618000-PDX",
+      "flightDisplay": "2151",
+      "flightIata": "DL2151",
+      "gateNumber": 15,
+      "gateLabel": "G15",
+      "destination": "PDX",
+      "podId": "pod-4",
+      "podLabel": "Pod 4",
+      "timeDisplayOps": "1840",
+      "timeDisplayFinance": "18:40",
+      "sortTimestamp": 1773618000,
+      "status": "On Time"
+    },
+    {
       "id": "G9-1773618300-DCA",
       "flightDisplay": "2962",
       "flightIata": "DL2962",
@@ -178,31 +192,17 @@
       "status": "On Time"
     },
     {
-      "id": "G15-1773623820-GEG",
+      "id": "G10-1773623820-GEG",
       "flightDisplay": "2418",
       "flightIata": "DL2418",
-      "gateNumber": 15,
-      "gateLabel": "G15",
+      "gateNumber": 10,
+      "gateLabel": "G10",
       "destination": "GEG",
       "podId": "pod-4",
       "podLabel": "Pod 4",
       "timeDisplayOps": "2017",
       "timeDisplayFinance": "20:17",
       "sortTimestamp": 1773623820,
-      "status": "On Time"
-    },
-    {
-      "id": "G10-1773624720-PHL",
-      "flightDisplay": "2703",
-      "flightIata": "DL2703",
-      "gateNumber": 10,
-      "gateLabel": "G10",
-      "destination": "PHL",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "2032",
-      "timeDisplayFinance": "20:32",
-      "sortTimestamp": 1773624720,
       "status": "On Time"
     },
     {
