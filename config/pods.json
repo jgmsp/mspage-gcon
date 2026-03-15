@@ -4,12 +4,24 @@
       "id": "pod-1",
       "label": "Pod 1",
       "start_gate": 1,
-      "end_gate": 9
+      "end_gate": 8
+    },
+    {
+      "id": "pod-2",
+      "label": "Pod 2",
+      "start_gate": 9,
+      "end_gate": 10
+    },
+    {
+      "id": "pod-3",
+      "label": "Pod 3",
+      "start_gate": 11,
+      "end_gate": 13
     },
     {
       "id": "pod-4",
       "label": "Pod 4",
-      "start_gate": 10,
+      "start_gate": 14,
       "end_gate": 16
     },
     {

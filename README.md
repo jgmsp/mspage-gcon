@@ -87,8 +87,10 @@ The loader rejects:
 
 Default mapping:
 
-- Pod 1: `G1-G9`
-- Pod 4: `G10-G16`
+- Pod 1: `G1-G8`
+- Pod 2: `G9-G10`
+- Pod 3: `G11-G13`
+- Pod 4: `G14-G16`
 - Pod 5: `G17-G22`
 
 ## Local Preview

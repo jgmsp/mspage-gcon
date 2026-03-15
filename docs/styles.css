@@ -328,11 +328,11 @@ h1 {
 
 .finance-pill-pop {
   box-shadow: 0 0 0 0 rgba(15, 118, 110, 0.36);
-  animation: finance-pill-pop 600ms ease-out;
+  animation: finance-pill-pop 260ms ease-out;
 }
 
 .finance-pill-absorb {
-  animation: finance-pill-absorb 600ms ease-out;
+  animation: finance-pill-absorb 260ms ease-out;
 }
 
 .finance-subpill {
@@ -454,12 +454,12 @@ html[data-theme="ember"] .board.finance-mode {
 
 @keyframes finance-pill-pop {
   0% {
-    box-shadow: 0 0 0 0 rgba(15, 118, 110, 0.5);
+    box-shadow: 0 0 0 0 rgba(15, 118, 110, 0.28);
     filter: brightness(1);
   }
   45% {
-    box-shadow: 0 0 0 38px rgba(15, 118, 110, 0.34);
-    filter: brightness(1.28);
+    box-shadow: 0 0 0 10px rgba(15, 118, 110, 0.12);
+    filter: brightness(1.06);
   }
   100% {
     box-shadow: 0 0 0 0 rgba(15, 118, 110, 0);
@@ -469,12 +469,12 @@ html[data-theme="ember"] .board.finance-mode {
 
 @keyframes finance-pill-absorb {
   0% {
-    box-shadow: 0 0 0 38px rgba(15, 118, 110, 0.32);
-    filter: brightness(1.26);
+    box-shadow: 0 0 0 10px rgba(15, 118, 110, 0.12);
+    filter: brightness(1.05);
   }
   55% {
-    box-shadow: 0 0 0 12px rgba(15, 118, 110, 0.34);
-    filter: brightness(1.12);
+    box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.08);
+    filter: brightness(1.02);
   }
   100% {
     box-shadow: 0 0 0 0 rgba(15, 118, 110, 0);
@@ -486,13 +486,13 @@ html[data-theme="ember"] .board.finance-mode {
   position: fixed;
   left: 0;
   top: 0;
-  width: 13px;
-  height: 13px;
+  width: 6px;
+  height: 6px;
   border-radius: 2px;
   pointer-events: none;
   z-index: 40;
   opacity: 0;
-  animation: finance-cue-particle-out 600ms ease-out forwards;
+  animation: finance-cue-particle-out 260ms ease-out forwards;
 }
 
 .finance-cue-particle-in {

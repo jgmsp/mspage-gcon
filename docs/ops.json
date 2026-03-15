@@ -1,18 +1,30 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-15T17:27:25.684551Z",
+  "generatedAt": "2026-03-15T17:53:47.939071Z",
   "pods": [
     {
       "id": "pod-1",
       "label": "Pod 1",
       "start_gate": 1,
-      "end_gate": 9
+      "end_gate": 8
+    },
+    {
+      "id": "pod-2",
+      "label": "Pod 2",
+      "start_gate": 9,
+      "end_gate": 10
+    },
+    {
+      "id": "pod-3",
+      "label": "Pod 3",
+      "start_gate": 11,
+      "end_gate": 13
     },
     {
       "id": "pod-4",
       "label": "Pod 4",
-      "start_gate": 10,
+      "start_gate": 14,
       "end_gate": 16
     },
     {
@@ -30,8 +42,8 @@
       "gateNumber": 10,
       "gateLabel": "G10",
       "destination": "ATL",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
+      "podId": "pod-2",
+      "podLabel": "Pod 2",
       "timeDisplayOps": "1456",
       "timeDisplayFinance": "14:56",
       "sortTimestamp": 1773604560,
@@ -114,8 +126,8 @@
       "gateNumber": 9,
       "gateLabel": "G9",
       "destination": "DCA",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
+      "podId": "pod-2",
+      "podLabel": "Pod 2",
       "timeDisplayOps": "1845",
       "timeDisplayFinance": "18:45",
       "sortTimestamp": 1773618300,
@@ -184,8 +196,8 @@
       "gateNumber": 10,
       "gateLabel": "G10",
       "destination": "GEG",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
+      "podId": "pod-2",
+      "podLabel": "Pod 2",
       "timeDisplayOps": "2017",
       "timeDisplayFinance": "20:17",
       "sortTimestamp": 1773623820,
@@ -206,11 +218,11 @@
       "status": "On Time"
     },
     {
-      "id": "G9-1773625500-BNA",
+      "id": "G8-1773625500-BNA",
       "flightDisplay": "1144",
       "flightIata": "DL1144",
-      "gateNumber": 9,
-      "gateLabel": "G9",
+      "gateNumber": 8,
+      "gateLabel": "G8",
       "destination": "BNA",
       "podId": "pod-1",
       "podLabel": "Pod 1",

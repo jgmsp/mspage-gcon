@@ -13,6 +13,7 @@ from .pipeline import CHICAGO
 MSP_FLIGHTS_URL = "https://www.mspairport.com/flights-and-airlines/flights"
 MSP_QUERY_PARAMS = {
     "flight_type": "departures",
+    "airline_code": "DL",
     "text": "",
 }
 MSP_HEADERS = {"User-Agent": "mspage-gcon/0.1", "Referer": f"{MSP_FLIGHTS_URL}?{urlencode(MSP_QUERY_PARAMS)}"}

@@ -5,14 +5,16 @@ import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 from zoneinfo import ZoneInfo
 
 from mspage_gcon.config import load_pod_ranges
 from mspage_gcon.__main__ import main, resolve_finance_actions
 from mspage_gcon.msp import (
+    MSP_QUERY_PARAMS,
     ParseDiagnostics,
     extract_ajax_markup,
+    fetch_flights_page,
     has_next_page,
     is_suspicious_parse,
     parse_departure_rows,
@@ -72,6 +74,19 @@ class PipelineTests(unittest.TestCase):
         self.assertTrue(has_next_page('<a href="?flight_type=departures&amp;text=&amp;page=1">Next</a>', 0))
         self.assertFalse(has_next_page('<a href="?flight_type=departures&amp;text=&amp;page=2">Current</a>', 2))
 
+    def test_fetch_flights_page_requests_delta_departures_filter(self) -> None:
+        response = MagicMock()
+        response.__enter__.return_value = response
+        response.read.return_value = b"<html></html>"
+
+        with patch("mspage_gcon.msp.urlopen", return_value=response) as mock_urlopen:
+            fetch_flights_page(page=0)
+
+        request = mock_urlopen.call_args.args[0]
+        self.assertIn("flight_type=departures", request.full_url)
+        self.assertIn("airline_code=DL", request.full_url)
+        self.assertEqual(MSP_QUERY_PARAMS["airline_code"], "DL")
+
     def test_parse_departure_rows_filters_non_t1g_scope(self) -> None:
         self.assertEqual(len(self.rows), 4)
         self.assertEqual([row["dep_gate"] for row in self.rows], ["T1G9", "T1G22", "T1G5", "T1G18"])
@@ -91,7 +106,7 @@ class PipelineTests(unittest.TestCase):
         gate_to_pod = {item.gate_number: item.pod_id for item in departures}
 
         self.assertEqual(gate_to_pod[5], "pod-1")
-        self.assertEqual(gate_to_pod[9], "pod-1")
+        self.assertEqual(gate_to_pod[9], "pod-2")
         self.assertEqual(gate_to_pod[18], "pod-5")
         self.assertEqual(gate_to_pod[22], "pod-5")
 
@@ -126,7 +141,7 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(payload["airport"], "MSP")
         self.assertEqual(payload["concourse"], "G")
         self.assertEqual(payload["generatedAt"], "2026-03-09T12:00:00Z")
-        self.assertEqual(len(payload["pods"]), 3)
+        self.assertEqual(len(payload["pods"]), 5)
         self.assertEqual(payload["departures"][0]["destination"], "SJD")
         self.assertEqual(payload["departures"][0]["status"], "Boarding")
         self.assertNotIn("status", payload["departures"][1])
@@ -461,7 +476,7 @@ class PipelineTests(unittest.TestCase):
         self.assertIn("finance-cue-particle", app_js)
         self.assertIn("finance-pill-absorb", app_js)
         self.assertIn("emitAnimeFinanceCue", app_js)
-        self.assertIn("index < 50", app_js)
+        self.assertIn("const particleCount = 10", app_js)
         self.assertIn("syncFilterButtons", app_js)
         self.assertIn("status-line", index_html)
         self.assertIn("vendor/anime.iife.min.js", index_html)

@@ -1185,16 +1185,15 @@ function emitAnimeFinanceCue(button, mode) {
   const opening = mode === "open";
   button.classList.add(opening ? "finance-pill-pop" : "finance-pill-absorb");
   animateTargets(button, {
-    scale: opening ? [0.84, 1.24, 1] : [1.2, 0.86, 1],
-    duration: 600,
+    scale: opening ? [0.98, 1.06, 1] : [1.02, 0.98, 1],
+    duration: 260,
   });
   if (typeof animeApi.animate === "function") {
     try {
       animeApi.animate([button], {
-        scaleX: opening ? [0.78, 1.34, 1] : [1.28, 0.8, 1],
-        scaleY: opening ? [0.92, 1.1, 1] : [1.12, 0.9, 1],
-        rotate: opening ? [0, -5, 0] : [0, 5, 0],
-        duration: 600,
+        scaleX: opening ? [0.98, 1.08, 1] : [1.02, 0.98, 1],
+        scaleY: opening ? [0.99, 1.03, 1] : [1.01, 0.99, 1],
+        duration: 260,
         ease: "cubic-bezier(0.16, 1, 0.3, 1)",
       });
     } catch (error) {
@@ -1219,40 +1218,41 @@ function emitFinanceCueParticles(button, mode) {
     "rgba(21, 94, 117, 0.48)",
   ];
   const particles = [];
+  const particleCount = 10;
 
-  for (let index = 0; index < 50; index += 1) {
+  for (let index = 0; index < particleCount; index += 1) {
     const particle = document.createElement("span");
     particle.className = "finance-cue-particle";
     particle.style.left = `${centerX}px`;
     particle.style.top = `${centerY}px`;
     particle.style.background = palette[index % palette.length];
-    particle.style.setProperty("--finance-cue-x", `${Math.cos((Math.PI * 2 * index) / 50) * 164}px`);
-    particle.style.setProperty("--finance-cue-y", `${Math.sin((Math.PI * 2 * index) / 50) * 108}px`);
-    particle.style.setProperty("--finance-cue-rotation", `${index % 2 === 0 ? 76 : -76}deg`);
+    particle.style.setProperty("--finance-cue-x", `${Math.cos((Math.PI * 2 * index) / particleCount) * 42}px`);
+    particle.style.setProperty("--finance-cue-y", `${Math.sin((Math.PI * 2 * index) / particleCount) * 22}px`);
+    particle.style.setProperty("--finance-cue-rotation", `${index % 2 === 0 ? 18 : -18}deg`);
     if (mode === "in") {
       particle.classList.add("finance-cue-particle-in");
     }
     document.body.appendChild(particle);
     particles.push(particle);
-    window.setTimeout(() => particle.remove(), 640);
+    window.setTimeout(() => particle.remove(), 320);
   }
 
   if (typeof animeApi.animate === "function") {
     try {
       animeApi.animate(particles, {
         opacity: mode === "in" ? [0, 1, 0] : [0, 1, 0],
-        scale: mode === "in" ? [1.6, 1.02, 0.18] : [0.76, 1.7, 0.98],
+        scale: mode === "in" ? [1.08, 1, 0.42] : [0.72, 1.08, 0.92],
         translateX: (_, index) => {
-          const direction = Math.cos((Math.PI * 2 * index) / particles.length) * 188;
+          const direction = Math.cos((Math.PI * 2 * index) / particles.length) * 44;
           return mode === "in" ? [direction, 0] : [0, direction];
         },
         translateY: (_, index) => {
-          const direction = Math.sin((Math.PI * 2 * index) / particles.length) * 124;
+          const direction = Math.sin((Math.PI * 2 * index) / particles.length) * 24;
           return mode === "in" ? [direction, 0] : [0, direction];
         },
-        rotate: (_, index) => (mode === "in" ? [index % 2 === 0 ? 76 : -76, 0] : [0, index % 2 === 0 ? 76 : -76]),
-        delay: (_, index) => index * 4,
-        duration: 600,
+        rotate: (_, index) => (mode === "in" ? [index % 2 === 0 ? 18 : -18, 0] : [0, index % 2 === 0 ? 18 : -18]),
+        delay: (_, index) => index * 3,
+        duration: 260,
         ease: "cubic-bezier(0.2, 0.8, 0.2, 1)",
       });
     } catch (error) {
