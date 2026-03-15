@@ -46,10 +46,10 @@ Manual workflow dispatch follows the same finance rules:
 
 ## Finance Review Tool
 
-The site includes a finance compare tool during finance working windows.
+The site includes a finance compare tool inside the Finance view.
 
 - Trigger: `Check for diffs`
-- Availability: finance windows only
+- Availability: visible whenever the Finance view is visible
 - Behavior: refetch the latest `ops.json`, derive a candidate finance view, and compare it against the official frozen finance snapshot
 - Diff mode is read-only
 - The browser does not publish or rewrite `finance.txt`
