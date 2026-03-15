@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-15T16:33:16.324827Z",
+  "generatedAt": "2026-03-15T17:27:25.684551Z",
   "pods": [
     {
       "id": "pod-1",
@@ -217,20 +217,6 @@
       "timeDisplayOps": "2045",
       "timeDisplayFinance": "20:45",
       "sortTimestamp": 1773625500,
-      "status": "On Time"
-    },
-    {
-      "id": "G18-1773626820-IND",
-      "flightDisplay": "674",
-      "flightIata": "DL674",
-      "gateNumber": 18,
-      "gateLabel": "G18",
-      "destination": "IND",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "2107",
-      "timeDisplayFinance": "21:07",
-      "sortTimestamp": 1773626820,
       "status": "On Time"
     },
     {
