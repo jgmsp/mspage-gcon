@@ -477,6 +477,7 @@ class PipelineTests(unittest.TestCase):
         self.assertIn("finance-pill-absorb", app_js)
         self.assertIn("emitAnimeFinanceCue", app_js)
         self.assertIn("const particleCount = 10", app_js)
+        self.assertIn("return !shouldHideFinanceFilter();", app_js)
         self.assertIn("syncFilterButtons", app_js)
         self.assertIn("status-line", index_html)
         self.assertIn("vendor/anime.iife.min.js", index_html)

@@ -852,7 +852,7 @@ function shouldHideFinanceFilter() {
 }
 
 function isFinanceCompareAvailable() {
-  return !shouldHideFinanceFilter() && FINANCE_COMPARE_WINDOWS.some((window) => currentChicagoMinutes() >= window.start && currentChicagoMinutes() < window.end);
+  return !shouldHideFinanceFilter();
 }
 
 function currentCompareWindowLabel() {
