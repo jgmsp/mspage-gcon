@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-15T02:25:32.824460Z",
+  "generatedAt": "2026-03-15T05:05:21.375808Z",
   "pods": [
     {
       "id": "pod-1",
@@ -23,34 +23,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G1-1773543300-FSD",
-      "flightDisplay": "1694",
-      "flightIata": "DL1694",
-      "gateNumber": 1,
-      "gateLabel": "G1",
-      "destination": "FSD",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "2155",
-      "timeDisplayFinance": "21:55",
-      "sortTimestamp": 1773543300,
-      "status": "On Time"
-    },
-    {
-      "id": "G18-1773543540-LAS",
-      "flightDisplay": "1442",
-      "flightIata": "DL1442",
-      "gateNumber": 18,
-      "gateLabel": "G18",
-      "destination": "LAS",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "2159",
-      "timeDisplayFinance": "21:59",
-      "sortTimestamp": 1773543540,
-      "status": "On Time"
-    },
     {
       "id": "G19-1773606180-LAS",
       "flightDisplay": "643",
@@ -248,14 +220,14 @@
       "status": "On Time"
     },
     {
-      "id": "G10-1773625500-BNA",
+      "id": "G19-1773625500-BNA",
       "flightDisplay": "1144",
       "flightIata": "DL1144",
-      "gateNumber": 10,
-      "gateLabel": "G10",
+      "gateNumber": 19,
+      "gateLabel": "G19",
       "destination": "BNA",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
       "timeDisplayOps": "2045",
       "timeDisplayFinance": "20:45",
       "sortTimestamp": 1773625500,
@@ -332,11 +304,11 @@
       "status": "On Time"
     },
     {
-      "id": "G18-1773629940-LAS",
+      "id": "G21-1773629940-LAS",
       "flightDisplay": "1442",
       "flightIata": "DL1442",
-      "gateNumber": 18,
-      "gateLabel": "G18",
+      "gateNumber": 21,
+      "gateLabel": "G21",
       "destination": "LAS",
       "podId": "pod-5",
       "podLabel": "Pod 5",
