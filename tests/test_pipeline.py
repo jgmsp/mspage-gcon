@@ -11,11 +11,14 @@ from zoneinfo import ZoneInfo
 from mspage_gcon.config import load_pod_ranges
 from mspage_gcon.__main__ import main, resolve_finance_actions
 from mspage_gcon.msp import (
+    FetchDiagnostics,
     MSP_QUERY_PARAMS,
     ParseDiagnostics,
     extract_ajax_markup,
+    fetch_delta_departures_source,
     fetch_flights_page,
     has_next_page,
+    is_invalid_departures_response,
     is_suspicious_parse,
     parse_departure_rows,
     parse_departure_rows_with_diagnostics,
@@ -83,9 +86,52 @@ class PipelineTests(unittest.TestCase):
             fetch_flights_page(page=0)
 
         request = mock_urlopen.call_args.args[0]
-        self.assertIn("flight_type=departures", request.full_url)
+        self.assertIn("flight_type=departure", request.full_url)
         self.assertIn("airline_code=DL", request.full_url)
         self.assertEqual(MSP_QUERY_PARAMS["airline_code"], "DL")
+
+    def test_invalid_departures_response_detects_drupal_validation_error(self) -> None:
+        markup = """
+        <div class="messages messages--error">
+          The submitted value <em class="placeholder">departures</em> in the
+          <em class="placeholder">flight_type</em> element is not allowed.
+        </div>
+        <div class="view-empty"><p>Sorry, no results match your search.</p></div>
+        """
+
+        self.assertTrue(is_invalid_departures_response(markup))
+
+    def test_fetch_delta_departures_source_falls_back_to_next_contract(self) -> None:
+        invalid_markup = """
+        <div class="messages messages--error">
+          The submitted value <em class="placeholder">departures</em> in the
+          <em class="placeholder">flight_type</em> element is not allowed.
+        </div>
+        <div class="view-empty"><p>Sorry, no results match your search.</p></div>
+        """
+        valid_markup = (
+            "<table><tbody>"
+            "<tr>"
+            '<td class="views-field views-field-scheduled-time">Mar 09 — 10:24 a.m.</td>'
+            '<td class="views-field views-field-city-airport">Los Cabos (SJD)</td>'
+            '<td class="views-field views-field-airline views-field-name">DeltaDL 1826</td>'
+            '<td class="flight-search-results__status views-field views-field-flight-status-1">Boarding</td>'
+            '<td class="views-field views-field-terminal-1 views-field-gate-1">T1G9</td>'
+            "</tr>"
+            "</tbody></table>"
+        )
+        response = MagicMock()
+        response.__enter__.return_value = response
+        response.read.side_effect = [invalid_markup.encode("utf-8"), valid_markup.encode("utf-8")]
+
+        with patch("mspage_gcon.msp.urlopen", return_value=response) as mock_urlopen:
+            markup, diagnostics = fetch_delta_departures_source()
+
+        self.assertIn("T1G9", markup)
+        self.assertEqual(diagnostics, FetchDiagnostics(source="page", pages_fetched=1))
+        requested_urls = [call.args[0].full_url for call in mock_urlopen.call_args_list]
+        self.assertIn("flight_type=departure", requested_urls[0])
+        self.assertIn("flight_type=departures", requested_urls[1])
 
     def test_parse_departure_rows_filters_non_t1g_scope(self) -> None:
         self.assertEqual(len(self.rows), 4)

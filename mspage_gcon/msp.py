@@ -12,11 +12,23 @@ from .pipeline import CHICAGO
 
 MSP_FLIGHTS_URL = "https://www.mspairport.com/flights-and-airlines/flights"
 MSP_QUERY_PARAMS = {
-    "flight_type": "departures",
+    "flight_type": "departure",
     "airline_code": "DL",
     "text": "",
 }
-MSP_HEADERS = {"User-Agent": "mspage-gcon/0.1", "Referer": f"{MSP_FLIGHTS_URL}?{urlencode(MSP_QUERY_PARAMS)}"}
+MSP_QUERY_CONTRACTS = (
+    {
+        "flight_type": "departure",
+        "airline_code": "DL",
+        "text": "",
+    },
+    {
+        "flight_type": "departures",
+        "airline_code": "DL",
+        "text": "",
+    },
+)
+MSP_HEADERS = {"User-Agent": "mspage-gcon/0.1"}
 
 ROW_PATTERN = re.compile(r"<tr[^>]*>(.*?)</tr>", re.IGNORECASE | re.DOTALL)
 CELL_TEMPLATE = r'<td[^>]*class="[^"]*{marker}[^"]*"[^>]*>(.*?)</td>'
@@ -67,14 +79,24 @@ STATUS_MARKERS = ("views-field-flight-status-1", "flight-search-results__status"
 
 
 def fetch_delta_departures_source(timeout: float = 20.0) -> tuple[str, FetchDiagnostics]:
-    pages: list[str] = []
-    for page in range(MAX_PAGES):
-        html = fetch_flights_page(page=page, timeout=timeout)
-        pages.append(html)
-        if not has_next_page(html, page):
-            break
+    for params in MSP_QUERY_CONTRACTS:
+        pages: list[str] = []
+        invalid_contract = False
+        for page in range(MAX_PAGES):
+            html = fetch_flights_page(page=page, timeout=timeout, params=params)
+            if page == 0 and is_invalid_departures_response(html):
+                invalid_contract = True
+                break
+            pages.append(html)
+            if not has_next_page(html, page):
+                break
 
-    return "\n".join(pages), FetchDiagnostics(source="page", pages_fetched=len(pages))
+        if invalid_contract:
+            continue
+        if pages:
+            return "\n".join(pages), FetchDiagnostics(source="page", pages_fetched=len(pages))
+
+    return "", FetchDiagnostics(source="page", pages_fetched=0)
 
 
 def fetch_delta_departures_html(timeout: float = 20.0) -> str:
@@ -97,12 +119,13 @@ def extract_ajax_markup(commands: list[dict]) -> str:
     return ranked[0]
 
 
-def fetch_flights_page(page: int = 0, timeout: float = 20.0) -> str:
-    params = dict(MSP_QUERY_PARAMS)
-    params["page"] = str(page)
+def fetch_flights_page(page: int = 0, timeout: float = 20.0, params: dict[str, str] | None = None) -> str:
+    query_params = dict(params or MSP_QUERY_PARAMS)
+    query_params["page"] = str(page)
+    referer = f"{MSP_FLIGHTS_URL}?{urlencode(query_params)}"
     request = Request(
-        f"{MSP_FLIGHTS_URL}?{urlencode(params)}",
-        headers=MSP_HEADERS,
+        referer,
+        headers={**MSP_HEADERS, "Referer": referer},
     )
     with urlopen(request, timeout=timeout) as response:
         return response.read().decode("utf-8", errors="replace")
@@ -178,6 +201,15 @@ def parse_departure_rows_with_diagnostics(
 
 def has_gate_rows(markup: str) -> bool:
     return bool(RAW_GATE_PATTERN.search(markup))
+
+
+def is_invalid_departures_response(markup: str) -> bool:
+    lowered = markup.lower()
+    if "the submitted value" in lowered and "flight_type" in lowered and "not allowed" in lowered:
+        return True
+    if "view-empty" in lowered and "sorry, no results match your search." in lowered and not has_gate_rows(markup):
+        return True
+    return False
 
 
 def has_next_page(markup: str, current_page: int) -> bool:
