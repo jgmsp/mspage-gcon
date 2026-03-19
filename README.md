@@ -24,18 +24,18 @@ This project is intentionally small. It turns public MSP Delta departure data in
 
 ## Publish Rules
 
-GitHub Actions runs hourly on the hour in UTC. The generator always refreshes the canonical ops payload on each run.
+GitHub Actions runs hourly at `:50` in UTC. The generator always refreshes the canonical ops payload on each run.
 
 Finance follows fixed America/Chicago rules:
 
-- `5:00 AM` local: publish the AM finance snapshot
-- `12:00 PM` local: publish the PM finance snapshot
-- `6:00 PM` local: clear/hide finance for the rest of the day
+- `5:50 AM` local: publish the AM finance snapshot
+- `12:50 PM` local: publish the PM finance snapshot
+- `6:50 PM` local: clear/hide finance for the rest of the day
 
 Manual workflow dispatch follows the same finance rules:
 
 - ops refreshes immediately
-- finance changes only at `5:00 AM`, `12:00 PM`, or `6:00 PM` local
+- finance changes only at `5:50 AM`, `12:50 PM`, or `6:50 PM` local
 
 ## Failure Handling
 

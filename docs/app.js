@@ -67,11 +67,13 @@ const THEME_ICONS = {
     '<svg viewBox="0 0 24 24" role="presentation" focusable="false"><path d="M12.2 3.8c1.1 2 1.2 3.4.2 5.1c1.9-.5 3.4-1.8 4.2-3.8c2.4 2.2 3.7 4.8 3.7 7.6c0 4.2-3.2 7.4-7.7 7.4c-4.8 0-8-3.4-8-7.8c0-3 1.4-5.7 4.2-8.2c.1 2 .8 3.4 2 4.5c1-1.2 1.4-2.8 1.4-4.8Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/></svg>',
 };
 
-const FINANCE_VISIBLE_START = 5 * 60;
-const FINANCE_VISIBLE_END = 18 * 60;
+const OPS_REFRESH_MINUTE = 50;
+const FINANCE_EVENT_MINUTE = 50;
+const FINANCE_VISIBLE_START = 5 * 60 + FINANCE_EVENT_MINUTE;
+const FINANCE_VISIBLE_END = 18 * 60 + FINANCE_EVENT_MINUTE;
 const FINANCE_COMPARE_WINDOWS = [
-  { start: 5 * 60, end: 9 * 60, label: "AM Review Window" },
-  { start: 12 * 60, end: 15 * 60, label: "PM Review Window" },
+  { start: 5 * 60 + FINANCE_EVENT_MINUTE, end: 9 * 60 + FINANCE_EVENT_MINUTE, label: "AM Review Window" },
+  { start: 12 * 60 + FINANCE_EVENT_MINUTE, end: 15 * 60 + FINANCE_EVENT_MINUTE, label: "PM Review Window" },
 ];
 
 applyTheme(state.activeTheme);
@@ -859,18 +861,19 @@ function currentCompareWindowLabel() {
 
 function nextOpsRefreshDate() {
   const chicago = getChicagoClockParts(new Date(currentTimeMs()));
-  const nextHour = chicago.hour + 1;
-  const dayOffset = Math.floor(nextHour / 24);
-  return chicagoDateAt(chicago, nextHour % 24, 0, dayOffset);
+  const isBeforeRefreshMinute = chicago.minute < OPS_REFRESH_MINUTE;
+  const targetHour = isBeforeRefreshMinute ? chicago.hour : chicago.hour + 1;
+  const dayOffset = Math.floor(targetHour / 24);
+  return chicagoDateAt(chicago, targetHour % 24, OPS_REFRESH_MINUTE, dayOffset);
 }
 
 function nextFinanceEventDate() {
   const chicago = getChicagoClockParts(new Date(currentTimeMs()));
   const currentMinutes = chicago.hour * 60 + chicago.minute;
   const schedule = [
-    { hour: 5, minute: 0 },
-    { hour: 12, minute: 0 },
-    { hour: 18, minute: 0 },
+    { hour: 5, minute: FINANCE_EVENT_MINUTE },
+    { hour: 12, minute: FINANCE_EVENT_MINUTE },
+    { hour: 18, minute: FINANCE_EVENT_MINUTE },
   ];
 
   const next = schedule.find(({ hour, minute }) => currentMinutes < hour * 60 + minute);

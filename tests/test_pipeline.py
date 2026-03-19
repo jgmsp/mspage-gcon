@@ -564,6 +564,21 @@ class PipelineTests(unittest.TestCase):
         self.assertIn("Board filters", index_html)
         self.assertIn("finance-plain", index_html)
         self.assertIn("finance-subpill", app_js)
+
+    def test_frontend_refresh_schedule_matches_workflow_cron(self) -> None:
+        workflow = (ROOT / ".github" / "workflows" / "publish.yml").read_text(encoding="utf-8")
+        index_html = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
+        app_js = (ROOT / "docs" / "app.js").read_text(encoding="utf-8")
+        styles_css = (ROOT / "docs" / "styles.css").read_text(encoding="utf-8")
+        anime_js = (ROOT / "docs" / "vendor" / "anime.iife.min.js").read_text(encoding="utf-8")
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+
+        self.assertIn('cron: "50 * * * *"', workflow)
+        self.assertIn("const OPS_REFRESH_MINUTE = 50;", app_js)
+        self.assertIn("const FINANCE_EVENT_MINUTE = 50;", app_js)
+        self.assertIn("5:50 AM", readme)
+        self.assertIn("12:50 PM", readme)
+        self.assertIn("6:50 PM", readme)
         self.assertIn("Finance - Diffs", app_js)
         self.assertIn("finance-cue-particle", app_js)
         self.assertIn("finance-pill-absorb", app_js)
