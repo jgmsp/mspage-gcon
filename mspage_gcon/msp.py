@@ -293,6 +293,12 @@ def is_suspicious_parse(
     *,
     previous_departure_count: int | None = None,
 ) -> bool:
+    if diagnostics.pages_fetched == 0 or diagnostics.rows_seen == 0:
+        return True
+
+    if diagnostics.candidate_rows == 0 and diagnostics.rows_kept == 0:
+        return True
+
     if diagnostics.candidate_rows > 0 and diagnostics.rows_kept == 0:
         return True
 

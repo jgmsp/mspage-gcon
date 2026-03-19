@@ -3,7 +3,7 @@ name: Publish MSP Snapshot
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 * * * *"
+    - cron: "50 * * * *"
 
 permissions:
   contents: write

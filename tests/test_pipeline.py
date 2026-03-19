@@ -438,6 +438,18 @@ class PipelineTests(unittest.TestCase):
 
         self.assertTrue(is_suspicious_parse(diagnostics))
 
+    def test_suspicious_parse_detects_zero_row_source(self) -> None:
+        diagnostics = ParseDiagnostics(
+            source="page",
+            pages_fetched=1,
+            rows_seen=0,
+            candidate_rows=0,
+            rows_kept=0,
+            status_rows=0,
+        )
+
+        self.assertTrue(is_suspicious_parse(diagnostics))
+
     def test_main_reuses_last_good_snapshot_when_refresh_fails(self) -> None:
         with TemporaryDirectory() as temp_dir:
             output_dir = Path(temp_dir)
@@ -453,6 +465,40 @@ class PipelineTests(unittest.TestCase):
             original_finance = (output_dir / "finance.txt").read_text(encoding="utf-8")
 
             with patch("mspage_gcon.__main__.fetch_delta_departures_source", side_effect=RuntimeError("boom")):
+                exit_code = main(
+                    [
+                        "--output-dir",
+                        str(output_dir),
+                        "--pod-config",
+                        str(ROOT / "config" / "pods.json"),
+                    ]
+                )
+
+            self.assertEqual(exit_code, 0)
+            self.assertEqual((output_dir / "ops.json").read_text(encoding="utf-8"), original_ops)
+            self.assertEqual((output_dir / "finance.txt").read_text(encoding="utf-8"), original_finance)
+            diagnostics = json.loads((output_dir / DIAGNOSTICS_FILENAME).read_text(encoding="utf-8"))
+            self.assertEqual(diagnostics["status"], "degraded")
+            self.assertEqual(diagnostics["lastSuccessAt"], original_generated_at.isoformat().replace("+00:00", "Z"))
+
+    def test_main_reuses_last_good_snapshot_when_source_returns_zero_rows(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            output_dir = Path(temp_dir)
+            departures = build_departures(self.rows, self.pods)
+            original_generated_at = datetime.now(ZoneInfo("UTC")).replace(minute=0, second=0, microsecond=0)
+            write_outputs(
+                output_dir=output_dir,
+                departures=departures,
+                pods=self.pods,
+                generated_at=original_generated_at,
+            )
+            original_ops = (output_dir / "ops.json").read_text(encoding="utf-8")
+            original_finance = (output_dir / "finance.txt").read_text(encoding="utf-8")
+
+            with patch(
+                "mspage_gcon.__main__.fetch_delta_departures_source",
+                return_value=("", FetchDiagnostics(source="page", pages_fetched=1)),
+            ):
                 exit_code = main(
                     [
                         "--output-dir",
