@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-19T20:19:52.580598Z",
+  "generatedAt": "2026-03-19T21:20:09.986469Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,34 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G17-1773951780-LAS",
-      "flightDisplay": "643",
-      "flightIata": "DL643",
-      "gateNumber": 17,
-      "gateLabel": "G17",
-      "destination": "LAS",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1523",
-      "timeDisplayFinance": "15:23",
-      "sortTimestamp": 1773951780,
-      "status": "Boarding"
-    },
-    {
-      "id": "G22-1773952080-RSW",
-      "flightDisplay": "308",
-      "flightIata": "DL308",
-      "gateNumber": 22,
-      "gateLabel": "G22",
-      "destination": "RSW",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1528",
-      "timeDisplayFinance": "15:28",
-      "sortTimestamp": 1773952080,
-      "status": "Boarding"
-    },
-    {
       "id": "G9-1773955800-AMS",
       "flightDisplay": "160",
       "flightIata": "DL160",
@@ -75,7 +47,7 @@
       "timeDisplayOps": "1630",
       "timeDisplayFinance": "16:30",
       "sortTimestamp": 1773955800,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G15-1773956460-ATL",
@@ -190,6 +162,20 @@
       "status": "On Time"
     },
     {
+      "id": "G1-1773964020-BIS",
+      "flightDisplay": "2713",
+      "flightIata": "DL2713",
+      "gateNumber": 1,
+      "gateLabel": "G1",
+      "destination": "BIS",
+      "podId": "pod-1",
+      "podLabel": "Pod 1",
+      "timeDisplayOps": "1847",
+      "timeDisplayFinance": "18:47",
+      "sortTimestamp": 1773964020,
+      "status": "On Time"
+    },
+    {
       "id": "G18-1773964200-LAS",
       "flightDisplay": "2246",
       "flightIata": "DL2246",
@@ -260,20 +246,6 @@
       "status": "On Time"
     },
     {
-      "id": "G1-1773967800-AUS",
-      "flightDisplay": "2749",
-      "flightIata": "DL2749",
-      "gateNumber": 1,
-      "gateLabel": "G1",
-      "destination": "AUS",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1950",
-      "timeDisplayFinance": "19:50",
-      "sortTimestamp": 1773967800,
-      "status": "On Time"
-    },
-    {
       "id": "G19-1773968400-SLC",
       "flightDisplay": "1051",
       "flightIata": "DL1051",
@@ -330,11 +302,11 @@
       "status": "On Time"
     },
     {
-      "id": "G4-1773972180-CVG",
+      "id": "G3-1773972180-CVG",
       "flightDisplay": "1469",
       "flightIata": "DL1469",
-      "gateNumber": 4,
-      "gateLabel": "G4",
+      "gateNumber": 3,
+      "gateLabel": "G3",
       "destination": "CVG",
       "podId": "pod-1",
       "podLabel": "Pod 1",
@@ -428,14 +400,14 @@
       "status": "On Time"
     },
     {
-      "id": "G9-1773975900-FAR",
+      "id": "G6-1773975900-FAR",
       "flightDisplay": "2295",
       "flightIata": "DL2295",
-      "gateNumber": 9,
-      "gateLabel": "G9",
+      "gateNumber": 6,
+      "gateLabel": "G6",
       "destination": "FAR",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
+      "podId": "pod-1",
+      "podLabel": "Pod 1",
       "timeDisplayOps": "2205",
       "timeDisplayFinance": "22:05",
       "sortTimestamp": 1773975900,
