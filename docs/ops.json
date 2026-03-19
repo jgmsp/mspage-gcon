@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-19T21:42:20.592590Z",
+  "generatedAt": "2026-03-19T22:00:54.575928Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,20 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G8-1773957300-DTW",
-      "flightDisplay": "1476",
-      "flightIata": "DL1476",
-      "gateNumber": 8,
-      "gateLabel": "G8",
-      "destination": "DTW",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1655",
-      "timeDisplayFinance": "16:55",
-      "sortTimestamp": 1773957300,
-      "status": "Boarding"
-    },
-    {
       "id": "G6-1773959100-CDG",
       "flightDisplay": "152",
       "flightIata": "DL152",
@@ -78,14 +64,14 @@
       "status": "On Time"
     },
     {
-      "id": "G10-1773961800-SLC",
+      "id": "G21-1773961800-SLC",
       "flightDisplay": "2607",
       "flightIata": "DL2607",
-      "gateNumber": 10,
-      "gateLabel": "G10",
+      "gateNumber": 21,
+      "gateLabel": "G21",
       "destination": "SLC",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
       "timeDisplayOps": "1810",
       "timeDisplayFinance": "18:10",
       "sortTimestamp": 1773961800,
@@ -159,20 +145,6 @@
       "timeDisplayOps": "1850",
       "timeDisplayFinance": "18:50",
       "sortTimestamp": 1773964200,
-      "status": "On Time"
-    },
-    {
-      "id": "G21-1773964740-FLL",
-      "flightDisplay": "1683",
-      "flightIata": "DL1683",
-      "gateNumber": 21,
-      "gateLabel": "G21",
-      "destination": "FLL",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1859",
-      "timeDisplayFinance": "18:59",
-      "sortTimestamp": 1773964740,
       "status": "On Time"
     },
     {
