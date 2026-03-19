@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-19T03:34:41.995445Z",
+  "generatedAt": "2026-03-19T05:13:53.677052Z",
   "pods": [
     {
       "id": "pod-1",
@@ -35,20 +35,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G22-1773892800-SLC",
-      "flightDisplay": "8944",
-      "flightIata": "DL8944",
-      "gateNumber": 22,
-      "gateLabel": "G22",
-      "destination": "SLC",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "2300",
-      "timeDisplayFinance": "23:00",
-      "sortTimestamp": 1773892800,
-      "status": "On Time"
-    },
     {
       "id": "G3-1773915300-ATL",
       "flightDisplay": "1062",
