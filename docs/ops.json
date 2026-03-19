@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-19T11:23:17.208844Z",
+  "generatedAt": "2026-03-19T12:04:01.936114Z",
   "pods": [
     {
       "id": "pod-1",
@@ -47,7 +47,7 @@
       "timeDisplayOps": "0705",
       "timeDisplayFinance": "07:05",
       "sortTimestamp": 1773921900,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G2-1773922200-SJD",
@@ -61,7 +61,7 @@
       "timeDisplayOps": "0710",
       "timeDisplayFinance": "07:10",
       "sortTimestamp": 1773922200,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G14-1773924000-CUN",
