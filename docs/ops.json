@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-19T21:20:09.986469Z",
+  "generatedAt": "2026-03-19T21:42:20.592590Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,34 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G9-1773955800-AMS",
-      "flightDisplay": "160",
-      "flightIata": "DL160",
-      "gateNumber": 9,
-      "gateLabel": "G9",
-      "destination": "AMS",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
-      "timeDisplayOps": "1630",
-      "timeDisplayFinance": "16:30",
-      "sortTimestamp": 1773955800,
-      "status": "Boarding"
-    },
-    {
-      "id": "G15-1773956460-ATL",
-      "flightDisplay": "1028",
-      "flightIata": "DL1028",
-      "gateNumber": 15,
-      "gateLabel": "G15",
-      "destination": "ATL",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "1641",
-      "timeDisplayFinance": "16:41",
-      "sortTimestamp": 1773956460,
-      "status": "On Time"
-    },
-    {
       "id": "G8-1773957300-DTW",
       "flightDisplay": "1476",
       "flightIata": "DL1476",
@@ -75,7 +47,7 @@
       "timeDisplayOps": "1655",
       "timeDisplayFinance": "16:55",
       "sortTimestamp": 1773957300,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G6-1773959100-CDG",
@@ -134,11 +106,11 @@
       "status": "On Time"
     },
     {
-      "id": "G15-1773962400-TPA",
+      "id": "G14-1773962400-TPA",
       "flightDisplay": "2385",
       "flightIata": "DL2385",
-      "gateNumber": 15,
-      "gateLabel": "G15",
+      "gateNumber": 14,
+      "gateLabel": "G14",
       "destination": "TPA",
       "podId": "pod-4",
       "podLabel": "Pod 4",
@@ -204,20 +176,6 @@
       "status": "On Time"
     },
     {
-      "id": "G3-1773965400-DUB",
-      "flightDisplay": "258",
-      "flightIata": "DL258",
-      "gateNumber": 3,
-      "gateLabel": "G3",
-      "destination": "DUB",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1910",
-      "timeDisplayFinance": "19:10",
-      "sortTimestamp": 1773965400,
-      "status": "On Time"
-    },
-    {
       "id": "G22-1773965400-RSW",
       "flightDisplay": "2268",
       "flightIata": "DL2268",
@@ -260,11 +218,11 @@
       "status": "On Time"
     },
     {
-      "id": "G14-1773969480-ATL",
+      "id": "G15-1773969480-ATL",
       "flightDisplay": "1032",
       "flightIata": "DL1032",
-      "gateNumber": 14,
-      "gateLabel": "G14",
+      "gateNumber": 15,
+      "gateLabel": "G15",
       "destination": "ATL",
       "podId": "pod-4",
       "podLabel": "Pod 4",
