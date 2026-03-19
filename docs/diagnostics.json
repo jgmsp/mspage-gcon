@@ -1,5 +1,5 @@
 {
-  "status": "degraded",
-  "lastSuccessAt": "2026-03-19T07:37:03.911718Z",
+  "status": "healthy",
+  "lastSuccessAt": "2026-03-19T09:28:38.660037Z",
   "staleAfterMinutes": 180
 }
