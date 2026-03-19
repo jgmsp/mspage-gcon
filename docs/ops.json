@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-19T22:00:54.575928Z",
+  "generatedAt": "2026-03-19T23:03:19.475969Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,20 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G6-1773959100-CDG",
-      "flightDisplay": "152",
-      "flightIata": "DL152",
-      "gateNumber": 6,
-      "gateLabel": "G6",
-      "destination": "CDG",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1725",
-      "timeDisplayFinance": "17:25",
-      "sortTimestamp": 1773959100,
-      "status": "On Time"
-    },
-    {
       "id": "G4-1773961500-LHR",
       "flightDisplay": "10",
       "flightIata": "DL10",
@@ -64,14 +50,14 @@
       "status": "On Time"
     },
     {
-      "id": "G21-1773961800-SLC",
+      "id": "G10-1773961800-SLC",
       "flightDisplay": "2607",
       "flightIata": "DL2607",
-      "gateNumber": 21,
-      "gateLabel": "G21",
+      "gateNumber": 10,
+      "gateLabel": "G10",
       "destination": "SLC",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
+      "podId": "pod-2",
+      "podLabel": "Pod 2",
       "timeDisplayOps": "1810",
       "timeDisplayFinance": "18:10",
       "sortTimestamp": 1773961800,
