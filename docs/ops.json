@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-19T10:24:59.353716Z",
+  "generatedAt": "2026-03-19T11:23:17.208844Z",
   "pods": [
     {
       "id": "pod-1",
@@ -35,20 +35,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G17-1773918600-TPA",
-      "flightDisplay": "2301",
-      "flightIata": "DL2301",
-      "gateNumber": 17,
-      "gateLabel": "G17",
-      "destination": "TPA",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0610",
-      "timeDisplayFinance": "06:10",
-      "sortTimestamp": 1773918600,
-      "status": "On Time"
-    },
     {
       "id": "G20-1773921900-MIA",
       "flightDisplay": "2112",
@@ -190,11 +176,11 @@
       "status": "On Time"
     },
     {
-      "id": "G21-1773929820-LAS",
+      "id": "G17-1773929820-LAS",
       "flightDisplay": "2262",
       "flightIata": "DL2262",
-      "gateNumber": 21,
-      "gateLabel": "G21",
+      "gateNumber": 17,
+      "gateLabel": "G17",
       "destination": "LAS",
       "podId": "pod-5",
       "podLabel": "Pod 5",
@@ -604,20 +590,6 @@
       "destination": "DUB",
       "podId": "pod-1",
       "podLabel": "Pod 1",
-      "timeDisplayOps": "1910",
-      "timeDisplayFinance": "19:10",
-      "sortTimestamp": 1773965400,
-      "status": "On Time"
-    },
-    {
-      "id": "G20-1773965400-RSW",
-      "flightDisplay": "2268",
-      "flightIata": "DL2268",
-      "gateNumber": 20,
-      "gateLabel": "G20",
-      "destination": "RSW",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
       "timeDisplayOps": "1910",
       "timeDisplayFinance": "19:10",
       "sortTimestamp": 1773965400,
