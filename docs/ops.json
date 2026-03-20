@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-20T20:02:03.829835Z",
+  "generatedAt": "2026-03-20T21:04:23.222505Z",
   "pods": [
     {
       "id": "pod-1",
@@ -35,34 +35,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G19-1774038180-LAS",
-      "flightDisplay": "643",
-      "flightIata": "DL643",
-      "gateNumber": 19,
-      "gateLabel": "G19",
-      "destination": "LAS",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1523",
-      "timeDisplayFinance": "15:23",
-      "sortTimestamp": 1774038180,
-      "status": "Boarding"
-    },
-    {
-      "id": "G22-1774038480-RSW",
-      "flightDisplay": "308",
-      "flightIata": "DL308",
-      "gateNumber": 22,
-      "gateLabel": "G22",
-      "destination": "RSW",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1528",
-      "timeDisplayFinance": "15:28",
-      "sortTimestamp": 1774038480,
-      "status": "Boarding"
-    },
     {
       "id": "G9-1774042200-AMS",
       "flightDisplay": "160",
@@ -232,11 +204,11 @@
       "status": "On Time"
     },
     {
-      "id": "G8-1774054800-SLC",
+      "id": "G4-1774054800-SLC",
       "flightDisplay": "1051",
       "flightIata": "DL1051",
-      "gateNumber": 8,
-      "gateLabel": "G8",
+      "gateNumber": 4,
+      "gateLabel": "G4",
       "destination": "SLC",
       "podId": "pod-1",
       "podLabel": "Pod 1",
@@ -288,20 +260,6 @@
       "status": "On Time"
     },
     {
-      "id": "G4-1774058580-CVG",
-      "flightDisplay": "1469",
-      "flightIata": "DL1469",
-      "gateNumber": 4,
-      "gateLabel": "G4",
-      "destination": "CVG",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "2103",
-      "timeDisplayFinance": "21:03",
-      "sortTimestamp": 1774058580,
-      "status": "On Time"
-    },
-    {
       "id": "G17-1774058820-IND",
       "flightDisplay": "674",
       "flightIata": "DL674",
@@ -330,14 +288,14 @@
       "status": "On Time"
     },
     {
-      "id": "G4-1774059600-DFW",
+      "id": "G19-1774059600-DFW",
       "flightDisplay": "2967",
       "flightIata": "DL2967",
-      "gateNumber": 4,
-      "gateLabel": "G4",
+      "gateNumber": 19,
+      "gateLabel": "G19",
       "destination": "DFW",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
       "timeDisplayOps": "2120",
       "timeDisplayFinance": "21:20",
       "sortTimestamp": 1774059600,
