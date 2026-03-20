@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-20T07:35:31.617685Z",
+  "generatedAt": "2026-03-20T08:23:51.224315Z",
   "pods": [
     {
       "id": "pod-1",
@@ -201,20 +201,6 @@
       "timeDisplayOps": "0900",
       "timeDisplayFinance": "09:00",
       "sortTimestamp": 1774015200,
-      "status": "On Time"
-    },
-    {
-      "id": "G1-1774015440-MEX",
-      "flightDisplay": "611",
-      "flightIata": "DL611",
-      "gateNumber": 1,
-      "gateLabel": "G1",
-      "destination": "MEX",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "0904",
-      "timeDisplayFinance": "09:04",
-      "sortTimestamp": 1774015440,
       "status": "On Time"
     },
     {
