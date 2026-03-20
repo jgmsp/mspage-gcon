@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-20T21:04:23.222505Z",
+  "generatedAt": "2026-03-20T21:59:30.557778Z",
   "pods": [
     {
       "id": "pod-1",
@@ -35,48 +35,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G9-1774042200-AMS",
-      "flightDisplay": "160",
-      "flightIata": "DL160",
-      "gateNumber": 9,
-      "gateLabel": "G9",
-      "destination": "AMS",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
-      "timeDisplayOps": "1630",
-      "timeDisplayFinance": "16:30",
-      "sortTimestamp": 1774042200,
-      "status": "On Time"
-    },
-    {
-      "id": "G15-1774042860-ATL",
-      "flightDisplay": "1028",
-      "flightIata": "DL1028",
-      "gateNumber": 15,
-      "gateLabel": "G15",
-      "destination": "ATL",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "1641",
-      "timeDisplayFinance": "16:41",
-      "sortTimestamp": 1774042860,
-      "status": "On Time"
-    },
-    {
-      "id": "G2-1774043700-DTW",
-      "flightDisplay": "1476",
-      "flightIata": "DL1476",
-      "gateNumber": 2,
-      "gateLabel": "G2",
-      "destination": "DTW",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1655",
-      "timeDisplayFinance": "16:55",
-      "sortTimestamp": 1774043700,
-      "status": "On Time"
-    },
     {
       "id": "G9-1774048320-ATL",
       "flightDisplay": "1026",
@@ -299,6 +257,20 @@
       "timeDisplayOps": "2120",
       "timeDisplayFinance": "21:20",
       "sortTimestamp": 1774059600,
+      "status": "On Time"
+    },
+    {
+      "id": "G20-1774060800-SAN",
+      "flightDisplay": "2146",
+      "flightIata": "DL2146",
+      "gateNumber": 20,
+      "gateLabel": "G20",
+      "destination": "SAN",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
+      "timeDisplayOps": "2140",
+      "timeDisplayFinance": "21:40",
+      "sortTimestamp": 1774060800,
       "status": "On Time"
     },
     {
