@@ -41,9 +41,21 @@ from mspage_gcon.pipeline import (
     write_failure_diagnostics,
     write_outputs,
 )
+from mspage_gcon.phl import (
+    is_suspicious_phl_parse,
+    parse_phl_departure_rows_with_diagnostics,
+)
+from mspage_gcon.phl_pipeline import (
+    build_phl_departures,
+    build_phl_ops_departures_from_now,
+    build_phl_ops_payload,
+    load_terminal_definitions,
+    update_stats_snapshot,
+)
 
 
 FIXTURE_PATH = Path(__file__).parent / "fixtures" / "msp_delta_ajax.json"
+PHL_FIXTURE_PATH = Path(__file__).parent / "fixtures" / "phl_departures_sample.html"
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -637,6 +649,157 @@ class PipelineTests(unittest.TestCase):
         self.assertIn("finance-record-overlays", app_js)
         self.assertIn("finance-overlay-line-added", styles_css)
         self.assertIn("finance-overlay-line-removed", styles_css)
+
+
+class PHLDraftTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.markup = PHL_FIXTURE_PATH.read_text(encoding="utf-8")
+        self.now = datetime(2026, 3, 19, 9, 15, tzinfo=ZoneInfo("America/New_York"))
+        self.rows, self.diagnostics = parse_phl_departure_rows_with_diagnostics(self.markup, now=self.now)
+        self.terminals = load_terminal_definitions(ROOT / "config" / "phl_terminals.json")
+
+    def test_parse_phl_rows_keeps_aa_rows_in_b_c_f_only(self) -> None:
+        self.assertEqual([row["gate_label"] for row in self.rows], ["B10", "F12", "C24"])
+        self.assertEqual([row["flight_display"] for row in self.rows], ["AA 1809", "AA 5426", "AA 1315"])
+        self.assertEqual([row["terminal_id"] for row in self.rows], ["TB", "TF", "TC"])
+        self.assertEqual(self.diagnostics.rows_kept, 3)
+        self.assertEqual(self.diagnostics.status_rows, 3)
+
+    def test_build_phl_ops_payload_only_includes_b_and_f_departures(self) -> None:
+        departures = build_phl_departures(self.rows)
+        ops_departures = build_phl_ops_departures_from_now(departures, now=self.now)
+        payload = build_phl_ops_payload(
+            departures=ops_departures,
+            terminals=self.terminals,
+            generated_at=datetime(2026, 3, 20, 14, 20, tzinfo=ZoneInfo("UTC")),
+        )
+
+        self.assertEqual(payload["airport"], "PHL")
+        self.assertEqual(payload["airline"], "AA")
+        self.assertEqual([item["terminalId"] for item in payload["departures"]], ["TB", "TF"])
+        self.assertEqual(payload["terminals"][0]["id"], "TB")
+        self.assertEqual(payload["terminals"][1]["id"], "TF")
+        self.assertTrue(payload["terminals"][0]["venues"])
+
+    def test_stats_snapshot_tracks_tb_and_tc_moves_once_per_transition(self) -> None:
+        first_snapshot = update_stats_snapshot(
+            previous_payload=None,
+            departures=build_phl_departures(
+                [
+                    {
+                        "flight_display": "AA 1809",
+                        "flight_iata": "AA1809",
+                        "destination": "Charlotte, NC",
+                        "gate_label": "B10",
+                        "terminal_id": "TB",
+                        "departure_time": datetime(2026, 3, 20, 9, 55, tzinfo=ZoneInfo("America/New_York")),
+                        "sort_timestamp": int(datetime(2026, 3, 20, 9, 55, tzinfo=ZoneInfo("America/New_York")).timestamp()),
+                        "status": "On Time",
+                    }
+                ]
+            ),
+            generated_at=datetime(2026, 3, 20, 13, 50, tzinfo=ZoneInfo("UTC")),
+        )
+        self.assertEqual(first_snapshot["summary"]["lostToC"], 0)
+        self.assertEqual(first_snapshot["summary"]["gainedFromC"], 0)
+
+        moved_to_c = update_stats_snapshot(
+            previous_payload=first_snapshot,
+            departures=build_phl_departures(
+                [
+                    {
+                        "flight_display": "AA 1809",
+                        "flight_iata": "AA1809",
+                        "destination": "Charlotte, NC",
+                        "gate_label": "C24",
+                        "terminal_id": "TC",
+                        "departure_time": datetime(2026, 3, 20, 9, 55, tzinfo=ZoneInfo("America/New_York")),
+                        "sort_timestamp": int(datetime(2026, 3, 20, 9, 55, tzinfo=ZoneInfo("America/New_York")).timestamp()),
+                        "status": "On Time",
+                    }
+                ]
+            ),
+            generated_at=datetime(2026, 3, 20, 14, 50, tzinfo=ZoneInfo("UTC")),
+        )
+        self.assertEqual(moved_to_c["summary"]["lostToC"], 1)
+        self.assertEqual(moved_to_c["summary"]["gainedFromC"], 0)
+        self.assertEqual(moved_to_c["events"][0]["flightDisplay"], "AA 1809")
+        self.assertEqual(moved_to_c["events"][0]["fromGateLabel"], "B10")
+        self.assertEqual(moved_to_c["events"][0]["toGateLabel"], "C24")
+
+        repeated_c = update_stats_snapshot(
+            previous_payload=moved_to_c,
+            departures=build_phl_departures(
+                [
+                    {
+                        "flight_display": "AA 1809",
+                        "flight_iata": "AA1809",
+                        "destination": "Charlotte, NC",
+                        "gate_label": "C24",
+                        "terminal_id": "TC",
+                        "departure_time": datetime(2026, 3, 20, 9, 55, tzinfo=ZoneInfo("America/New_York")),
+                        "sort_timestamp": int(datetime(2026, 3, 20, 9, 55, tzinfo=ZoneInfo("America/New_York")).timestamp()),
+                        "status": "On Time",
+                    }
+                ]
+            ),
+            generated_at=datetime(2026, 3, 20, 15, 50, tzinfo=ZoneInfo("UTC")),
+        )
+        self.assertEqual(repeated_c["summary"]["lostToC"], 1)
+        self.assertEqual(len(repeated_c["events"]), 1)
+
+        back_to_b = update_stats_snapshot(
+            previous_payload=repeated_c,
+            departures=build_phl_departures(
+                [
+                    {
+                        "flight_display": "AA 1809",
+                        "flight_iata": "AA1809",
+                        "destination": "Charlotte, NC",
+                        "gate_label": "B12",
+                        "terminal_id": "TB",
+                        "departure_time": datetime(2026, 3, 20, 9, 55, tzinfo=ZoneInfo("America/New_York")),
+                        "sort_timestamp": int(datetime(2026, 3, 20, 9, 55, tzinfo=ZoneInfo("America/New_York")).timestamp()),
+                        "status": "On Time",
+                    }
+                ]
+            ),
+            generated_at=datetime(2026, 3, 20, 16, 50, tzinfo=ZoneInfo("UTC")),
+        )
+        self.assertEqual(back_to_b["summary"]["lostToC"], 1)
+        self.assertEqual(back_to_b["summary"]["gainedFromC"], 1)
+        self.assertEqual(back_to_b["events"][-1]["direction"], "gainedFromC")
+
+    def test_phl_stats_reset_on_new_york_service_day(self) -> None:
+        first_snapshot = update_stats_snapshot(
+            previous_payload=None,
+            departures=build_phl_departures(self.rows),
+            generated_at=datetime(2026, 3, 20, 14, 50, tzinfo=ZoneInfo("UTC")),
+        )
+        next_day = update_stats_snapshot(
+            previous_payload=first_snapshot,
+            departures=build_phl_departures(self.rows),
+            generated_at=datetime(2026, 3, 21, 14, 50, tzinfo=ZoneInfo("UTC")),
+        )
+
+        self.assertEqual(next_day["serviceDate"], "2026-03-21")
+        self.assertEqual(next_day["summary"]["lostToC"], 0)
+        self.assertEqual(next_day["summary"]["gainedFromC"], 0)
+        self.assertEqual(next_day["events"], [])
+
+    def test_phl_suspicious_parse_detects_zero_kept_rows(self) -> None:
+        self.assertFalse(is_suspicious_phl_parse(self.diagnostics))
+        self.assertTrue(
+            is_suspicious_phl_parse(
+                self.diagnostics.__class__(
+                    source="page",
+                    rows_seen=10,
+                    candidate_rows=0,
+                    rows_kept=0,
+                    status_rows=0,
+                )
+            )
+        )
 
 
 if __name__ == "__main__":

@@ -1,0 +1,30 @@
+{
+  "terminals": [
+    {
+      "id": "TB",
+      "label": "Terminal B",
+      "venues": [
+        "Baba Bar",
+        "Boule Cafe",
+        "CIBO Bistro & Wine Bar",
+        "CIBO Express Gourmet Market",
+        "Germantown Biergarten",
+        "Independence Prime",
+        "LOVE Grille",
+        "Mezzogiorno",
+        "Noobar",
+        "Passyunk Steaks",
+        "SGR / CIBO",
+        "Tagliare"
+      ]
+    },
+    {
+      "id": "TF",
+      "label": "Terminal F",
+      "venues": [
+        "Local Tavern",
+        "Re:Vive"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PHL AA Draft Board</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="kicker">PHL / American Airlines / Draft</p>
+        <div class="hero-grid">
+          <div>
+            <h1>Terminal B + F Ops Board</h1>
+            <p class="lede">
+              Live AA departures for Terminal B and F, plus a same-day Terminal B to C movement ledger.
+            </p>
+          </div>
+          <div class="hero-meta">
+            <p class="meta-label">Last refresh</p>
+            <p class="meta-value" id="last-updated">Awaiting snapshot</p>
+          </div>
+        </div>
+        <div class="tabbar" id="tabbar" aria-label="PHL draft views">
+          <button type="button" class="tab active" data-tab="ops">Ops</button>
+          <button type="button" class="tab" data-tab="stats">Stats</button>
+        </div>
+      </section>
+
+      <section class="content" id="ops-view">
+        <article class="panel board-panel">
+          <div class="panel-head">
+            <div>
+              <p class="panel-kicker">Current board</p>
+              <h2>Operations</h2>
+            </div>
+            <div class="status-chip" id="status-line">Status: Awaiting snapshot</div>
+          </div>
+          <div class="toggle-row" id="terminal-toggle" aria-label="Terminal toggle"></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Gate</th>
+                  <th>Flight</th>
+                  <th>Destination</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="departures-body"></tbody>
+            </table>
+            <div class="empty-state hidden" id="ops-empty">No AA departures match this terminal right now.</div>
+          </div>
+        </article>
+
+        <aside class="panel venue-panel">
+          <div class="panel-head">
+            <div>
+              <p class="panel-kicker">Terminal reference</p>
+              <h2 id="venue-title">Terminal B venues</h2>
+            </div>
+            <p class="venue-count" id="venue-count">0 venues</p>
+          </div>
+          <ul class="venue-list" id="venue-list"></ul>
+        </aside>
+      </section>
+
+      <section class="content hidden" id="stats-view">
+        <article class="panel stats-panel">
+          <div class="panel-head">
+            <div>
+              <p class="panel-kicker">Daily reference</p>
+              <h2>Terminal B / C movement</h2>
+            </div>
+            <p class="service-date" id="service-date">Service day pending</p>
+          </div>
+
+          <div class="summary-grid">
+            <section class="summary-card loss">
+              <p class="summary-label">Lost to Terminal C</p>
+              <p class="summary-value" id="lost-count">0</p>
+            </section>
+            <section class="summary-card gain">
+              <p class="summary-label">Gained from Terminal C</p>
+              <p class="summary-value" id="gained-count">0</p>
+            </section>
+          </div>
+
+          <div class="ledger-grid">
+            <section class="ledger">
+              <div class="ledger-head">
+                <h3>Lost to C</h3>
+                <p>Flights that moved from TB to TC.</p>
+              </div>
+              <div class="ledger-list" id="lost-list"></div>
+            </section>
+            <section class="ledger">
+              <div class="ledger-head">
+                <h3>Gained from C</h3>
+                <p>Flights that moved from TC back to TB.</p>
+              </div>
+              <div class="ledger-list" id="gained-list"></div>
+            </section>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>

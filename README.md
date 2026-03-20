@@ -105,6 +105,23 @@ python3 -m http.server
 Then open:
 
 - `http://localhost:8000/docs/`
+- `http://localhost:8000/docs/phl/`
+
+## PHL Draft
+
+The repo also includes a separate PHL draft board for American Airlines.
+
+- App path: `docs/phl/`
+- Ops scope: Terminal `B` and Terminal `F` AA departures
+- Stats scope: same-day `TB <-> TC` moves by AA flight number
+- Venue config: `config/phl_terminals.json`
+
+Generate the PHL draft outputs from the repo root:
+
+```bash
+cd /Users/grim/p-projects/mspage-gcon
+python3 -m mspage_gcon.phl_main
+```
 
 ## Development Check
 
