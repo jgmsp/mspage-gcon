@@ -69,8 +69,6 @@ const THEME_ICONS = {
 
 const OPS_REFRESH_MINUTE = 50;
 const FINANCE_EVENT_MINUTE = 50;
-const FINANCE_VISIBLE_START = 5 * 60 + FINANCE_EVENT_MINUTE;
-const FINANCE_VISIBLE_END = 18 * 60 + FINANCE_EVENT_MINUTE;
 const FINANCE_COMPARE_WINDOWS = [
   { start: 5 * 60 + FINANCE_EVENT_MINUTE, end: 9 * 60 + FINANCE_EVENT_MINUTE, label: "AM Review Window" },
   { start: 12 * 60 + FINANCE_EVENT_MINUTE, end: 15 * 60 + FINANCE_EVENT_MINUTE, label: "PM Review Window" },
@@ -872,7 +870,6 @@ function nextFinanceEventDate() {
   const schedule = [
     { hour: 5, minute: FINANCE_EVENT_MINUTE },
     { hour: 12, minute: FINANCE_EVENT_MINUTE },
-    { hour: 18, minute: FINANCE_EVENT_MINUTE },
   ];
 
   const next = schedule.find(({ hour, minute }) => currentMinutes < hour * 60 + minute);

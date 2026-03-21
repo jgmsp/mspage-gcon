@@ -13,7 +13,6 @@ from .msp import (
 )
 from .pipeline import (
     CHICAGO,
-    FINANCE_CLEAR_HOUR,
     FINANCE_SNAPSHOT_HOURS,
     build_departures_from_now,
     has_last_good_snapshot,
@@ -93,7 +92,7 @@ def resolve_finance_actions(
     now: datetime,
 ) -> tuple[bool, bool]:
     update_finance = should_fetch_now(set(FINANCE_SNAPSHOT_HOURS), now=now)
-    clear_finance = now.hour == FINANCE_CLEAR_HOUR
+    clear_finance = False
     return update_finance, clear_finance
 
 

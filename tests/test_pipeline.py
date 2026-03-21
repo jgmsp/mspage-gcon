@@ -213,12 +213,12 @@ class PipelineTests(unittest.TestCase):
         morning = datetime(2026, 3, 9, 5, 5, tzinfo=ZoneInfo("America/Chicago"))
         midday = datetime(2026, 3, 9, 12, 15, tzinfo=ZoneInfo("America/Chicago"))
         off_window = datetime(2026, 3, 9, 10, 5, tzinfo=ZoneInfo("America/Chicago"))
-        clear_window = datetime(2026, 3, 9, 18, 0, tzinfo=ZoneInfo("America/Chicago"))
+        evening = datetime(2026, 3, 9, 18, 0, tzinfo=ZoneInfo("America/Chicago"))
 
         self.assertEqual(resolve_finance_actions(now=morning), (True, False))
         self.assertEqual(resolve_finance_actions(now=midday), (True, False))
         self.assertEqual(resolve_finance_actions(now=off_window), (False, False))
-        self.assertEqual(resolve_finance_actions(now=clear_window), (False, True))
+        self.assertEqual(resolve_finance_actions(now=evening), (False, False))
 
     def test_write_outputs_replaces_finance_snapshot_on_next_report_run(self) -> None:
         with TemporaryDirectory() as temp_dir:
@@ -308,7 +308,7 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(diagnostics["status"], "healthy")
             self.assertEqual(diagnostics["lastSuccessAt"], "2026-03-09T15:00:00Z")
 
-    def test_write_outputs_can_clear_finance_at_six_pm(self) -> None:
+    def test_write_outputs_preserve_finance_after_evening_ops_refresh(self) -> None:
         with TemporaryDirectory() as temp_dir:
             output_dir = Path(temp_dir)
             departures = build_departures(self.rows, self.pods)
@@ -325,11 +325,11 @@ class PipelineTests(unittest.TestCase):
                 pods=self.pods,
                 generated_at=datetime(2026, 3, 9, 23, 0, tzinfo=ZoneInfo("UTC")),
                 update_finance=False,
-                clear_finance=True,
             )
 
             finance_text = (output_dir / "finance.txt").read_text(encoding="utf-8")
-            self.assertEqual(finance_text, "Flight | Gate | Time\n")
+            self.assertIn("1826   | 9    | 10:00", finance_text)
+            self.assertIn("889    | 18   | 11:05", finance_text)
 
     def test_repo_finance_snapshots_do_not_include_deprecated_summary_counts(self) -> None:
         finance_paths = [ROOT / "docs" / "finance.txt", *sorted((ROOT / "docs" / "fixtures").glob("**/finance.txt"))]
@@ -590,13 +590,16 @@ class PipelineTests(unittest.TestCase):
         self.assertIn("const FINANCE_EVENT_MINUTE = 50;", app_js)
         self.assertIn("5:50 AM", readme)
         self.assertIn("12:50 PM", readme)
-        self.assertIn("6:50 PM", readme)
+        self.assertNotIn("6:50 PM", readme)
         self.assertIn("Finance - Diffs", app_js)
         self.assertIn("finance-cue-particle", app_js)
         self.assertIn("finance-pill-absorb", app_js)
         self.assertIn("emitAnimeFinanceCue", app_js)
         self.assertIn("const particleCount = 10", app_js)
-        self.assertIn("return !shouldHideFinanceFilter();", app_js)
+        self.assertIn("function shouldHideFinanceFilter() {", app_js)
+        self.assertIn("return false;", app_js)
+        self.assertIn("function isFinanceCompareAvailable() {", app_js)
+        self.assertIn("return true;", app_js)
         self.assertIn("syncFilterButtons", app_js)
         self.assertIn("status-line", index_html)
         self.assertIn("vendor/anime.iife.min.js", index_html)

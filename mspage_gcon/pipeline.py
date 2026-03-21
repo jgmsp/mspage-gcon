@@ -15,7 +15,6 @@ from .config import PodRange, assign_pod
 
 CHICAGO = ZoneInfo("America/Chicago")
 FINANCE_SNAPSHOT_HOURS = frozenset({5, 12})
-FINANCE_CLEAR_HOUR = 18
 STALE_THRESHOLD_MINUTES = 180
 DIAGNOSTICS_FILENAME = "diagnostics.json"
 GATE_PATTERN = re.compile(r"(?i)\b(?:T1)?G\s*([0-9]{1,2})\b")

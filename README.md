@@ -30,12 +30,11 @@ Finance follows fixed America/Chicago rules:
 
 - `5:50 AM` local: publish the AM finance snapshot
 - `12:50 PM` local: publish the PM finance snapshot
-- `6:50 PM` local: clear/hide finance for the rest of the day
 
 Manual workflow dispatch follows the same finance rules:
 
 - ops refreshes immediately
-- finance changes only at `5:50 AM`, `12:50 PM`, or `6:50 PM` local
+- finance changes only at `5:50 AM` or `12:50 PM` local
 
 ## Failure Handling
 
