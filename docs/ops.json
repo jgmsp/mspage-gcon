@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-21T20:59:44.333277Z",
+  "generatedAt": "2026-03-21T21:57:30.243182Z",
   "pods": [
     {
       "id": "pod-1",
@@ -35,34 +35,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G3-1774128600-AMS",
-      "flightDisplay": "160",
-      "flightIata": "DL160",
-      "gateNumber": 3,
-      "gateLabel": "G3",
-      "destination": "AMS",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1630",
-      "timeDisplayFinance": "16:30",
-      "sortTimestamp": 1774128600,
-      "status": "Boarding"
-    },
-    {
-      "id": "G15-1774129260-ATL",
-      "flightDisplay": "1028",
-      "flightIata": "DL1028",
-      "gateNumber": 15,
-      "gateLabel": "G15",
-      "destination": "ATL",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "1641",
-      "timeDisplayFinance": "16:41",
-      "sortTimestamp": 1774129260,
-      "status": "On Time"
-    },
     {
       "id": "G4-1774134300-LHR",
       "flightDisplay": "10",
@@ -232,6 +204,20 @@
       "status": "On Time"
     },
     {
+      "id": "G18-1774141980-MCO",
+      "flightDisplay": "2309",
+      "flightIata": "DL2309",
+      "gateNumber": 18,
+      "gateLabel": "G18",
+      "destination": "MCO",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
+      "timeDisplayOps": "2013",
+      "timeDisplayFinance": "20:13",
+      "sortTimestamp": 1774141980,
+      "status": "On Time"
+    },
+    {
       "id": "G20-1774142220-GEG",
       "flightDisplay": "2418",
       "flightIata": "DL2418",
@@ -254,20 +240,6 @@
       "destination": "DFW",
       "podId": "pod-4",
       "podLabel": "Pod 4",
-      "timeDisplayOps": "2100",
-      "timeDisplayFinance": "21:00",
-      "sortTimestamp": 1774144800,
-      "status": "On Time"
-    },
-    {
-      "id": "G21-1774144800-CVG",
-      "flightDisplay": "1469",
-      "flightIata": "DL1469",
-      "gateNumber": 21,
-      "gateLabel": "G21",
-      "destination": "CVG",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
       "timeDisplayOps": "2100",
       "timeDisplayFinance": "21:00",
       "sortTimestamp": 1774144800,
