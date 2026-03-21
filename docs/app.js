@@ -845,12 +845,11 @@ function setFinanceHeading(note) {
 }
 
 function shouldHideFinanceFilter() {
-  const minutes = currentChicagoMinutes();
-  return minutes < FINANCE_VISIBLE_START || minutes >= FINANCE_VISIBLE_END;
+  return false;
 }
 
 function isFinanceCompareAvailable() {
-  return !shouldHideFinanceFilter();
+  return true;
 }
 
 function currentCompareWindowLabel() {
