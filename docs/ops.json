@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-21T09:04:11.848880Z",
+  "generatedAt": "2026-03-21T09:59:33.598884Z",
   "pods": [
     {
       "id": "pod-1",
@@ -257,6 +257,20 @@
       "timeDisplayOps": "0906",
       "timeDisplayFinance": "09:06",
       "sortTimestamp": 1774101960,
+      "status": "On Time"
+    },
+    {
+      "id": "G21-1774102500-LAX",
+      "flightDisplay": "2102",
+      "flightIata": "DL2102",
+      "gateNumber": 21,
+      "gateLabel": "G21",
+      "destination": "LAX",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
+      "timeDisplayOps": "0915",
+      "timeDisplayFinance": "09:15",
+      "sortTimestamp": 1774102500,
       "status": "On Time"
     },
     {
