@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-21T15:58:55.019009Z",
+  "generatedAt": "2026-03-21T17:02:02.471823Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,62 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G10-1774109760-LAS",
-      "flightDisplay": "2238",
-      "flightIata": "DL2238",
-      "gateNumber": 10,
-      "gateLabel": "G10",
-      "destination": "LAS",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
-      "timeDisplayOps": "1116",
-      "timeDisplayFinance": "11:16",
-      "sortTimestamp": 1774109760,
-      "status": "On Time"
-    },
-    {
-      "id": "G19-1774109760-LAX",
-      "flightDisplay": "2119",
-      "flightIata": "DL2119",
-      "gateNumber": 19,
-      "gateLabel": "G19",
-      "destination": "LAX",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1116",
-      "timeDisplayFinance": "11:16",
-      "sortTimestamp": 1774109760,
-      "status": "On Time"
-    },
-    {
-      "id": "G4-1774110600-ICN",
-      "flightDisplay": "171",
-      "flightIata": "DL171",
-      "gateNumber": 4,
-      "gateLabel": "G4",
-      "destination": "ICN",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1130",
-      "timeDisplayFinance": "11:30",
-      "sortTimestamp": 1774110600,
-      "status": "On Time"
-    },
-    {
-      "id": "G17-1774110600-SAN",
-      "flightDisplay": "2125",
-      "flightIata": "DL2125",
-      "gateNumber": 17,
-      "gateLabel": "G17",
-      "destination": "SAN",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1130",
-      "timeDisplayFinance": "11:30",
-      "sortTimestamp": 1774110600,
-      "status": "On Time"
-    },
-    {
       "id": "G20-1774114080-RSW",
       "flightDisplay": "1186",
       "flightIata": "DL1186",
@@ -103,7 +47,7 @@
       "timeDisplayOps": "1228",
       "timeDisplayFinance": "12:28",
       "sortTimestamp": 1774114080,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G6-1774115400-HND",
