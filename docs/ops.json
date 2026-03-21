@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-21T13:31:17.420595Z",
+  "generatedAt": "2026-03-21T14:03:28.815660Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,34 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G19-1774101300-RSW",
-      "flightDisplay": "2226",
-      "flightIata": "DL2226",
-      "gateNumber": 19,
-      "gateLabel": "G19",
-      "destination": "RSW",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0855",
-      "timeDisplayFinance": "08:55",
-      "sortTimestamp": 1774101300,
-      "status": "On Time"
-    },
-    {
-      "id": "G10-1774101600-MZT",
-      "flightDisplay": "1795",
-      "flightIata": "DL1795",
-      "gateNumber": 10,
-      "gateLabel": "G10",
-      "destination": "MZT",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
-      "timeDisplayOps": "0900",
-      "timeDisplayFinance": "09:00",
-      "sortTimestamp": 1774101600,
-      "status": "Boarding"
-    },
-    {
       "id": "G1-1774101840-MEX",
       "flightDisplay": "611",
       "flightIata": "DL611",
@@ -75,7 +47,7 @@
       "timeDisplayOps": "0904",
       "timeDisplayFinance": "09:04",
       "sortTimestamp": 1774101840,
-      "status": "On Time"
+      "status": "Departed"
     },
     {
       "id": "G18-1774101960-SAN",
@@ -103,7 +75,7 @@
       "timeDisplayOps": "0915",
       "timeDisplayFinance": "09:15",
       "sortTimestamp": 1774102500,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G14-1774102620-LAS",
@@ -117,7 +89,7 @@
       "timeDisplayOps": "0917",
       "timeDisplayFinance": "09:17",
       "sortTimestamp": 1774102620,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G17-1774103700-TPA",
@@ -131,7 +103,7 @@
       "timeDisplayOps": "0935",
       "timeDisplayFinance": "09:35",
       "sortTimestamp": 1774103700,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G2-1774104540-PLS",
@@ -579,20 +551,6 @@
       "timeDisplayOps": "1910",
       "timeDisplayFinance": "19:10",
       "sortTimestamp": 1774138200,
-      "status": "On Time"
-    },
-    {
-      "id": "G10-1774140480-DTW",
-      "flightDisplay": "1484",
-      "flightIata": "DL1484",
-      "gateNumber": 10,
-      "gateLabel": "G10",
-      "destination": "DTW",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
-      "timeDisplayOps": "1948",
-      "timeDisplayFinance": "19:48",
-      "sortTimestamp": 1774140480,
       "status": "On Time"
     },
     {
