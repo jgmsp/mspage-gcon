@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-21T04:57:50.762122Z",
+  "generatedAt": "2026-03-21T06:25:05.591804Z",
   "pods": [
     {
       "id": "pod-1",
@@ -187,20 +187,6 @@
       "timeDisplayOps": "0824",
       "timeDisplayFinance": "08:24",
       "sortTimestamp": 1774099440,
-      "status": "On Time"
-    },
-    {
-      "id": "G22-1774101000-MSY",
-      "flightDisplay": "1621",
-      "flightIata": "DL1621",
-      "gateNumber": 22,
-      "gateLabel": "G22",
-      "destination": "MSY",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0850",
-      "timeDisplayFinance": "08:50",
-      "sortTimestamp": 1774101000,
       "status": "On Time"
     },
     {
