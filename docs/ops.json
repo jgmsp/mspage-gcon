@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-21T09:59:33.598884Z",
+  "generatedAt": "2026-03-21T11:00:12.807596Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,20 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G3-1774088100-ATL",
-      "flightDisplay": "1062",
-      "flightIata": "DL1062",
-      "gateNumber": 3,
-      "gateLabel": "G3",
-      "destination": "ATL",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "0515",
-      "timeDisplayFinance": "05:15",
-      "sortTimestamp": 1774088100,
-      "status": "On Time"
-    },
-    {
       "id": "G10-1774091160-CUN",
       "flightDisplay": "399",
       "flightIata": "DL399",
@@ -61,7 +47,7 @@
       "timeDisplayOps": "0606",
       "timeDisplayFinance": "06:06",
       "sortTimestamp": 1774091160,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G9-1774091400-TPA",
@@ -75,7 +61,7 @@
       "timeDisplayOps": "0610",
       "timeDisplayFinance": "06:10",
       "sortTimestamp": 1774091400,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G14-1774094400-ATL",
@@ -582,14 +568,14 @@
       "status": "On Time"
     },
     {
-      "id": "G15-1774129260-ATL",
+      "id": "G17-1774129260-ATL",
       "flightDisplay": "1028",
       "flightIata": "DL1028",
-      "gateNumber": 15,
-      "gateLabel": "G15",
+      "gateNumber": 17,
+      "gateLabel": "G17",
       "destination": "ATL",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
       "timeDisplayOps": "1641",
       "timeDisplayFinance": "16:41",
       "sortTimestamp": 1774129260,
@@ -677,6 +663,20 @@
       "timeDisplayOps": "1850",
       "timeDisplayFinance": "18:50",
       "sortTimestamp": 1774137000,
+      "status": "On Time"
+    },
+    {
+      "id": "G9-1774138200-SFO",
+      "flightDisplay": "756",
+      "flightIata": "DL756",
+      "gateNumber": 9,
+      "gateLabel": "G9",
+      "destination": "SFO",
+      "podId": "pod-2",
+      "podLabel": "Pod 2",
+      "timeDisplayOps": "1910",
+      "timeDisplayFinance": "19:10",
+      "sortTimestamp": 1774138200,
       "status": "On Time"
     },
     {
