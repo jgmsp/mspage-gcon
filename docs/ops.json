@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-21T14:59:48.674362Z",
+  "generatedAt": "2026-03-21T15:58:55.019009Z",
   "pods": [
     {
       "id": "pod-1",
@@ -35,62 +35,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G9-1774105200-SJD",
-      "flightDisplay": "1826",
-      "flightIata": "DL1826",
-      "gateNumber": 9,
-      "gateLabel": "G9",
-      "destination": "SJD",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
-      "timeDisplayOps": "1000",
-      "timeDisplayFinance": "10:00",
-      "sortTimestamp": 1774105200,
-      "status": "On Time"
-    },
-    {
-      "id": "G22-1774106100-FLL",
-      "flightDisplay": "488",
-      "flightIata": "DL488",
-      "gateNumber": 22,
-      "gateLabel": "G22",
-      "destination": "FLL",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1015",
-      "timeDisplayFinance": "10:15",
-      "sortTimestamp": 1774106100,
-      "status": "Boarding"
-    },
-    {
-      "id": "G15-1774106280-PBI",
-      "flightDisplay": "1308",
-      "flightIata": "DL1308",
-      "gateNumber": 15,
-      "gateLabel": "G15",
-      "destination": "PBI",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "1018",
-      "timeDisplayFinance": "10:18",
-      "sortTimestamp": 1774106280,
-      "status": "On Time"
-    },
-    {
-      "id": "G3-1774106520-ATL",
-      "flightDisplay": "1046",
-      "flightIata": "DL1046",
-      "gateNumber": 3,
-      "gateLabel": "G3",
-      "destination": "ATL",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1022",
-      "timeDisplayFinance": "10:22",
-      "sortTimestamp": 1774106520,
-      "status": "Boarding"
-    },
     {
       "id": "G10-1774109760-LAS",
       "flightDisplay": "2238",
@@ -397,20 +341,6 @@
       "timeDisplayOps": "1836",
       "timeDisplayFinance": "18:36",
       "sortTimestamp": 1774136160,
-      "status": "On Time"
-    },
-    {
-      "id": "G9-1774136400-PDX",
-      "flightDisplay": "2151",
-      "flightIata": "DL2151",
-      "gateNumber": 9,
-      "gateLabel": "G9",
-      "destination": "PDX",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
-      "timeDisplayOps": "1840",
-      "timeDisplayFinance": "18:40",
-      "sortTimestamp": 1774136400,
       "status": "On Time"
     },
     {
