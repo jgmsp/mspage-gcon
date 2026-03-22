@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-22T15:00:25.287619Z",
+  "generatedAt": "2026-03-22T15:58:47.186647Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,34 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G18-1774191900-AUS",
-      "flightDisplay": "2062",
-      "flightIata": "DL2062",
-      "gateNumber": 18,
-      "gateLabel": "G18",
-      "destination": "AUS",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1005",
-      "timeDisplayFinance": "10:05",
-      "sortTimestamp": 1774191900,
-      "status": "On Time"
-    },
-    {
-      "id": "G22-1774191900-CUN",
-      "flightDisplay": "648",
-      "flightIata": "DL648",
-      "gateNumber": 22,
-      "gateLabel": "G22",
-      "destination": "CUN",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1005",
-      "timeDisplayFinance": "10:05",
-      "sortTimestamp": 1774191900,
-      "status": "Boarding"
-    },
-    {
       "id": "G3-1774196160-LAS",
       "flightDisplay": "2238",
       "flightIata": "DL2238",
@@ -89,7 +61,7 @@
       "timeDisplayOps": "1116",
       "timeDisplayFinance": "11:16",
       "sortTimestamp": 1774196160,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G6-1774197000-ICN",
@@ -103,7 +75,7 @@
       "timeDisplayOps": "1130",
       "timeDisplayFinance": "11:30",
       "sortTimestamp": 1774197000,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G15-1774197360-SAN",
