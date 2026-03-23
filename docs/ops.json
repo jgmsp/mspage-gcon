@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-23T09:46:22.100122Z",
+  "generatedAt": "2026-03-23T10:37:53.899968Z",
   "pods": [
     {
       "id": "pod-1",
@@ -35,20 +35,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G3-1774260900-ATL",
-      "flightDisplay": "1062",
-      "flightIata": "DL1062",
-      "gateNumber": 3,
-      "gateLabel": "G3",
-      "destination": "ATL",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "0515",
-      "timeDisplayFinance": "05:15",
-      "sortTimestamp": 1774260900,
-      "status": "Boarding"
-    },
     {
       "id": "G20-1774263600-DTW",
       "flightDisplay": "1461",
@@ -232,20 +218,6 @@
       "status": "On Time"
     },
     {
-      "id": "G21-1774274220-SEA",
-      "flightDisplay": "868",
-      "flightIata": "DL868",
-      "gateNumber": 21,
-      "gateLabel": "G21",
-      "destination": "SEA",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0857",
-      "timeDisplayFinance": "08:57",
-      "sortTimestamp": 1774274220,
-      "status": "On Time"
-    },
-    {
       "id": "G1-1774274640-MEX",
       "flightDisplay": "611",
       "flightIata": "DL611",
@@ -274,14 +246,14 @@
       "status": "On Time"
     },
     {
-      "id": "G14-1774275420-LAS",
+      "id": "G9-1774275420-LAS",
       "flightDisplay": "2262",
       "flightIata": "DL2262",
-      "gateNumber": 14,
-      "gateLabel": "G14",
+      "gateNumber": 9,
+      "gateLabel": "G9",
       "destination": "LAS",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
+      "podId": "pod-2",
+      "podLabel": "Pod 2",
       "timeDisplayOps": "0917",
       "timeDisplayFinance": "09:17",
       "sortTimestamp": 1774275420,
@@ -327,6 +299,20 @@
       "timeDisplayOps": "1005",
       "timeDisplayFinance": "10:05",
       "sortTimestamp": 1774278300,
+      "status": "On Time"
+    },
+    {
+      "id": "G8-1774278900-BOS",
+      "flightDisplay": "2655",
+      "flightIata": "DL2655",
+      "gateNumber": 8,
+      "gateLabel": "G8",
+      "destination": "BOS",
+      "podId": "pod-1",
+      "podLabel": "Pod 1",
+      "timeDisplayOps": "1015",
+      "timeDisplayFinance": "10:15",
+      "sortTimestamp": 1774278900,
       "status": "On Time"
     },
     {
@@ -722,6 +708,20 @@
       "status": "On Time"
     },
     {
+      "id": "G2-1774313280-DTW",
+      "flightDisplay": "1484",
+      "flightIata": "DL1484",
+      "gateNumber": 2,
+      "gateLabel": "G2",
+      "destination": "DTW",
+      "podId": "pod-1",
+      "podLabel": "Pod 1",
+      "timeDisplayOps": "1948",
+      "timeDisplayFinance": "19:48",
+      "sortTimestamp": 1774313280,
+      "status": "On Time"
+    },
+    {
       "id": "G19-1774314000-SLC",
       "flightDisplay": "1051",
       "flightIata": "DL1051",
@@ -747,20 +747,6 @@
       "timeDisplayOps": "2018",
       "timeDisplayFinance": "20:18",
       "sortTimestamp": 1774315080,
-      "status": "On Time"
-    },
-    {
-      "id": "G10-1774315920-PHL",
-      "flightDisplay": "2703",
-      "flightIata": "DL2703",
-      "gateNumber": 10,
-      "gateLabel": "G10",
-      "destination": "PHL",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
-      "timeDisplayOps": "2032",
-      "timeDisplayFinance": "20:32",
-      "sortTimestamp": 1774315920,
       "status": "On Time"
     },
     {
@@ -792,25 +778,11 @@
       "status": "On Time"
     },
     {
-      "id": "G6-1774318020-IND",
-      "flightDisplay": "674",
-      "flightIata": "DL674",
-      "gateNumber": 6,
-      "gateLabel": "G6",
-      "destination": "IND",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "2107",
-      "timeDisplayFinance": "21:07",
-      "sortTimestamp": 1774318020,
-      "status": "On Time"
-    },
-    {
-      "id": "G3-1774318140-CMH",
+      "id": "G6-1774318140-CMH",
       "flightDisplay": "1356",
       "flightIata": "DL1356",
-      "gateNumber": 3,
-      "gateLabel": "G3",
+      "gateNumber": 6,
+      "gateLabel": "G6",
       "destination": "CMH",
       "podId": "pod-1",
       "podLabel": "Pod 1",
