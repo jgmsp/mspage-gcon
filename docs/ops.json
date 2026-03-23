@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-23T18:34:03.142681Z",
+  "generatedAt": "2026-03-23T19:36:34.494232Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,20 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G17-1774293660-LAS",
-      "flightDisplay": "1542",
-      "flightIata": "DL1542",
-      "gateNumber": 17,
-      "gateLabel": "G17",
-      "destination": "LAS",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1421",
-      "timeDisplayFinance": "14:21",
-      "sortTimestamp": 1774293660,
-      "status": "On Time"
-    },
-    {
       "id": "G14-1774295760-ATL",
       "flightDisplay": "1036",
       "flightIata": "DL1036",
@@ -61,7 +47,7 @@
       "timeDisplayOps": "1456",
       "timeDisplayFinance": "14:56",
       "sortTimestamp": 1774295760,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G21-1774295880-LAX",
@@ -103,20 +89,6 @@
       "timeDisplayOps": "1528",
       "timeDisplayFinance": "15:28",
       "sortTimestamp": 1774297680,
-      "status": "On Time"
-    },
-    {
-      "id": "G9-1774301400-AMS",
-      "flightDisplay": "160",
-      "flightIata": "DL160",
-      "gateNumber": 9,
-      "gateLabel": "G9",
-      "destination": "AMS",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
-      "timeDisplayOps": "1630",
-      "timeDisplayFinance": "16:30",
-      "sortTimestamp": 1774301400,
       "status": "On Time"
     },
     {
@@ -176,11 +148,11 @@
       "status": "On Time"
     },
     {
-      "id": "G8-1774308960-DEN",
+      "id": "G6-1774308960-DEN",
       "flightDisplay": "2931",
       "flightIata": "DL2931",
-      "gateNumber": 8,
-      "gateLabel": "G8",
+      "gateNumber": 6,
+      "gateLabel": "G6",
       "destination": "DEN",
       "podId": "pod-1",
       "podLabel": "Pod 1",
@@ -260,11 +232,11 @@
       "status": "On Time"
     },
     {
-      "id": "G3-1774313280-DTW",
+      "id": "G2-1774313280-DTW",
       "flightDisplay": "1484",
       "flightIata": "DL1484",
-      "gateNumber": 3,
-      "gateLabel": "G3",
+      "gateNumber": 2,
+      "gateLabel": "G2",
       "destination": "DTW",
       "podId": "pod-1",
       "podLabel": "Pod 1",
@@ -358,11 +330,11 @@
       "status": "On Time"
     },
     {
-      "id": "G2-1774318140-CMH",
+      "id": "G3-1774318140-CMH",
       "flightDisplay": "1356",
       "flightIata": "DL1356",
-      "gateNumber": 2,
-      "gateLabel": "G2",
+      "gateNumber": 3,
+      "gateLabel": "G3",
       "destination": "CMH",
       "podId": "pod-1",
       "podLabel": "Pod 1",
