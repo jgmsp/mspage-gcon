@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-23T20:23:53.186962Z",
+  "generatedAt": "2026-03-23T21:21:04.544346Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,34 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G19-1774297380-LAS",
-      "flightDisplay": "643",
-      "flightIata": "DL643",
-      "gateNumber": 19,
-      "gateLabel": "G19",
-      "destination": "LAS",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1523",
-      "timeDisplayFinance": "15:23",
-      "sortTimestamp": 1774297380,
-      "status": "Boarding"
-    },
-    {
-      "id": "G22-1774297680-RSW",
-      "flightDisplay": "308",
-      "flightIata": "DL308",
-      "gateNumber": 22,
-      "gateLabel": "G22",
-      "destination": "RSW",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1528",
-      "timeDisplayFinance": "15:28",
-      "sortTimestamp": 1774297680,
-      "status": "On Time"
-    },
-    {
       "id": "G15-1774302060-ATL",
       "flightDisplay": "1028",
       "flightIata": "DL1028",
@@ -89,7 +61,7 @@
       "timeDisplayOps": "1655",
       "timeDisplayFinance": "16:55",
       "sortTimestamp": 1774302900,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G3-1774307100-LHR",
