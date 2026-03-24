@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-24T07:41:42.823241Z",
+  "generatedAt": "2026-03-24T08:32:08.895056Z",
   "pods": [
     {
       "id": "pod-1",
@@ -190,14 +190,14 @@
       "status": "On Time"
     },
     {
-      "id": "G22-1774358700-MCO",
+      "id": "G4-1774358700-MCO",
       "flightDisplay": "1208",
       "flightIata": "DL1208",
-      "gateNumber": 22,
-      "gateLabel": "G22",
+      "gateNumber": 4,
+      "gateLabel": "G4",
       "destination": "MCO",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
+      "podId": "pod-1",
+      "podLabel": "Pod 1",
       "timeDisplayOps": "0825",
       "timeDisplayFinance": "08:25",
       "sortTimestamp": 1774358700,
@@ -218,12 +218,12 @@
       "status": "On Time"
     },
     {
-      "id": "G3-1774360500-MBJ",
-      "flightDisplay": "1915",
-      "flightIata": "DL1915",
+      "id": "G3-1774360500-CUN",
+      "flightDisplay": "1881",
+      "flightIata": "DL1881",
       "gateNumber": 3,
       "gateLabel": "G3",
-      "destination": "MBJ",
+      "destination": "CUN",
       "podId": "pod-1",
       "podLabel": "Pod 1",
       "timeDisplayOps": "0855",
@@ -232,14 +232,14 @@
       "status": "On Time"
     },
     {
-      "id": "G21-1774360500-CUN",
-      "flightDisplay": "1881",
-      "flightIata": "DL1881",
-      "gateNumber": 21,
-      "gateLabel": "G21",
-      "destination": "CUN",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
+      "id": "G3-1774360500-MBJ",
+      "flightDisplay": "1915",
+      "flightIata": "DL1915",
+      "gateNumber": 3,
+      "gateLabel": "G3",
+      "destination": "MBJ",
+      "podId": "pod-1",
+      "podLabel": "Pod 1",
       "timeDisplayOps": "0855",
       "timeDisplayFinance": "08:55",
       "sortTimestamp": 1774360500,
@@ -414,11 +414,11 @@
       "status": "On Time"
     },
     {
-      "id": "G6-1774369800-ICN",
+      "id": "G4-1774369800-ICN",
       "flightDisplay": "171",
       "flightIata": "DL171",
-      "gateNumber": 6,
-      "gateLabel": "G6",
+      "gateNumber": 4,
+      "gateLabel": "G4",
       "destination": "ICN",
       "podId": "pod-1",
       "podLabel": "Pod 1",
