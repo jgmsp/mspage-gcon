@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-24T21:22:44.638548Z",
+  "generatedAt": "2026-03-24T23:04:45.194584Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,48 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G6-1774387800-AMS",
-      "flightDisplay": "160",
-      "flightIata": "DL160",
-      "gateNumber": 6,
-      "gateLabel": "G6",
-      "destination": "AMS",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1630",
-      "timeDisplayFinance": "16:30",
-      "sortTimestamp": 1774387800,
-      "status": "On Time"
-    },
-    {
-      "id": "G15-1774388460-ATL",
-      "flightDisplay": "1028",
-      "flightIata": "DL1028",
-      "gateNumber": 15,
-      "gateLabel": "G15",
-      "destination": "ATL",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "1641",
-      "timeDisplayFinance": "16:41",
-      "sortTimestamp": 1774388460,
-      "status": "Boarding"
-    },
-    {
-      "id": "G10-1774389300-DTW",
-      "flightDisplay": "1476",
-      "flightIata": "DL1476",
-      "gateNumber": 10,
-      "gateLabel": "G10",
-      "destination": "DTW",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
-      "timeDisplayOps": "1655",
-      "timeDisplayFinance": "16:55",
-      "sortTimestamp": 1774389300,
-      "status": "On Time"
-    },
-    {
       "id": "G4-1774393500-LHR",
       "flightDisplay": "10",
       "flightIata": "DL10",
@@ -89,7 +47,7 @@
       "timeDisplayOps": "1805",
       "timeDisplayFinance": "18:05",
       "sortTimestamp": 1774393500,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G17-1774393800-SLC",
@@ -103,7 +61,7 @@
       "timeDisplayOps": "1810",
       "timeDisplayFinance": "18:10",
       "sortTimestamp": 1774393800,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G9-1774393920-ATL",
@@ -117,7 +75,7 @@
       "timeDisplayOps": "1812",
       "timeDisplayFinance": "18:12",
       "sortTimestamp": 1774393920,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G10-1774395360-DEN",
@@ -131,7 +89,7 @@
       "timeDisplayOps": "1836",
       "timeDisplayFinance": "18:36",
       "sortTimestamp": 1774395360,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G2-1774395600-PDX",
