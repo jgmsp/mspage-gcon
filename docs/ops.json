@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-24T20:24:36.520872Z",
+  "generatedAt": "2026-03-24T21:22:44.638548Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,20 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G22-1774384080-RSW",
-      "flightDisplay": "308",
-      "flightIata": "DL308",
-      "gateNumber": 22,
-      "gateLabel": "G22",
-      "destination": "RSW",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1528",
-      "timeDisplayFinance": "15:28",
-      "sortTimestamp": 1774384080,
-      "status": "On Time"
-    },
-    {
       "id": "G6-1774387800-AMS",
       "flightDisplay": "160",
       "flightIata": "DL160",
@@ -75,7 +61,7 @@
       "timeDisplayOps": "1641",
       "timeDisplayFinance": "16:41",
       "sortTimestamp": 1774388460,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G10-1774389300-DTW",
@@ -260,6 +246,20 @@
       "status": "On Time"
     },
     {
+      "id": "G17-1774402320-PHL",
+      "flightDisplay": "2703",
+      "flightIata": "DL2703",
+      "gateNumber": 17,
+      "gateLabel": "G17",
+      "destination": "PHL",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
+      "timeDisplayOps": "2032",
+      "timeDisplayFinance": "20:32",
+      "sortTimestamp": 1774402320,
+      "status": "On Time"
+    },
+    {
       "id": "G10-1774403100-BNA",
       "flightDisplay": "1144",
       "flightIata": "DL1144",
@@ -327,20 +327,6 @@
       "timeDisplayOps": "2140",
       "timeDisplayFinance": "21:40",
       "sortTimestamp": 1774406400,
-      "status": "On Time"
-    },
-    {
-      "id": "G17-1774407300-MSN",
-      "flightDisplay": "1599",
-      "flightIata": "DL1599",
-      "gateNumber": 17,
-      "gateLabel": "G17",
-      "destination": "MSN",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "2155",
-      "timeDisplayFinance": "21:55",
-      "sortTimestamp": 1774407300,
       "status": "On Time"
     }
   ]
