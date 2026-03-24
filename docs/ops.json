@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-24T17:39:40.705878Z",
+  "generatedAt": "2026-03-24T18:40:12.309084Z",
   "pods": [
     {
       "id": "pod-1",
@@ -35,48 +35,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G17-1774374600-MCO",
-      "flightDisplay": "2225",
-      "flightIata": "DL2225",
-      "gateNumber": 17,
-      "gateLabel": "G17",
-      "destination": "MCO",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1250",
-      "timeDisplayFinance": "12:50",
-      "sortTimestamp": 1774374600,
-      "status": "Boarding"
-    },
-    {
-      "id": "G18-1774374600-TPA",
-      "flightDisplay": "2264",
-      "flightIata": "DL2264",
-      "gateNumber": 18,
-      "gateLabel": "G18",
-      "destination": "TPA",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1250",
-      "timeDisplayFinance": "12:50",
-      "sortTimestamp": 1774374600,
-      "status": "On Time"
-    },
-    {
-      "id": "G2-1774375140-ATL",
-      "flightDisplay": "1048",
-      "flightIata": "DL1048",
-      "gateNumber": 2,
-      "gateLabel": "G2",
-      "destination": "ATL",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1259",
-      "timeDisplayFinance": "12:59",
-      "sortTimestamp": 1774375140,
-      "status": "On Time"
-    },
     {
       "id": "G14-1774382160-ATL",
       "flightDisplay": "1036",
