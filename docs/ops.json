@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-24T16:43:42.728685Z",
+  "generatedAt": "2026-03-24T17:39:40.705878Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,20 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G21-1774371120-HRL",
-      "flightDisplay": "1701",
-      "flightIata": "DL1701",
-      "gateNumber": 21,
-      "gateLabel": "G21",
-      "destination": "HRL",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1152",
-      "timeDisplayFinance": "11:52",
-      "sortTimestamp": 1774371120,
-      "status": "Boarding"
-    },
-    {
       "id": "G17-1774374600-MCO",
       "flightDisplay": "2225",
       "flightIata": "DL2225",
@@ -61,7 +47,7 @@
       "timeDisplayOps": "1250",
       "timeDisplayFinance": "12:50",
       "sortTimestamp": 1774374600,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G18-1774374600-TPA",
@@ -372,11 +358,11 @@
       "status": "On Time"
     },
     {
-      "id": "G9-1774403100-BNA",
+      "id": "G10-1774403100-BNA",
       "flightDisplay": "1144",
       "flightIata": "DL1144",
-      "gateNumber": 9,
-      "gateLabel": "G9",
+      "gateNumber": 10,
+      "gateLabel": "G10",
       "destination": "BNA",
       "podId": "pod-2",
       "podLabel": "Pod 2",
@@ -386,14 +372,14 @@
       "status": "On Time"
     },
     {
-      "id": "G10-1774404420-IND",
+      "id": "G2-1774404420-IND",
       "flightDisplay": "674",
       "flightIata": "DL674",
-      "gateNumber": 10,
-      "gateLabel": "G10",
+      "gateNumber": 2,
+      "gateLabel": "G2",
       "destination": "IND",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
+      "podId": "pod-1",
+      "podLabel": "Pod 1",
       "timeDisplayOps": "2107",
       "timeDisplayFinance": "21:07",
       "sortTimestamp": 1774404420,
