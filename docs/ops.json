@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-25T12:32:38.183370Z",
+  "generatedAt": "2026-03-25T14:04:52.023550Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,90 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G21-1774443600-ATL",
-      "flightDisplay": "1052",
-      "flightIata": "DL1052",
-      "gateNumber": 21,
-      "gateLabel": "G21",
-      "destination": "ATL",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0800",
-      "timeDisplayFinance": "08:00",
-      "sortTimestamp": 1774443600,
-      "status": "On Time"
-    },
-    {
-      "id": "G22-1774445040-FLL",
-      "flightDisplay": "1134",
-      "flightIata": "DL1134",
-      "gateNumber": 22,
-      "gateLabel": "G22",
-      "destination": "FLL",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0824",
-      "timeDisplayFinance": "08:24",
-      "sortTimestamp": 1774445040,
-      "status": "On Time"
-    },
-    {
-      "id": "G3-1774445100-MCO",
-      "flightDisplay": "1208",
-      "flightIata": "DL1208",
-      "gateNumber": 3,
-      "gateLabel": "G3",
-      "destination": "MCO",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "0825",
-      "timeDisplayFinance": "08:25",
-      "sortTimestamp": 1774445100,
-      "status": "On Time"
-    },
-    {
-      "id": "G20-1774446600-MSY",
-      "flightDisplay": "1621",
-      "flightIata": "DL1621",
-      "gateNumber": 20,
-      "gateLabel": "G20",
-      "destination": "MSY",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0850",
-      "timeDisplayFinance": "08:50",
-      "sortTimestamp": 1774446600,
-      "status": "On Time"
-    },
-    {
-      "id": "G15-1774446900-MBJ",
-      "flightDisplay": "1915",
-      "flightIata": "DL1915",
-      "gateNumber": 15,
-      "gateLabel": "G15",
-      "destination": "MBJ",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "0855",
-      "timeDisplayFinance": "08:55",
-      "sortTimestamp": 1774446900,
-      "status": "On Time"
-    },
-    {
-      "id": "G19-1774446900-RSW",
-      "flightDisplay": "2226",
-      "flightIata": "DL2226",
-      "gateNumber": 19,
-      "gateLabel": "G19",
-      "destination": "RSW",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0855",
-      "timeDisplayFinance": "08:55",
-      "sortTimestamp": 1774446900,
-      "status": "On Time"
-    },
-    {
       "id": "G1-1774447440-MEX",
       "flightDisplay": "611",
       "flightIata": "DL611",
@@ -131,7 +47,7 @@
       "timeDisplayOps": "0904",
       "timeDisplayFinance": "09:04",
       "sortTimestamp": 1774447440,
-      "status": "On Time"
+      "status": "Departed"
     },
     {
       "id": "G18-1774447560-SAN",
@@ -173,7 +89,7 @@
       "timeDisplayOps": "0917",
       "timeDisplayFinance": "09:17",
       "sortTimestamp": 1774448220,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G17-1774449300-TPA",
@@ -187,7 +103,7 @@
       "timeDisplayOps": "0935",
       "timeDisplayFinance": "09:35",
       "sortTimestamp": 1774449300,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G9-1774450800-SJD",
@@ -204,11 +120,11 @@
       "status": "On Time"
     },
     {
-      "id": "G2-1774451100-ATL",
+      "id": "G8-1774451100-ATL",
       "flightDisplay": "1046",
       "flightIata": "DL1046",
-      "gateNumber": 2,
-      "gateLabel": "G2",
+      "gateNumber": 8,
+      "gateLabel": "G8",
       "destination": "ATL",
       "podId": "pod-1",
       "podLabel": "Pod 1",
@@ -425,6 +341,20 @@
       "timeDisplayOps": "1528",
       "timeDisplayFinance": "15:28",
       "sortTimestamp": 1774470480,
+      "status": "On Time"
+    },
+    {
+      "id": "G17-1774472040-ANC",
+      "flightDisplay": "377",
+      "flightIata": "DL377",
+      "gateNumber": 17,
+      "gateLabel": "G17",
+      "destination": "ANC",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
+      "timeDisplayOps": "1554",
+      "timeDisplayFinance": "15:54",
+      "sortTimestamp": 1774472040,
       "status": "On Time"
     },
     {
