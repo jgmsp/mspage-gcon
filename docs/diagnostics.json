@@ -1,5 +1,5 @@
 {
-  "status": "healthy",
+  "status": "stale",
   "lastSuccessAt": "2026-03-25T00:02:07.787290Z",
   "staleAfterMinutes": 180
 }
