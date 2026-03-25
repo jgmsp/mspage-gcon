@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-25T06:43:20.693878Z",
+  "generatedAt": "2026-03-25T07:41:13.925449Z",
   "pods": [
     {
       "id": "pod-1",
@@ -187,20 +187,6 @@
       "timeDisplayOps": "0825",
       "timeDisplayFinance": "08:25",
       "sortTimestamp": 1774445100,
-      "status": "On Time"
-    },
-    {
-      "id": "G10-1774446600-MIA",
-      "flightDisplay": "2129",
-      "flightIata": "DL2129",
-      "gateNumber": 10,
-      "gateLabel": "G10",
-      "destination": "MIA",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
-      "timeDisplayOps": "0850",
-      "timeDisplayFinance": "08:50",
-      "sortTimestamp": 1774446600,
       "status": "On Time"
     },
     {
