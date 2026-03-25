@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-25T16:47:59.413350Z",
+  "generatedAt": "2026-03-25T17:44:24.504332Z",
   "pods": [
     {
       "id": "pod-1",
@@ -35,20 +35,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G22-1774459680-RSW",
-      "flightDisplay": "1186",
-      "flightIata": "DL1186",
-      "gateNumber": 22,
-      "gateLabel": "G22",
-      "destination": "RSW",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1228",
-      "timeDisplayFinance": "12:28",
-      "sortTimestamp": 1774459680,
-      "status": "On Time"
-    },
     {
       "id": "G6-1774461000-HND",
       "flightDisplay": "121",
@@ -89,7 +75,7 @@
       "timeDisplayOps": "1255",
       "timeDisplayFinance": "12:55",
       "sortTimestamp": 1774461300,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G2-1774461540-ATL",
@@ -103,7 +89,7 @@
       "timeDisplayOps": "1259",
       "timeDisplayFinance": "12:59",
       "sortTimestamp": 1774461540,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G21-1774462080-MIA",
@@ -117,7 +103,7 @@
       "timeDisplayOps": "1308",
       "timeDisplayFinance": "13:08",
       "sortTimestamp": 1774462080,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G14-1774468560-ATL",
@@ -260,11 +246,11 @@
       "status": "On Time"
     },
     {
-      "id": "G10-1774480320-ATL",
+      "id": "G9-1774480320-ATL",
       "flightDisplay": "1026",
       "flightIata": "DL1026",
-      "gateNumber": 10,
-      "gateLabel": "G10",
+      "gateNumber": 9,
+      "gateLabel": "G9",
       "destination": "ATL",
       "podId": "pod-2",
       "podLabel": "Pod 2",
@@ -302,11 +288,11 @@
       "status": "On Time"
     },
     {
-      "id": "G9-1774482660-SEA",
+      "id": "G10-1774482660-SEA",
       "flightDisplay": "881",
       "flightIata": "DL881",
-      "gateNumber": 9,
-      "gateLabel": "G9",
+      "gateNumber": 10,
+      "gateLabel": "G10",
       "destination": "SEA",
       "podId": "pod-2",
       "podLabel": "Pod 2",
@@ -327,6 +313,20 @@
       "timeDisplayOps": "1859",
       "timeDisplayFinance": "18:59",
       "sortTimestamp": 1774483140,
+      "status": "On Time"
+    },
+    {
+      "id": "G8-1774483800-SFO",
+      "flightDisplay": "756",
+      "flightIata": "DL756",
+      "gateNumber": 8,
+      "gateLabel": "G8",
+      "destination": "SFO",
+      "podId": "pod-1",
+      "podLabel": "Pod 1",
+      "timeDisplayOps": "1910",
+      "timeDisplayFinance": "19:10",
+      "sortTimestamp": 1774483800,
       "status": "On Time"
     },
     {
