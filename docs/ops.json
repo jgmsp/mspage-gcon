@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-25T10:33:40.600110Z",
+  "generatedAt": "2026-03-25T11:28:54.724734Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,34 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G15-1774436760-CUN",
-      "flightDisplay": "399",
-      "flightIata": "DL399",
-      "gateNumber": 15,
-      "gateLabel": "G15",
-      "destination": "CUN",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "0606",
-      "timeDisplayFinance": "06:06",
-      "sortTimestamp": 1774436760,
-      "status": "Boarding"
-    },
-    {
-      "id": "G18-1774437000-TPA",
-      "flightDisplay": "2301",
-      "flightIata": "DL2301",
-      "gateNumber": 18,
-      "gateLabel": "G18",
-      "destination": "TPA",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0610",
-      "timeDisplayFinance": "06:10",
-      "sortTimestamp": 1774437000,
-      "status": "Boarding"
-    },
-    {
       "id": "G10-1774439700-LAS",
       "flightDisplay": "2261",
       "flightIata": "DL2261",
@@ -89,7 +61,7 @@
       "timeDisplayOps": "0700",
       "timeDisplayFinance": "07:00",
       "sortTimestamp": 1774440000,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G8-1774440300-BZE",
@@ -103,7 +75,7 @@
       "timeDisplayOps": "0705",
       "timeDisplayFinance": "07:05",
       "sortTimestamp": 1774440300,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G2-1774440600-SJD",
@@ -313,20 +285,6 @@
       "timeDisplayOps": "1005",
       "timeDisplayFinance": "10:05",
       "sortTimestamp": 1774451100,
-      "status": "On Time"
-    },
-    {
-      "id": "G8-1774452180-PBI",
-      "flightDisplay": "1308",
-      "flightIata": "DL1308",
-      "gateNumber": 8,
-      "gateLabel": "G8",
-      "destination": "PBI",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1023",
-      "timeDisplayFinance": "10:23",
-      "sortTimestamp": 1774452180,
       "status": "On Time"
     },
     {
@@ -610,14 +568,14 @@
       "status": "On Time"
     },
     {
-      "id": "G19-1774480800-TPA",
+      "id": "G15-1774480800-TPA",
       "flightDisplay": "2385",
       "flightIata": "DL2385",
-      "gateNumber": 19,
-      "gateLabel": "G19",
+      "gateNumber": 15,
+      "gateLabel": "G15",
       "destination": "TPA",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
+      "podId": "pod-4",
+      "podLabel": "Pod 4",
       "timeDisplayOps": "1820",
       "timeDisplayFinance": "18:20",
       "sortTimestamp": 1774480800,
