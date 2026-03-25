@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-25T19:34:30.738600Z",
+  "generatedAt": "2026-03-25T20:22:34.521594Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,34 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G14-1774468560-ATL",
-      "flightDisplay": "1036",
-      "flightIata": "DL1036",
-      "gateNumber": 14,
-      "gateLabel": "G14",
-      "destination": "ATL",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "1456",
-      "timeDisplayFinance": "14:56",
-      "sortTimestamp": 1774468560,
-      "status": "On Time"
-    },
-    {
-      "id": "G21-1774468680-LAX",
-      "flightDisplay": "2114",
-      "flightIata": "DL2114",
-      "gateNumber": 21,
-      "gateLabel": "G21",
-      "destination": "LAX",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1458",
-      "timeDisplayFinance": "14:58",
-      "sortTimestamp": 1774468680,
-      "status": "On Time"
-    },
-    {
       "id": "G19-1774470180-LAS",
       "flightDisplay": "643",
       "flightIata": "DL643",
@@ -75,7 +47,7 @@
       "timeDisplayOps": "1523",
       "timeDisplayFinance": "15:23",
       "sortTimestamp": 1774470180,
-      "status": "On Time"
+      "status": "Departed"
     },
     {
       "id": "G22-1774470480-RSW",
@@ -89,7 +61,7 @@
       "timeDisplayOps": "1528",
       "timeDisplayFinance": "15:28",
       "sortTimestamp": 1774470480,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G17-1774472040-ANC",
@@ -103,7 +75,7 @@
       "timeDisplayOps": "1554",
       "timeDisplayFinance": "15:54",
       "sortTimestamp": 1774472040,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G14-1774474860-ATL",
