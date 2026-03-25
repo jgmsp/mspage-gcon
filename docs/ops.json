@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-25T20:22:34.521594Z",
+  "generatedAt": "2026-03-25T21:21:22.865643Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,48 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G19-1774470180-LAS",
-      "flightDisplay": "643",
-      "flightIata": "DL643",
-      "gateNumber": 19,
-      "gateLabel": "G19",
-      "destination": "LAS",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1523",
-      "timeDisplayFinance": "15:23",
-      "sortTimestamp": 1774470180,
-      "status": "Departed"
-    },
-    {
-      "id": "G22-1774470480-RSW",
-      "flightDisplay": "308",
-      "flightIata": "DL308",
-      "gateNumber": 22,
-      "gateLabel": "G22",
-      "destination": "RSW",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1528",
-      "timeDisplayFinance": "15:28",
-      "sortTimestamp": 1774470480,
-      "status": "Boarding"
-    },
-    {
-      "id": "G17-1774472040-ANC",
-      "flightDisplay": "377",
-      "flightIata": "DL377",
-      "gateNumber": 17,
-      "gateLabel": "G17",
-      "destination": "ANC",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1554",
-      "timeDisplayFinance": "15:54",
-      "sortTimestamp": 1774472040,
-      "status": "Boarding"
-    },
-    {
       "id": "G14-1774474860-ATL",
       "flightDisplay": "1028",
       "flightIata": "DL1028",
@@ -103,7 +61,7 @@
       "timeDisplayOps": "1655",
       "timeDisplayFinance": "16:55",
       "sortTimestamp": 1774475700,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G4-1774477500-CDG",
