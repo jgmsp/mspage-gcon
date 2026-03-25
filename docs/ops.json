@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-25T11:28:54.724734Z",
+  "generatedAt": "2026-03-25T12:32:38.183370Z",
   "pods": [
     {
       "id": "pod-1",
@@ -35,76 +35,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G10-1774439700-LAS",
-      "flightDisplay": "2261",
-      "flightIata": "DL2261",
-      "gateNumber": 10,
-      "gateLabel": "G10",
-      "destination": "LAS",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
-      "timeDisplayOps": "0655",
-      "timeDisplayFinance": "06:55",
-      "sortTimestamp": 1774439700,
-      "status": "On Time"
-    },
-    {
-      "id": "G17-1774440000-ATL",
-      "flightDisplay": "1039",
-      "flightIata": "DL1039",
-      "gateNumber": 17,
-      "gateLabel": "G17",
-      "destination": "ATL",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0700",
-      "timeDisplayFinance": "07:00",
-      "sortTimestamp": 1774440000,
-      "status": "Boarding"
-    },
-    {
-      "id": "G8-1774440300-BZE",
-      "flightDisplay": "1940",
-      "flightIata": "DL1940",
-      "gateNumber": 8,
-      "gateLabel": "G8",
-      "destination": "BZE",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "0705",
-      "timeDisplayFinance": "07:05",
-      "sortTimestamp": 1774440300,
-      "status": "Boarding"
-    },
-    {
-      "id": "G2-1774440600-SJD",
-      "flightDisplay": "1924",
-      "flightIata": "DL1924",
-      "gateNumber": 2,
-      "gateLabel": "G2",
-      "destination": "SJD",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "0710",
-      "timeDisplayFinance": "07:10",
-      "sortTimestamp": 1774440600,
-      "status": "On Time"
-    },
-    {
-      "id": "G14-1774440840-BNA",
-      "flightDisplay": "2724",
-      "flightIata": "DL2724",
-      "gateNumber": 14,
-      "gateLabel": "G14",
-      "destination": "BNA",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "0714",
-      "timeDisplayFinance": "07:14",
-      "sortTimestamp": 1774440840,
-      "status": "On Time"
-    },
     {
       "id": "G21-1774443600-ATL",
       "flightDisplay": "1052",
@@ -355,6 +285,20 @@
       "timeDisplayOps": "1136",
       "timeDisplayFinance": "11:36",
       "sortTimestamp": 1774456560,
+      "status": "On Time"
+    },
+    {
+      "id": "G22-1774459680-RSW",
+      "flightDisplay": "1186",
+      "flightIata": "DL1186",
+      "gateNumber": 22,
+      "gateLabel": "G22",
+      "destination": "RSW",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
+      "timeDisplayOps": "1228",
+      "timeDisplayFinance": "12:28",
+      "sortTimestamp": 1774459680,
       "status": "On Time"
     },
     {
@@ -680,11 +624,11 @@
       "status": "On Time"
     },
     {
-      "id": "G10-1774489500-BNA",
+      "id": "G9-1774489500-BNA",
       "flightDisplay": "1144",
       "flightIata": "DL1144",
-      "gateNumber": 10,
-      "gateLabel": "G10",
+      "gateNumber": 9,
+      "gateLabel": "G9",
       "destination": "BNA",
       "podId": "pod-2",
       "podLabel": "Pod 2",
@@ -708,14 +652,14 @@
       "status": "On Time"
     },
     {
-      "id": "G2-1774490820-IND",
+      "id": "G10-1774490820-IND",
       "flightDisplay": "674",
       "flightIata": "DL674",
-      "gateNumber": 2,
-      "gateLabel": "G2",
+      "gateNumber": 10,
+      "gateLabel": "G10",
       "destination": "IND",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
+      "podId": "pod-2",
+      "podLabel": "Pod 2",
       "timeDisplayOps": "2107",
       "timeDisplayFinance": "21:07",
       "sortTimestamp": 1774490820,
@@ -736,11 +680,11 @@
       "status": "On Time"
     },
     {
-      "id": "G8-1774491600-DFW",
+      "id": "G2-1774491600-DFW",
       "flightDisplay": "2967",
       "flightIata": "DL2967",
-      "gateNumber": 8,
-      "gateLabel": "G8",
+      "gateNumber": 2,
+      "gateLabel": "G2",
       "destination": "DFW",
       "podId": "pod-1",
       "podLabel": "Pod 1",
