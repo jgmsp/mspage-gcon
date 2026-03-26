@@ -23,28 +23,8 @@ jobs:
       - name: Run tests
         run: python3 -m unittest discover -s tests -t .
 
-      - name: Install Playwright for live MSP-POG
-        if: ${{ secrets.NEXGENPOG_USERNAME != '' && secrets.NEXGENPOG_PASSWORD != '' }}
-        run: |
-          python3 -m pip install playwright pypdf
-          python3 -m playwright install chromium
-
-      - name: Run live MSP-POG smoke
-        if: ${{ secrets.NEXGENPOG_USERNAME != '' && secrets.NEXGENPOG_PASSWORD != '' }}
-        env:
-          NEXGENPOG_USERNAME: ${{ secrets.NEXGENPOG_USERNAME }}
-          NEXGENPOG_PASSWORD: ${{ secrets.NEXGENPOG_PASSWORD }}
-        run: python3 -m unittest tests.test_pog.PogPipelineTests.test_live_smoke_mode_can_generate_a_manifest
-
       - name: Generate latest snapshot
         run: python3 -m mspage_gcon --output-dir docs --pod-config config/pods.json
-
-      - name: Generate MSP-POG viewer
-        env:
-          NEXGENPOG_USERNAME: ${{ secrets.NEXGENPOG_USERNAME }}
-          NEXGENPOG_PASSWORD: ${{ secrets.NEXGENPOG_PASSWORD }}
-          NEXGENPOG_BASE_URL: ${{ secrets.NEXGENPOG_BASE_URL }}
-        run: python3 -m mspage_gcon.pog_main --output-dir docs/pog --config config/pog_sources.json --mode auto
 
       - name: Commit generated files
         run: |
@@ -58,22 +38,3 @@ jobs:
           git add docs
           git commit -m "Update MSP G-concourse snapshot"
           git push
-
-      - name: Email stats workbook
-        if: ${{ success() && github.event_name == 'schedule' && hashFiles('docs/stats.xlsx') != '' && secrets.MSP_SMTP_HOST != '' && secrets.MSP_SMTP_USERNAME != '' && secrets.MSP_SMTP_PASSWORD != '' && secrets.MSP_EMAIL_FROM != '' && secrets.MSP_EMAIL_TO != '' }}
-        env:
-          MSP_SMTP_HOST: ${{ secrets.MSP_SMTP_HOST }}
-          MSP_SMTP_PORT: ${{ secrets.MSP_SMTP_PORT }}
-          MSP_SMTP_USERNAME: ${{ secrets.MSP_SMTP_USERNAME }}
-          MSP_SMTP_PASSWORD: ${{ secrets.MSP_SMTP_PASSWORD }}
-          MSP_SMTP_USE_SSL: ${{ secrets.MSP_SMTP_USE_SSL }}
-          MSP_EMAIL_FROM: ${{ secrets.MSP_EMAIL_FROM }}
-          MSP_EMAIL_TO: ${{ secrets.MSP_EMAIL_TO }}
-          MSP_EMAIL_SUBJECT_PREFIX: ${{ secrets.MSP_EMAIL_SUBJECT_PREFIX }}
-        run: |
-          if [ "$(TZ=America/Chicago date +%H:%M)" != "23:50" ]; then
-            echo "Skipping stats email outside the Chicago 11:50 PM end-of-day run."
-            exit 0
-          fi
-
-          python3 -m mspage_gcon.email_stats --attachment docs/stats.xlsx --stats docs/stats.json

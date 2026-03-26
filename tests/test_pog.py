@@ -575,12 +575,12 @@ class PogPipelineTests(unittest.TestCase):
             self.assertTrue((Path(temp_dir) / "diagnostics.json").exists())
             self.assertEqual(read_pog_last_success_at(Path(temp_dir)), datetime.fromisoformat(manifest["board"]["generatedAt"].replace("Z", "+00:00")))
 
-    def test_publish_workflow_runs_pog_generator(self) -> None:
+    def test_publish_workflow_stays_focused_on_msp_snapshot(self) -> None:
         workflow = (ROOT / ".github" / "workflows" / "publish.yml").read_text(encoding="utf-8")
 
-        self.assertIn("python3 -m mspage_gcon.pog_main", workflow)
-        self.assertIn("--mode auto", workflow)
-        self.assertIn("Install Playwright for live MSP-POG", workflow)
+        self.assertIn("python3 -m mspage_gcon --output-dir docs --pod-config config/pods.json", workflow)
+        self.assertNotIn("python3 -m mspage_gcon.pog_main", workflow)
+        self.assertNotIn("Install Playwright for live MSP-POG", workflow)
 
     def test_resolve_pog_publish_mode_prefers_live_when_creds_present(self) -> None:
         sources = [
