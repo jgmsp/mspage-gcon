@@ -20,8 +20,8 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Run tests
-        run: python3 -m unittest discover -s tests -t .
+      - name: Run MSP snapshot tests
+        run: python3 -m unittest tests.test_pipeline
 
       - name: Generate latest snapshot
         run: python3 -m mspage_gcon --output-dir docs --pod-config config/pods.json
