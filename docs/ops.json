@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-26T07:48:13.643522Z",
+  "generatedAt": "2026-03-26T08:35:25.809222Z",
   "pods": [
     {
       "id": "pod-1",
@@ -330,6 +330,20 @@
       "status": "On Time"
     },
     {
+      "id": "G4-1774537200-PHX",
+      "flightDisplay": "2208",
+      "flightIata": "DL2208",
+      "gateNumber": 4,
+      "gateLabel": "G4",
+      "destination": "PHX",
+      "podId": "pod-1",
+      "podLabel": "Pod 1",
+      "timeDisplayOps": "1000",
+      "timeDisplayFinance": "10:00",
+      "sortTimestamp": 1774537200,
+      "status": "On Time"
+    },
+    {
       "id": "G9-1774537200-SJD",
       "flightDisplay": "1826",
       "flightIata": "DL1826",
@@ -400,11 +414,11 @@
       "status": "On Time"
     },
     {
-      "id": "G4-1774542600-ICN",
+      "id": "G6-1774542600-ICN",
       "flightDisplay": "171",
       "flightIata": "DL171",
-      "gateNumber": 4,
-      "gateLabel": "G4",
+      "gateNumber": 6,
+      "gateLabel": "G6",
       "destination": "ICN",
       "podId": "pod-1",
       "podLabel": "Pod 1",
@@ -442,11 +456,11 @@
       "status": "On Time"
     },
     {
-      "id": "G6-1774547400-HND",
+      "id": "G8-1774547400-HND",
       "flightDisplay": "121",
       "flightIata": "DL121",
-      "gateNumber": 6,
-      "gateLabel": "G6",
+      "gateNumber": 8,
+      "gateLabel": "G8",
       "destination": "HND",
       "podId": "pod-1",
       "podLabel": "Pod 1",
