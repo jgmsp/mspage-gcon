@@ -4,10 +4,16 @@ const state = {
   diagnostics: null,
   activeFilter: "all",
   activeTheme: readStorage("mspage-gcon-theme") || "light",
+  showNextDay: readStorage("mspage-gcon-show-next-day") === "true",
+  opsStatusExpanded: readStorage("mspage-gcon-status-expanded") === "true",
   lastView: null,
   diffOpen: false,
   diffLoading: false,
   diffResult: null,
+  financeDiffIssueFilter: "all",
+  financeDiffTimeFilter: "all-day",
+  financeDiffStartTime: "04:00",
+  financeDiffEndTime: "23:59",
   lastDiffCueState: null,
 };
 
@@ -32,6 +38,7 @@ const visibleCount = document.getElementById("visible-count");
 const emptyState = document.getElementById("empty-state");
 const boardTitle = document.getElementById("board-title");
 const boardNote = document.getElementById("board-note");
+const boardControls = document.getElementById("board-controls");
 const financePlain = document.getElementById("finance-plain");
 const financeDiff = document.getElementById("finance-diff");
 const financeDiffTitle = document.getElementById("finance-diff-title");
@@ -67,8 +74,29 @@ const THEME_ICONS = {
     '<svg viewBox="0 0 24 24" role="presentation" focusable="false"><path d="M12.2 3.8c1.1 2 1.2 3.4.2 5.1c1.9-.5 3.4-1.8 4.2-3.8c2.4 2.2 3.7 4.8 3.7 7.6c0 4.2-3.2 7.4-7.7 7.4c-4.8 0-8-3.4-8-7.8c0-3 1.4-5.7 4.2-8.2c.1 2 .8 3.4 2 4.5c1-1.2 1.4-2.8 1.4-4.8Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/></svg>',
 };
 
+const ICONS = {
+  calendar:
+    '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 2.8v2.4M17 2.8v2.4M3.8 8.2h16.4M5.2 5.4h13.6a1.4 1.4 0 0 1 1.4 1.4v11.8a1.4 1.4 0 0 1-1.4 1.4H5.2a1.4 1.4 0 0 1-1.4-1.4V6.8a1.4 1.4 0 0 1 1.4-1.4Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/></svg>',
+  status:
+    '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="7" cy="12" r="2.1" fill="currentColor"/><path d="M12 8.2h7.2M12 12h7.2M12 15.8h7.2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/></svg>',
+};
+
 const OPS_REFRESH_MINUTE = 50;
 const FINANCE_EVENT_MINUTE = 50;
+const FINANCE_DIFF_ISSUE_FILTERS = [
+  { id: "all", label: "All" },
+  { id: "departed", label: "Departed" },
+  { id: "canceled", label: "Canceled" },
+  { id: "delayed", label: "Delayed" },
+  { id: "gate-change", label: "Gate Change" },
+  { id: "time-change", label: "Time Change" },
+];
+const FINANCE_DIFF_TIME_FILTERS = [
+  { id: "all-day", label: "All day" },
+  { id: "am", label: "AM" },
+  { id: "pm", label: "PM" },
+  { id: "custom", label: "Custom" },
+];
 const FINANCE_COMPARE_WINDOWS = [
   { start: 5 * 60 + FINANCE_EVENT_MINUTE, end: 9 * 60 + FINANCE_EVENT_MINUTE, label: "AM Review Window" },
   { start: 12 * 60 + FINANCE_EVENT_MINUTE, end: 15 * 60 + FINANCE_EVENT_MINUTE, label: "PM Review Window" },
@@ -116,6 +144,7 @@ function render() {
   renderMeta();
   renderPodFilters();
   renderHead();
+  renderBoardControls();
   renderRows();
   renderFinanceTools();
   renderStatusFooter();
@@ -290,8 +319,16 @@ function renderFinancePlainText() {
   financePlain.classList.remove("hidden");
   if (state.diffOpen && !state.diffLoading && state.diffResult?.hasChanges) {
     financePlain.classList.add("is-diff");
-    const nodes = buildFinanceLayeredNodes(state.diffResult.records);
-    financePlain.replaceChildren(...nodes);
+    const filteredRecords = filterFinanceDiffRecords(state.diffResult.records);
+    if (filteredRecords.length) {
+      const nodes = buildFinanceLayeredNodes({
+        headerLine: state.diffResult.headerLine,
+        records: filteredRecords,
+      });
+      financePlain.replaceChildren(...nodes);
+    } else {
+      financePlain.textContent = "";
+    }
   } else {
     financePlain.classList.remove("is-diff");
     if (officialEntries.length) {
@@ -305,6 +342,56 @@ function renderFinancePlainText() {
 
 function renderFinanceTools() {
   heroToolbar?.classList.toggle("finance-toolbar", isFinanceView() && isFinanceCompareAvailable());
+}
+
+function renderBoardControls() {
+  boardControls?.replaceChildren();
+  if (isFinanceView()) {
+    return;
+  }
+
+  const nextDayButton = buildControlChip({
+    icon: ICONS.calendar,
+    label: "Tomorrow",
+    active: state.showNextDay,
+    onClick: () => {
+      state.showNextDay = !state.showNextDay;
+      writeStorage("mspage-gcon-show-next-day", String(state.showNextDay));
+      render();
+    },
+  });
+
+  const statusButton = buildControlChip({
+    icon: ICONS.status,
+    label: "Status",
+    active: state.opsStatusExpanded,
+    onClick: () => {
+      state.opsStatusExpanded = !state.opsStatusExpanded;
+      writeStorage("mspage-gcon-status-expanded", String(state.opsStatusExpanded));
+      render();
+    },
+  });
+
+  boardControls?.append(nextDayButton, statusButton);
+}
+
+function buildControlChip({ icon, label, active, onClick }) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = active ? "compare-button subtle control-chip is-active" : "compare-button subtle control-chip";
+  button.setAttribute("aria-pressed", active ? "true" : "false");
+
+  const iconWrap = document.createElement("span");
+  iconWrap.className = "control-chip-icon";
+  iconWrap.innerHTML = icon;
+
+  const text = document.createElement("span");
+  text.className = "control-chip-label";
+  text.textContent = label;
+
+  button.append(iconWrap, text);
+  button.addEventListener("click", onClick);
+  return button;
 }
 
 async function runFinanceDiff() {
@@ -378,7 +465,7 @@ function createFinanceSubpill() {
 }
 
 function renderFinanceDiff() {
-  if (!state.diffOpen || (state.diffResult?.hasChanges && !state.diffResult?.error)) {
+  if (!state.diffOpen) {
     financeDiff.classList.add("hidden");
     return;
   }
@@ -395,10 +482,243 @@ function renderFinanceDiff() {
 
   financeDiffTitle.textContent = result.title;
   financeDiffMeta.textContent = result.meta || "";
-  financeDiffSummary.replaceChildren();
+  financeDiffSummary.replaceChildren(buildFinanceDiffFilters());
   financeDiffList.replaceChildren();
+  financeDiffList.classList.add("hidden");
 
   financeDiff.classList.remove("hidden");
+}
+
+function buildFinanceDiffFilters() {
+  const wrapper = document.createElement("div");
+  wrapper.className = "finance-diff-filters";
+  wrapper.append(
+    buildFinanceDiffFilterGroup("Issue", FINANCE_DIFF_ISSUE_FILTERS, state.financeDiffIssueFilter, (id) => {
+      state.financeDiffIssueFilter = id;
+      render();
+    }),
+    buildFinanceDiffFilterGroup("Window", FINANCE_DIFF_TIME_FILTERS, state.financeDiffTimeFilter, (id) => {
+      state.financeDiffTimeFilter = id;
+      render();
+    })
+  );
+
+  if (state.financeDiffTimeFilter === "custom") {
+    wrapper.appendChild(buildFinanceCustomRangeControls());
+  }
+
+  return wrapper;
+}
+
+function buildFinanceDiffFilterGroup(label, options, activeId, onSelect) {
+  const group = document.createElement("div");
+  group.className = "finance-diff-filter-group";
+
+  const title = document.createElement("span");
+  title.className = "finance-diff-filter-label";
+  title.textContent = label;
+
+  const chips = document.createElement("div");
+  chips.className = "finance-diff-filter-chips";
+  options.forEach((option) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = option.id === activeId ? "pill finance-diff-chip active" : "pill finance-diff-chip";
+    button.textContent = option.label;
+    button.setAttribute("aria-pressed", option.id === activeId ? "true" : "false");
+    button.addEventListener("click", () => onSelect(option.id));
+    chips.appendChild(button);
+  });
+
+  group.append(title, chips);
+  return group;
+}
+
+function buildFinanceCustomRangeControls() {
+  const wrap = document.createElement("div");
+  wrap.className = "finance-custom-range";
+
+  const start = document.createElement("label");
+  start.className = "finance-custom-range-field";
+  start.append("From ", buildFinanceTimeInput("start", state.financeDiffStartTime));
+
+  const end = document.createElement("label");
+  end.className = "finance-custom-range-field";
+  end.append("To ", buildFinanceTimeInput("end", state.financeDiffEndTime));
+
+  wrap.append(start, end);
+  return wrap;
+}
+
+function buildFinanceTimeInput(kind, value) {
+  const input = document.createElement("input");
+  input.type = "time";
+  input.className = "finance-time-input";
+  input.value = value;
+  input.addEventListener("input", () => {
+    if (kind === "start") {
+      state.financeDiffStartTime = input.value || "04:00";
+    } else {
+      state.financeDiffEndTime = input.value || "23:59";
+    }
+    render();
+  });
+  return input;
+}
+
+function buildFinanceDiffStatus(result) {
+  const filtered = filterFinanceDiffRecords(result.records || []);
+  const text = document.createElement("p");
+  text.className = "finance-diff-status";
+
+  if (state.diffLoading) {
+    text.textContent = "Checking the current flights run...";
+    return text;
+  }
+
+  if (result.error) {
+    text.textContent = result.meta || "Unable to compare right now.";
+    return text;
+  }
+
+  if (!result.hasChanges) {
+    text.textContent = "Official finance snapshot matches the recent flights run.";
+    return text;
+  }
+
+  if (!filtered.length) {
+    text.textContent = "No active issues in current filter.";
+    return text;
+  }
+
+  const counts = summarizeFinanceDiffRecords(filtered);
+  const parts = [];
+  if (counts["gate-change"]) {
+    parts.push(`Gate change ${counts["gate-change"]}`);
+  }
+  if (counts["time-change"]) {
+    parts.push(`Time change ${counts["time-change"]}`);
+  }
+  if (counts.delayed) {
+    parts.push(`Delayed ${counts.delayed}`);
+  }
+  if (counts.new) {
+    parts.push(`New ${counts.new}`);
+  }
+  if (counts.departed) {
+    parts.push(`Departed ${counts.departed}`);
+  }
+  if (counts.canceled) {
+    parts.push(`Canceled ${counts.canceled}`);
+  }
+  if (counts.removed) {
+    parts.push(`Removed ${counts.removed}`);
+  }
+  text.textContent = parts.join(" · ");
+  return text;
+}
+
+function filterFinanceDiffRecords(records) {
+  return (records || []).filter((record) => matchesFinanceIssueFilter(record) && matchesFinanceTimeFilter(record));
+}
+
+function matchesFinanceIssueFilter(record) {
+  const categories = record.categories || [];
+  if (state.financeDiffIssueFilter === "all") {
+    return categories.length > 0;
+  }
+  return categories.includes(state.financeDiffIssueFilter);
+}
+
+function matchesFinanceTimeFilter(record) {
+  const minutes = record.scheduledMinutes;
+  if (minutes == null) {
+    return true;
+  }
+  if (state.financeDiffTimeFilter === "all-day") {
+    return true;
+  }
+  if (state.financeDiffTimeFilter === "am") {
+    return minutes >= 4 * 60 && minutes < 14 * 60;
+  }
+  if (state.financeDiffTimeFilter === "pm") {
+    return minutes >= 14 * 60;
+  }
+  if (state.financeDiffTimeFilter === "custom") {
+    const start = parseFinanceMinutes(state.financeDiffStartTime) ?? 0;
+    const end = parseFinanceMinutes(state.financeDiffEndTime) ?? 23 * 60 + 59;
+    if (start <= end) {
+      return minutes >= start && minutes <= end;
+    }
+    return minutes >= start || minutes <= end;
+  }
+  return true;
+}
+
+function summarizeFinanceDiffRecords(records) {
+  const counts = {
+    "gate-change": 0,
+    "time-change": 0,
+    delayed: 0,
+    departed: 0,
+    canceled: 0,
+    removed: 0,
+    new: 0,
+  };
+
+  records.forEach((record) => {
+    (record.categories || []).forEach((category) => {
+      if (counts[category] != null) {
+        counts[category] += 1;
+      }
+    });
+  });
+  return counts;
+}
+
+function describeFinanceDiffStatus(result) {
+  const filtered = filterFinanceDiffRecords(result?.records || []);
+
+  if (state.diffLoading) {
+    return "Checking current flights run";
+  }
+
+  if (result?.error) {
+    return "Compare unavailable";
+  }
+
+  if (!result?.hasChanges) {
+    return "No changes detected";
+  }
+
+  if (!filtered.length) {
+    return "No active issues";
+  }
+
+  const counts = summarizeFinanceDiffRecords(filtered);
+  const parts = [];
+  if (counts["gate-change"]) {
+    parts.push(`Gate change ${counts["gate-change"]}`);
+  }
+  if (counts["time-change"]) {
+    parts.push(`Time change ${counts["time-change"]}`);
+  }
+  if (counts.delayed) {
+    parts.push(`Delayed ${counts.delayed}`);
+  }
+  if (counts.new) {
+    parts.push(`New ${counts.new}`);
+  }
+  if (counts.departed) {
+    parts.push(`Departed ${counts.departed}`);
+  }
+  if (counts.canceled) {
+    parts.push(`Canceled ${counts.canceled}`);
+  }
+  if (counts.removed) {
+    parts.push(`Removed ${counts.removed}`);
+  }
+  return parts.join(" · ");
 }
 
 function buildDiffResult(diff, officialEntries, candidateEntries, generatedAt) {
@@ -406,7 +726,8 @@ function buildDiffResult(diff, officialEntries, candidateEntries, generatedAt) {
     ? `Recent flights run from ${formatChicagoTime(generatedAt)}`
     : "Recent flights run loaded for comparison.";
 
-  const hasChanges = diff.changed.length + diff.added.length + diff.removed.length > 0;
+  const layered = buildFinanceDiffRecords(officialEntries, candidateEntries, generatedAt);
+  const hasChanges = layered.records.length > 0;
 
   if (!hasChanges) {
     return {
@@ -414,6 +735,7 @@ function buildDiffResult(diff, officialEntries, candidateEntries, generatedAt) {
       meta,
       summary: [],
       records: [],
+      headerLine: layered.headerLine,
       hasChanges: false,
     };
   }
@@ -421,8 +743,9 @@ function buildDiffResult(diff, officialEntries, candidateEntries, generatedAt) {
   return {
     title: "Differences found",
     meta,
-    summary: [],
-    records: buildFinanceDiffRecords(officialEntries, candidateEntries),
+    summary: layered.summary,
+    records: layered.records,
+    headerLine: layered.headerLine,
     hasChanges: true,
   };
 }
@@ -500,11 +823,11 @@ function buildFinanceOverlayLineNode(item) {
   return row;
 }
 
-function buildFinanceDiffRecords(officialEntries, candidateEntries) {
-  const widths = measureFinanceWidths([...officialEntries, ...candidateEntries]);
+function buildFinanceDiffRecords(officialEntries, candidateEntries, generatedAt) {
   const officialMap = new Map(keyFinanceEntries(officialEntries).map((entry) => [entry.key, entry]));
   const candidateMap = new Map(keyFinanceEntries(candidateEntries).map((entry) => [entry.key, entry]));
   const records = [];
+  const displayEntries = [];
   const keys = new Set([...officialMap.keys(), ...candidateMap.keys()]);
 
   for (const key of keys) {
@@ -512,48 +835,40 @@ function buildFinanceDiffRecords(officialEntries, candidateEntries) {
     const candidate = candidateMap.get(key);
 
     if (official && candidate) {
-      if (sameFinanceEntry(official, candidate)) {
-        records.push({
-          sortKey: financeEntrySortKey(candidate),
-          baseLine: formatFinanceLine(candidate, widths),
-          overlays: [],
-        });
+      const presentRecord = classifyPresentFinanceRecord(official, candidate);
+      if (!presentRecord) {
         continue;
       }
-
-      records.push({
-        sortKey: [financeEntrySortKey(official), financeEntrySortKey(candidate)].sort()[0],
-        baseLine: formatFinanceLine(official, widths),
-        overlays: [
-          { kind: "removed", line: formatFinanceLine(official, widths) },
-          { kind: "added", line: formatFinanceLine(candidate, widths) },
-        ],
-      });
+      displayEntries.push(...presentRecord.displayEntries);
+      records.push(presentRecord.record);
       continue;
     }
 
     if (candidate) {
-      records.push({
-        sortKey: financeEntrySortKey(candidate),
-        baseLine: "",
-        overlays: [{ kind: "added", line: formatFinanceLine(candidate, widths) }],
-      });
+      const addedRecord = classifyAddedFinanceRecord(candidate);
+      displayEntries.push(...addedRecord.displayEntries);
+      records.push(addedRecord.record);
       continue;
     }
 
     if (official) {
-      records.push({
-        sortKey: financeEntrySortKey(official),
-        baseLine: formatFinanceLine(official, widths),
-        overlays: [{ kind: "removed", line: formatFinanceLine(official, widths) }],
-      });
+      const missingRecord = classifyMissingFinanceRecord(official, generatedAt);
+      displayEntries.push(...missingRecord.displayEntries);
+      records.push(missingRecord.record);
     }
   }
 
   records.sort((left, right) => left.sortKey.localeCompare(right.sortKey));
+  const widths = measureFinanceDiffWidths(displayEntries);
+  records.forEach((record) => {
+    record.overlays.forEach((overlay) => {
+      overlay.line = formatFinanceDiffLine(overlay.display, widths, overlay.reason);
+    });
+  });
 
   return {
-    headerLine: formatFinanceHeader(widths),
+    headerLine: formatFinanceDiffHeader(widths),
+    summary: summarizeFinanceDiffRecords(records),
     records,
   };
 }
@@ -571,8 +886,29 @@ function measureFinanceWidths(entries) {
   return widths;
 }
 
+function measureFinanceDiffWidths(entries) {
+  const headers = ["Flight", "Gate", "Time", "Reason"];
+  const widths = headers.map((header) => header.length);
+
+  entries.forEach((entry) => {
+    [entry.flightDisplay, entry.gateDisplay ?? String(entry.gateNumber), entry.timeDisplay ?? entry.timeDisplayFinance].forEach((value, index) => {
+      widths[index] = Math.max(widths[index], value.length);
+    });
+    widths[3] = Math.max(widths[3], String(entry.reason || "").length);
+  });
+
+  return widths;
+}
+
 function formatFinanceHeader(widths) {
   return ["Flight", "Gate", "Time"]
+    .map((header, index) => header.padEnd(widths[index], " "))
+    .join(" | ")
+    .trimEnd();
+}
+
+function formatFinanceDiffHeader(widths) {
+  return ["Flight", "Gate", "Time", "Reason"]
     .map((header, index) => header.padEnd(widths[index], " "))
     .join(" | ")
     .trimEnd();
@@ -583,6 +919,196 @@ function formatFinanceLine(entry, widths) {
     .map((value, index) => value.padEnd(widths[index], " "))
     .join(" | ")
     .trimEnd();
+}
+
+function formatFinanceDiffLine(entry, widths, reason) {
+  return [
+    entry.flightDisplay,
+    entry.gateDisplay ?? String(entry.gateNumber),
+    entry.timeDisplay ?? entry.timeDisplayFinance,
+    reason || entry.reason || "",
+  ]
+    .map((value, index) => String(value).padEnd(widths[index], " "))
+    .join(" | ")
+    .trimEnd();
+}
+
+function classifyPresentFinanceRecord(official, candidate) {
+  const categories = [];
+  const gateChanged = official.gateNumber !== candidate.gateNumber;
+  const timeChanged = official.timeDisplayFinance !== candidate.timeDisplayFinance;
+  const status = String(candidate.status || "");
+  const delayed = /delay/i.test(status);
+  const canceled = /cancel/i.test(status);
+
+  if (gateChanged) {
+    categories.push("gate-change");
+  }
+  if (timeChanged) {
+    categories.push("time-change");
+  }
+  if (delayed) {
+    categories.push("delayed");
+  }
+  if (canceled) {
+    categories.push("canceled");
+  }
+  if (!categories.length) {
+    return null;
+  }
+
+  const reason = formatFinanceReason(categories);
+  const addedDisplay = buildFinanceDiffDisplay(candidate, {
+    priorGateNumber: gateChanged ? official.gateNumber : null,
+    priorTimeDisplay: timeChanged ? official.timeDisplayFinance : null,
+    reason,
+  });
+  const overlays = [];
+  const displayEntries = [];
+
+  if (gateChanged || timeChanged) {
+    const removedDisplay = buildFinanceDiffDisplay(official, { reason });
+    overlays.push({ kind: "removed", reason, display: removedDisplay, line: "" });
+    displayEntries.push(removedDisplay);
+  }
+
+  overlays.push({
+    kind: canceled ? "removed" : "added",
+    reason,
+    display: addedDisplay,
+    line: "",
+  });
+  displayEntries.push(addedDisplay);
+
+  return {
+    record: {
+      sortKey: [financeEntrySortKey(official), financeEntrySortKey(candidate)].sort()[0],
+      baseLine: "",
+      categories,
+      scheduledMinutes: parseFinanceMinutes(candidate.timeDisplayFinance) ?? parseFinanceMinutes(official.timeDisplayFinance),
+      overlays,
+    },
+    displayEntries,
+  };
+}
+
+function classifyAddedFinanceRecord(candidate) {
+  const status = String(candidate.status || "");
+  const categories = [];
+  if (/delay/i.test(status)) {
+    categories.push("delayed");
+  }
+  if (/cancel/i.test(status)) {
+    categories.push("canceled");
+  }
+  if (!categories.length) {
+    categories.push("new");
+  }
+  const reason = formatFinanceReason(categories);
+  const display = buildFinanceDiffDisplay(candidate, { reason });
+  return {
+    record: {
+      sortKey: financeEntrySortKey(candidate),
+      baseLine: "",
+      categories,
+      scheduledMinutes: parseFinanceMinutes(candidate.timeDisplayFinance),
+      overlays: [{ kind: categories.includes("canceled") ? "removed" : "added", reason, display, line: "" }],
+    },
+    displayEntries: [display],
+  };
+}
+
+function classifyMissingFinanceRecord(official, generatedAt) {
+  const reason = classifyMissingFinanceReason(official, generatedAt);
+  const categories = [reason === "Departed" ? "departed" : "removed"];
+  const display = buildFinanceDiffDisplay(official, { reason });
+  return {
+    record: {
+      sortKey: financeEntrySortKey(official),
+      baseLine: "",
+      categories,
+      scheduledMinutes: parseFinanceMinutes(official.timeDisplayFinance),
+      overlays: [{ kind: "removed", reason, display, line: "" }],
+    },
+    displayEntries: [display],
+  };
+}
+
+function buildFinanceDiffDisplay(entry, options = {}) {
+  const gateBase = String(options.gateNumber ?? entry.gateNumber);
+  const timeBase = String(options.timeDisplayFinance ?? entry.timeDisplayFinance);
+  const gateDisplay =
+    options.priorGateNumber != null && options.priorGateNumber !== entry.gateNumber
+      ? `${gateBase} (from ${options.priorGateNumber})`
+      : gateBase;
+  const timeDisplay =
+    options.priorTimeDisplay && options.priorTimeDisplay !== entry.timeDisplayFinance
+      ? `${timeBase} (was ${options.priorTimeDisplay})`
+      : timeBase;
+  return {
+    flightDisplay: entry.flightDisplay,
+    gateNumber: entry.gateNumber,
+    timeDisplayFinance: entry.timeDisplayFinance,
+    gateDisplay,
+    timeDisplay,
+    reason: options.reason || "",
+  };
+}
+
+function formatFinanceReason(categories) {
+  const labels = [];
+  if (categories.includes("canceled")) {
+    labels.push("Canceled");
+  }
+  if (categories.includes("delayed")) {
+    labels.push("Delayed");
+  }
+  if (categories.includes("gate-change")) {
+    labels.push("Gate Change");
+  }
+  if (categories.includes("time-change")) {
+    labels.push("Time Change");
+  }
+  if (categories.includes("new")) {
+    labels.push("New");
+  }
+  if (!labels.length) {
+    labels.push("Removed");
+  }
+  return labels.join(" · ");
+}
+
+function classifyMissingFinanceReason(entry, generatedAt) {
+  if (!(generatedAt instanceof Date) || Number.isNaN(generatedAt.getTime())) {
+    return "Removed";
+  }
+
+  const scheduledTime = financeEntryScheduledDate(entry, generatedAt);
+  if (!scheduledTime) {
+    return "Removed";
+  }
+
+  return scheduledTime.getTime() <= generatedAt.getTime() ? "Departed" : "Removed";
+}
+
+function financeEntryScheduledDate(entry, referenceDate) {
+  const match = String(entry?.timeDisplayFinance || "").match(/^(\d{1,2}):(\d{2})$/);
+  if (!match) {
+    return null;
+  }
+
+  const parts = getChicagoClockParts(referenceDate);
+  const hour = Number(match[1]);
+  const minute = Number(match[2]);
+  return chicagoDateAt(parts, hour, minute, 0);
+}
+
+function parseFinanceMinutes(value) {
+  const match = String(value || "").match(/^(\d{1,2}):(\d{2})$/);
+  if (!match) {
+    return null;
+  }
+  return Number(match[1]) * 60 + Number(match[2]);
 }
 
 function financeEntrySortKey(entry) {
@@ -657,6 +1183,7 @@ function buildFinanceEntriesFromPayload(payload) {
     flightDisplay: departure.flightDisplay,
     gateNumber: departure.gateNumber,
     timeDisplayFinance: departure.timeDisplayFinance,
+    status: departure.status || null,
   }));
 }
 
@@ -774,13 +1301,11 @@ function getVisibleDepartures() {
     return sortDepartures(departures);
   }
 
-  const upcomingDepartures = departures.filter(isVisibleInOps);
-  const filtered =
-    state.activeFilter === "all"
-      ? upcomingDepartures
-      : upcomingDepartures.filter((departure) => departure.podId === state.activeFilter);
-
-  return sortDepartures(filtered);
+  const upcomingDepartures = sortDepartures(departures.filter(isVisibleInOps));
+  const currentDay = upcomingDepartures.filter((departure) => isSameChicagoDay(departure.sortTimestamp));
+  const nextDay = upcomingDepartures.filter((departure) => !isSameChicagoDay(departure.sortTimestamp));
+  const base = state.showNextDay ? upcomingDepartures : currentDay.length ? currentDay : nextDay;
+  return state.activeFilter === "all" ? base : base.filter((departure) => departure.podId === state.activeFilter);
 }
 
 function isVisibleInOps(departure) {
@@ -823,10 +1348,16 @@ function sortDiffItems(items) {
 }
 
 function updateOpsBoardNote(departures) {
+  const baseDepartures = sortDepartures((state.payload?.departures ?? []).filter(isVisibleInOps));
+  const sameDay = baseDepartures.filter((departure) => isSameChicagoDay(departure.sortTimestamp));
+  const showingNextDay = departures.some((departure) => !isSameChicagoDay(departure.sortTimestamp));
   const notes = [];
-  if (departures.some((departure) => !isSameChicagoFinanceDay(departure, state.payload))) {
-    notes.push("Displaying next-day departures.");
+  if (showingNextDay && !state.showNextDay && sameDay.length === 0) {
+    notes.push("Auto-showing next-day departures.");
+  } else if (state.showNextDay) {
+    notes.push("Next-day departures included.");
   }
+  notes.push(state.opsStatusExpanded ? "Status labels expanded." : "Status dots only.");
   boardNote.textContent = notes.join(" · ");
   boardNote.classList.toggle("hidden", !boardNote.textContent);
 }
@@ -839,7 +1370,11 @@ function financeBoardNote() {
 }
 
 function setFinanceHeading(note) {
-  boardTitle.textContent = "Finance Review";
+  const suffix =
+    state.diffOpen && state.diffResult
+      ? describeFinanceDiffStatus(state.diffResult)
+      : "";
+  boardTitle.textContent = suffix ? `Finance View - ${suffix}` : "Finance View";
 }
 
 function shouldHideFinanceFilter() {
@@ -915,14 +1450,27 @@ function makeDestinationCell(departure) {
   wrap.appendChild(text);
 
   if (departure.status) {
-    const badge = document.createElement("span");
-    badge.className = `status-badge status-${statusKind(departure.status)}`;
-    badge.textContent = departure.status;
-    wrap.appendChild(badge);
+    wrap.appendChild(buildStatusIndicator(departure.status));
   }
 
   cell.appendChild(wrap);
   return cell;
+}
+
+function buildStatusIndicator(status) {
+  const kind = statusKind(status);
+  if (!state.opsStatusExpanded) {
+    const dot = document.createElement("span");
+    dot.className = `status-dot status-${kind}`;
+    dot.title = status;
+    dot.setAttribute("aria-label", status);
+    return dot;
+  }
+
+  const badge = document.createElement("span");
+  badge.className = `status-badge status-${kind}`;
+  badge.textContent = status;
+  return badge;
 }
 
 function animateTargets(target, params) {
@@ -1326,6 +1874,16 @@ function chicagoDateAt(parts, hour, minute, dayOffset) {
   const offsetMinutes =
     (corrected.hour * 60 + corrected.minute) - (hour * 60 + minute) + (corrected.day - (parts.day + dayOffset)) * 1440;
   return new Date(utcGuess.getTime() - offsetMinutes * 60000);
+}
+
+function isSameChicagoDay(timestamp) {
+  const departureParts = getChicagoClockParts(new Date(timestamp * 1000));
+  const currentParts = getChicagoClockParts(new Date(currentTimeMs()));
+  return (
+    departureParts.year === currentParts.year &&
+    departureParts.month === currentParts.month &&
+    departureParts.day === currentParts.day
+  );
 }
 
 function statusKind(status) {

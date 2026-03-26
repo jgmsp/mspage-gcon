@@ -51,6 +51,7 @@
             <p class="board-count" id="visible-count">Flights: 0</p>
           </div>
           <div class="board-actions">
+            <div class="board-controls" id="board-controls"></div>
             <p class="board-note hidden" id="board-note"></p>
           </div>
         </div>
@@ -62,7 +63,6 @@
           <div class="empty-state hidden" id="empty-state">No departures match this view.</div>
         </div>
         <div class="finance-stack">
-          <div class="finance-plain hidden" id="finance-plain" aria-live="polite"></div>
           <section class="finance-diff hidden" id="finance-diff" aria-live="polite">
             <div class="finance-diff-head">
               <div>
@@ -71,9 +71,10 @@
               </div>
               <p class="finance-diff-meta" id="finance-diff-meta"></p>
             </div>
-            <div class="finance-diff-summary" id="finance-diff-summary"></div>
             <div class="finance-diff-list" id="finance-diff-list"></div>
+            <div class="finance-diff-summary" id="finance-diff-summary"></div>
           </section>
+          <div class="finance-plain hidden" id="finance-plain" aria-live="polite"></div>
         </div>
       </section>
       <footer class="status-footer">

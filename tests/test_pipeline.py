@@ -653,6 +653,49 @@ class PipelineTests(unittest.TestCase):
         self.assertIn("finance-overlay-line-added", styles_css)
         self.assertIn("finance-overlay-line-removed", styles_css)
 
+    def test_finance_diff_keeps_layered_rows_and_adds_reason_column(self) -> None:
+        app_js = (ROOT / "docs" / "app.js").read_text(encoding="utf-8")
+
+        self.assertIn('["Flight", "Gate", "Time", "Reason"]', app_js)
+        self.assertIn("classifyPresentFinanceRecord", app_js)
+        self.assertIn("classifyAddedFinanceRecord", app_js)
+        self.assertIn("formatFinanceReason", app_js)
+        self.assertIn("classifyMissingFinanceReason", app_js)
+        self.assertIn('"Departed"', app_js)
+
+    def test_finance_diff_exposes_issue_and_time_filters(self) -> None:
+        app_js = (ROOT / "docs" / "app.js").read_text(encoding="utf-8")
+        styles_css = (ROOT / "docs" / "styles.css").read_text(encoding="utf-8")
+
+        self.assertIn("Gate Change", app_js)
+        self.assertIn("Time Change", app_js)
+        self.assertIn("All day", app_js)
+        self.assertIn("Custom", app_js)
+        self.assertIn("No active issues in current filter.", app_js)
+        self.assertIn("finance-diff-filters", styles_css)
+        self.assertIn("finance-diff-filter-group", styles_css)
+        self.assertIn("finance-custom-range", styles_css)
+
+    def test_ops_view_supports_next_day_toggle_and_status_chips(self) -> None:
+        index_html = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
+        app_js = (ROOT / "docs" / "app.js").read_text(encoding="utf-8")
+        styles_css = (ROOT / "docs" / "styles.css").read_text(encoding="utf-8")
+
+        self.assertIn('id="board-controls"', index_html)
+        self.assertIn('showNextDay: readStorage("mspage-gcon-show-next-day") === "true"', app_js)
+        self.assertIn('opsStatusExpanded: readStorage("mspage-gcon-status-expanded") === "true"', app_js)
+        self.assertIn('label: "Tomorrow"', app_js)
+        self.assertIn('label: "Status"', app_js)
+        self.assertIn("buildControlChip", app_js)
+        self.assertIn("Auto-showing next-day departures.", app_js)
+        self.assertIn("Next-day departures included.", app_js)
+        self.assertIn("Status dots only.", app_js)
+        self.assertIn("Status labels expanded.", app_js)
+        self.assertIn("status-dot", app_js)
+        self.assertIn(".board-controls", styles_css)
+        self.assertIn(".control-chip", styles_css)
+        self.assertIn(".status-dot", styles_css)
+
 
 class PHLDraftTests(unittest.TestCase):
     def setUp(self) -> None:
