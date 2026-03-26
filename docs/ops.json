@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-26T11:37:22.485532Z",
+  "generatedAt": "2026-03-26T12:40:32.257780Z",
   "pods": [
     {
       "id": "pod-1",
@@ -35,76 +35,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G8-1774526100-LAS",
-      "flightDisplay": "2261",
-      "flightIata": "DL2261",
-      "gateNumber": 8,
-      "gateLabel": "G8",
-      "destination": "LAS",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "0655",
-      "timeDisplayFinance": "06:55",
-      "sortTimestamp": 1774526100,
-      "status": "Boarding"
-    },
-    {
-      "id": "G21-1774526400-ATL",
-      "flightDisplay": "1039",
-      "flightIata": "DL1039",
-      "gateNumber": 21,
-      "gateLabel": "G21",
-      "destination": "ATL",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0700",
-      "timeDisplayFinance": "07:00",
-      "sortTimestamp": 1774526400,
-      "status": "Boarding"
-    },
-    {
-      "id": "G14-1774526700-LAX",
-      "flightDisplay": "2110",
-      "flightIata": "DL2110",
-      "gateNumber": 14,
-      "gateLabel": "G14",
-      "destination": "LAX",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "0705",
-      "timeDisplayFinance": "07:05",
-      "sortTimestamp": 1774526700,
-      "status": "Boarding"
-    },
-    {
-      "id": "G19-1774526700-MIA",
-      "flightDisplay": "2112",
-      "flightIata": "DL2112",
-      "gateNumber": 19,
-      "gateLabel": "G19",
-      "destination": "MIA",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0705",
-      "timeDisplayFinance": "07:05",
-      "sortTimestamp": 1774526700,
-      "status": "On Time"
-    },
-    {
-      "id": "G2-1774527240-BNA",
-      "flightDisplay": "2724",
-      "flightIata": "DL2724",
-      "gateNumber": 2,
-      "gateLabel": "G2",
-      "destination": "BNA",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "0714",
-      "timeDisplayFinance": "07:14",
-      "sortTimestamp": 1774527240,
-      "status": "On Time"
-    },
     {
       "id": "G18-1774530000-ATL",
       "flightDisplay": "1052",
@@ -624,20 +554,6 @@
       "status": "On Time"
     },
     {
-      "id": "G2-1774568400-PDX",
-      "flightDisplay": "2151",
-      "flightIata": "DL2151",
-      "gateNumber": 2,
-      "gateLabel": "G2",
-      "destination": "PDX",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1840",
-      "timeDisplayFinance": "18:40",
-      "sortTimestamp": 1774568400,
-      "status": "On Time"
-    },
-    {
       "id": "G17-1774568700-SAN",
       "flightDisplay": "2145",
       "flightIata": "DL2145",
@@ -694,6 +610,20 @@
       "status": "On Time"
     },
     {
+      "id": "G14-1774572480-DTW",
+      "flightDisplay": "1484",
+      "flightIata": "DL1484",
+      "gateNumber": 14,
+      "gateLabel": "G14",
+      "destination": "DTW",
+      "podId": "pod-4",
+      "podLabel": "Pod 4",
+      "timeDisplayOps": "1948",
+      "timeDisplayFinance": "19:48",
+      "sortTimestamp": 1774572480,
+      "status": "On Time"
+    },
+    {
       "id": "G1-1774572600-AUS",
       "flightDisplay": "2749",
       "flightIata": "DL2749",
@@ -722,14 +652,14 @@
       "status": "On Time"
     },
     {
-      "id": "G15-1774575120-PHL",
+      "id": "G17-1774575120-PHL",
       "flightDisplay": "2703",
       "flightIata": "DL2703",
-      "gateNumber": 15,
-      "gateLabel": "G15",
+      "gateNumber": 17,
+      "gateLabel": "G17",
       "destination": "PHL",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
       "timeDisplayOps": "2032",
       "timeDisplayFinance": "20:32",
       "sortTimestamp": 1774575120,
@@ -806,14 +736,14 @@
       "status": "On Time"
     },
     {
-      "id": "G17-1774579800-LAX",
+      "id": "G15-1774579800-LAX",
       "flightDisplay": "2103",
       "flightIata": "DL2103",
-      "gateNumber": 17,
-      "gateLabel": "G17",
+      "gateNumber": 15,
+      "gateLabel": "G15",
       "destination": "LAX",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
+      "podId": "pod-4",
+      "podLabel": "Pod 4",
       "timeDisplayOps": "2150",
       "timeDisplayFinance": "21:50",
       "sortTimestamp": 1774579800,
