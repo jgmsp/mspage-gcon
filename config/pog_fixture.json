@@ -1,0 +1,286 @@
+{
+  "planograms": [
+    {
+      "planogram_id": "e3f23613-1edd-462f-b47a-ded7ea50af9d",
+      "display_name": "MSP - CEGM POD 5_A1-A3_v1.0",
+      "modified_at": "2026-02-09T18:00:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Feature Table - Medium"
+      ],
+      "report_text": "Product Name | UPC | Size\nDark Chocolate Almonds | 100100100010 | 1.0 oz\nTrail Mix Cups | 100100100011 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "f36275c4-11c4-4227-9093-1f752da47dc7",
+      "display_name": "MSP - CEGM POD 5_B1-B4_v1.0",
+      "modified_at": "2026-03-21T18:00:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Fruit and Veggie Savory",
+        "Fruit and Veggie Sweet",
+        "Pouch Candy"
+      ],
+      "report_text": "Product Name | UPC | Size\nApple Chips | 100100100020 | 1.0 oz\nMango Slices | 100100100021 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "33000000-0000-0000-0000-000000000001",
+      "display_name": "MSP - CEGM POD 5_C1, C3_v1.0",
+      "modified_at": "2026-03-22T16:45:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Chocolate",
+        "Gum and Mints"
+      ],
+      "report_text": "Product Name | UPC | Size\nDark Chocolate Squares | 100100100030 | 1.0 oz\nPeppermint Gum | 100100100031 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "767b7edd-4076-4920-98de-f0a64d7679ad",
+      "display_name": "MSP - CEGM POD 5_C2_v1.0",
+      "modified_at": "2026-03-22T17:30:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Energy Bars",
+        "Pouch Chocolate"
+      ],
+      "report_text": "Product Name | UPC | Size\nProtein Crisp Bar | 100100100040 | 1.0 oz\nDark Chocolate Bites | 100100100041 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "767b7edd-4076-4920-98de-f0a64d7679ae",
+      "display_name": "MSP - CEGM POD 5_C2_v2.0",
+      "modified_at": "2026-03-23T17:30:00Z",
+      "end_at": "2026-05-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Energy Bars",
+        "Pouch Chocolate"
+      ],
+      "report_text": "Product Name | UPC | Size\nSea Salt Protein Bar | 100100100050 | 1.0 oz\nEspresso Chocolate Bites | 100100100051 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "33000000-0000-0000-0000-000000000002",
+      "display_name": "MSP - CEGM POD 5_C4_v1.0",
+      "modified_at": "2026-03-22T18:10:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Chocolate",
+        "Cookies"
+      ],
+      "report_text": "Product Name | UPC | Size\nChocolate Wafer Bites | 100100100060 | 1.0 oz\nShortbread Cookie Pack | 100100100061 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "33000000-0000-0000-0000-000000000003",
+      "display_name": "MSP - CEGM POD 5_CASHWRAP BACK_v1.0",
+      "modified_at": "2026-03-22T18:20:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Cashwrap Drinks"
+      ],
+      "report_text": "Product Name | UPC | Size\nSparkling Water Lime | 100100100070 | 1.0 oz\nCold Brew Coffee | 100100100071 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "33000000-0000-0000-0000-000000000004",
+      "display_name": "MSP - CEGM POD 5_CASHWRAP FRONT_v1.0",
+      "modified_at": "2026-03-22T18:25:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Cashwrap Candy"
+      ],
+      "report_text": "Product Name | UPC | Size\nMint Tin | 100100100080 | 1.0 oz\nChocolate Covered Pretzels | 100100100081 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "33000000-0000-0000-0000-000000000005",
+      "display_name": "MSP - CEGM POD 5_D1-D6_v1.0",
+      "modified_at": "2026-03-22T18:35:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Protein Bars",
+        "Snack Bars"
+      ],
+      "report_text": "Product Name | UPC | Size\nBlueberry Oat Bar | 100100100090 | 1.0 oz\nPeanut Butter Crunch Bar | 100100100091 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "33000000-0000-0000-0000-000000000006",
+      "display_name": "MSP - CEGM POD 5_E1-E4_v1.0",
+      "modified_at": "2026-03-22T18:40:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Cookies",
+        "Crackers"
+      ],
+      "report_text": "Product Name | UPC | Size\nCheddar Crackers | 100100100100 | 1.0 oz\nChocolate Chip Cookies | 100100100101 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "33000000-0000-0000-0000-000000000007",
+      "display_name": "MSP - CEGM POD 5_F1-F3_v1.0",
+      "modified_at": "2026-03-22T18:45:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Trail Mix",
+        "Nuts"
+      ],
+      "report_text": "Product Name | UPC | Size\nSweet and Salty Mix | 100100100110 | 1.0 oz\nRoasted Cashews | 100100100111 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "33000000-0000-0000-0000-000000000008",
+      "display_name": "MSP - CEGM POD 5_G1-G4_v1.0",
+      "modified_at": "2026-03-22T18:50:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Jerky",
+        "Protein"
+      ],
+      "report_text": "Product Name | UPC | Size\nTeriyaki Beef Jerky | 100100100120 | 1.0 oz\nSmoked Turkey Stick | 100100100121 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "33000000-0000-0000-0000-000000000009",
+      "display_name": "MSP - CEGM POD 5_H1-H4_v1.0",
+      "modified_at": "2026-03-22T18:55:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Candy",
+        "Chocolate"
+      ],
+      "report_text": "Product Name | UPC | Size\nSour Gummies | 100100100130 | 1.0 oz\nMilk Chocolate Almonds | 100100100131 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "33000000-0000-0000-0000-000000000010",
+      "display_name": "MSP - CEGM POD 5_I1-I4_v1.0",
+      "modified_at": "2026-03-22T19:00:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Candy",
+        "Gum"
+      ],
+      "report_text": "Product Name | UPC | Size\nFruit Chews | 100100100140 | 1.0 oz\nMint Gum | 100100100141 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "33000000-0000-0000-0000-000000000011",
+      "display_name": "MSP - CEGM POD 5_J1-J4_v1.0",
+      "modified_at": "2026-03-22T19:05:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Chips",
+        "Pretzels"
+      ],
+      "report_text": "Product Name | UPC | Size\nSea Salt Kettle Chips | 100100100150 | 1.0 oz\nHoney Mustard Pretzels | 100100100151 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "33000000-0000-0000-0000-000000000012",
+      "display_name": "MSP - CEGM POD 5_K1-K4_v1.0",
+      "modified_at": "2026-03-22T19:10:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Popcorn",
+        "Puffs"
+      ],
+      "report_text": "Product Name | UPC | Size\nWhite Cheddar Popcorn | 100100100160 | 1.0 oz\nSea Salt Puffs | 100100100161 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "33000000-0000-0000-0000-000000000013",
+      "display_name": "MSP - CEGM POD 5_L1_v1.0",
+      "modified_at": "2026-03-22T19:15:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Meat Snacks"
+      ],
+      "report_text": "Product Name | UPC | Size\nOriginal Beef Stick | 100100100170 | 1.0 oz\nSpicy Turkey Stick | 100100100171 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "94238c5d-fb87-4a4d-b8e3-c9907318d6d5",
+      "display_name": "MSP - CEGM POD 5_M1-M3_v1.0",
+      "modified_at": "2026-03-22T19:00:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Chips",
+        "Popcorn & Puff",
+        "Pretzel & Cracker"
+      ],
+      "report_text": "Product Name | UPC | Size\nSea Salt Chips | 100100100180 | 1.0 oz\nMovie Theater Popcorn | 100100100181 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "94238c5d-fb87-4a4d-b8e3-c9907318d6d6",
+      "display_name": "MSP - CEGM POD 5_M1-M3_v2.0",
+      "modified_at": "2026-03-23T19:00:00Z",
+      "end_at": "2026-05-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Chips",
+        "Popcorn & Puff",
+        "Pretzel & Cracker"
+      ],
+      "report_text": "Product Name | UPC | Size\nKettle Jalapeno Chips | 100100100190 | 1.0 oz\nWhite Cheddar Popcorn | 100100100191 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "7c14ccd4-a248-4382-b7ca-05e98e4b880e",
+      "display_name": "MSP - CEGM POD 5_M4_v1.0",
+      "modified_at": "2026-03-21T20:00:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Nuts and Seeds"
+      ],
+      "report_text": "Product Name | UPC | Size\nRoasted Almonds | 100100100200 | 1.0 oz\nTrail Mix | 100100100201 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "d1f42ba2-695e-4550-b802-a83bb711a791",
+      "display_name": "MSP - CEGM POD 5_M5_v1.0",
+      "modified_at": "2026-03-22T20:00:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Meat & Meat Alternatives"
+      ],
+      "report_text": "Product Name | UPC | Size\nBeef Jerky | 100100100210 | 1.0 oz\nTurkey Sticks | 100100100211 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "26ff063d-09e1-4737-8efe-eb639fe11b47",
+      "display_name": "MSP - CEGM POD 5_M6_v1.0",
+      "modified_at": "2026-03-23T20:00:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Energy Bars"
+      ],
+      "report_text": "Product Name | UPC | Size\nChocolate Chip Bar | 100100100220 | 1.0 oz\nPeanut Butter Bar | 100100100221 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "fce49159-d7f4-4c20-ae49-ef811671c301",
+      "display_name": "MSP - CEGM POD 5_M7_v1.0",
+      "modified_at": "2026-03-23T20:15:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Energy Bars"
+      ],
+      "report_text": "Product Name | UPC | Size\nBlueberry Bar | 100100100230 | 1.0 oz\nCoconut Bar | 100100100231 | 1.1 oz\n"
+    },
+    {
+      "planogram_id": "632f6d7a-1309-4163-a505-4ed7c6dc790e",
+      "display_name": "MSP - CEGM POD 5_M8_v1.0",
+      "modified_at": "2026-03-23T20:30:00Z",
+      "end_at": "2026-04-09T00:00:00Z",
+      "status": "Active",
+      "groups": [
+        "Energy Bars"
+      ],
+      "report_text": "Product Name | UPC | Size\nHoney Oat Bar | 100100100240 | 1.0 oz\nDark Cocoa Bar | 100100100241 | 1.1 oz\n"
+    }
+  ]
+}
