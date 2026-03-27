@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-27T21:20:12.818933Z",
+  "generatedAt": "2026-03-27T22:02:38.635938Z",
   "pods": [
     {
       "id": "pod-1",
@@ -35,34 +35,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G17-1774647660-ATL",
-      "flightDisplay": "1028",
-      "flightIata": "DL1028",
-      "gateNumber": 17,
-      "gateLabel": "G17",
-      "destination": "ATL",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1641",
-      "timeDisplayFinance": "16:41",
-      "sortTimestamp": 1774647660,
-      "status": "On Time"
-    },
-    {
-      "id": "G2-1774648500-DTW",
-      "flightDisplay": "1476",
-      "flightIata": "DL1476",
-      "gateNumber": 2,
-      "gateLabel": "G2",
-      "destination": "DTW",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1655",
-      "timeDisplayFinance": "16:55",
-      "sortTimestamp": 1774648500,
-      "status": "On Time"
-    },
     {
       "id": "G6-1774650300-CDG",
       "flightDisplay": "152",
@@ -131,20 +103,6 @@
       "timeDisplayOps": "1820",
       "timeDisplayFinance": "18:20",
       "sortTimestamp": 1774653600,
-      "status": "On Time"
-    },
-    {
-      "id": "G8-1774654560-DEN",
-      "flightDisplay": "2931",
-      "flightIata": "DL2931",
-      "gateNumber": 8,
-      "gateLabel": "G8",
-      "destination": "DEN",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1836",
-      "timeDisplayFinance": "18:36",
-      "sortTimestamp": 1774654560,
       "status": "On Time"
     },
     {
