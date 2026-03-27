@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-27T22:02:38.635938Z",
+  "generatedAt": "2026-03-27T23:16:59.894134Z",
   "pods": [
     {
       "id": "pod-1",
@@ -35,62 +35,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G6-1774650300-CDG",
-      "flightDisplay": "152",
-      "flightIata": "DL152",
-      "gateNumber": 6,
-      "gateLabel": "G6",
-      "destination": "CDG",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1725",
-      "timeDisplayFinance": "17:25",
-      "sortTimestamp": 1774650300,
-      "status": "On Time"
-    },
-    {
-      "id": "G4-1774652700-LHR",
-      "flightDisplay": "10",
-      "flightIata": "DL10",
-      "gateNumber": 4,
-      "gateLabel": "G4",
-      "destination": "LHR",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1805",
-      "timeDisplayFinance": "18:05",
-      "sortTimestamp": 1774652700,
-      "status": "On Time"
-    },
-    {
-      "id": "G9-1774653000-SLC",
-      "flightDisplay": "2607",
-      "flightIata": "DL2607",
-      "gateNumber": 9,
-      "gateLabel": "G9",
-      "destination": "SLC",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
-      "timeDisplayOps": "1810",
-      "timeDisplayFinance": "18:10",
-      "sortTimestamp": 1774653000,
-      "status": "On Time"
-    },
-    {
-      "id": "G10-1774653120-ATL",
-      "flightDisplay": "1026",
-      "flightIata": "DL1026",
-      "gateNumber": 10,
-      "gateLabel": "G10",
-      "destination": "ATL",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
-      "timeDisplayOps": "1812",
-      "timeDisplayFinance": "18:12",
-      "sortTimestamp": 1774653120,
-      "status": "On Time"
-    },
     {
       "id": "G15-1774653600-TPA",
       "flightDisplay": "2385",
@@ -132,6 +76,20 @@
       "timeDisplayFinance": "18:59",
       "sortTimestamp": 1774655940,
       "status": "On Time"
+    },
+    {
+      "id": "G22-1774656600-DEN",
+      "flightDisplay": "8845",
+      "flightIata": "DL8845",
+      "gateNumber": 22,
+      "gateLabel": "G22",
+      "destination": "DEN",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
+      "timeDisplayOps": "1910",
+      "timeDisplayFinance": "19:10",
+      "sortTimestamp": 1774656600,
+      "status": "Departed"
     },
     {
       "id": "G3-1774659540-BOS",
