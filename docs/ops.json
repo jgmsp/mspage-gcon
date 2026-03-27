@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-27T18:36:39.605990Z",
+  "generatedAt": "2026-03-27T19:30:00.760865Z",
   "pods": [
     {
       "id": "pod-1",
@@ -35,20 +35,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G17-1774639260-LAS",
-      "flightDisplay": "1542",
-      "flightIata": "DL1542",
-      "gateNumber": 17,
-      "gateLabel": "G17",
-      "destination": "LAS",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1421",
-      "timeDisplayFinance": "14:21",
-      "sortTimestamp": 1774639260,
-      "status": "On Time"
-    },
     {
       "id": "G14-1774641360-ATL",
       "flightDisplay": "1036",
