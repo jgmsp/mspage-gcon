@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-27T10:33:08.908191Z",
+  "generatedAt": "2026-03-27T11:30:07.658872Z",
   "pods": [
     {
       "id": "pod-1",
@@ -35,48 +35,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G17-1774609560-CUN",
-      "flightDisplay": "399",
-      "flightIata": "DL399",
-      "gateNumber": 17,
-      "gateLabel": "G17",
-      "destination": "CUN",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0606",
-      "timeDisplayFinance": "06:06",
-      "sortTimestamp": 1774609560,
-      "status": "Boarding"
-    },
-    {
-      "id": "G21-1774609800-TPA",
-      "flightDisplay": "2301",
-      "flightIata": "DL2301",
-      "gateNumber": 21,
-      "gateLabel": "G21",
-      "destination": "TPA",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0610",
-      "timeDisplayFinance": "06:10",
-      "sortTimestamp": 1774609800,
-      "status": "On Time"
-    },
-    {
-      "id": "G20-1774610400-RSW",
-      "flightDisplay": "854",
-      "flightIata": "DL854",
-      "gateNumber": 20,
-      "gateLabel": "G20",
-      "destination": "RSW",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0620",
-      "timeDisplayFinance": "06:20",
-      "sortTimestamp": 1774610400,
-      "status": "On Time"
-    },
     {
       "id": "G4-1774612620-PHX",
       "flightDisplay": "1047",
@@ -131,7 +89,7 @@
       "timeDisplayOps": "0705",
       "timeDisplayFinance": "07:05",
       "sortTimestamp": 1774613100,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G10-1774614000-SLC",
@@ -596,6 +554,20 @@
       "status": "On Time"
     },
     {
+      "id": "G6-1774650300-CDG",
+      "flightDisplay": "152",
+      "flightIata": "DL152",
+      "gateNumber": 6,
+      "gateLabel": "G6",
+      "destination": "CDG",
+      "podId": "pod-1",
+      "podLabel": "Pod 1",
+      "timeDisplayOps": "1725",
+      "timeDisplayFinance": "17:25",
+      "sortTimestamp": 1774650300,
+      "status": "On Time"
+    },
+    {
       "id": "G4-1774652700-LHR",
       "flightDisplay": "10",
       "flightIata": "DL10",
@@ -610,31 +582,17 @@
       "status": "On Time"
     },
     {
-      "id": "G8-1774653000-SLC",
+      "id": "G9-1774653000-SLC",
       "flightDisplay": "2607",
       "flightIata": "DL2607",
-      "gateNumber": 8,
-      "gateLabel": "G8",
+      "gateNumber": 9,
+      "gateLabel": "G9",
       "destination": "SLC",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
+      "podId": "pod-2",
+      "podLabel": "Pod 2",
       "timeDisplayOps": "1810",
       "timeDisplayFinance": "18:10",
       "sortTimestamp": 1774653000,
-      "status": "On Time"
-    },
-    {
-      "id": "G9-1774653120-ATL",
-      "flightDisplay": "1026",
-      "flightIata": "DL1026",
-      "gateNumber": 9,
-      "gateLabel": "G9",
-      "destination": "ATL",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
-      "timeDisplayOps": "1812",
-      "timeDisplayFinance": "18:12",
-      "sortTimestamp": 1774653120,
       "status": "On Time"
     },
     {
@@ -708,14 +666,14 @@
       "status": "On Time"
     },
     {
-      "id": "G10-1774655460-SEA",
+      "id": "G15-1774655460-SEA",
       "flightDisplay": "881",
       "flightIata": "DL881",
-      "gateNumber": 10,
-      "gateLabel": "G10",
+      "gateNumber": 15,
+      "gateLabel": "G15",
       "destination": "SEA",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
+      "podId": "pod-4",
+      "podLabel": "Pod 4",
       "timeDisplayOps": "1851",
       "timeDisplayFinance": "18:51",
       "sortTimestamp": 1774655460,
@@ -750,14 +708,14 @@
       "status": "On Time"
     },
     {
-      "id": "G10-1774659540-BOS",
+      "id": "G3-1774659540-BOS",
       "flightDisplay": "2614",
       "flightIata": "DL2614",
-      "gateNumber": 10,
-      "gateLabel": "G10",
+      "gateNumber": 3,
+      "gateLabel": "G3",
       "destination": "BOS",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
+      "podId": "pod-1",
+      "podLabel": "Pod 1",
       "timeDisplayOps": "1959",
       "timeDisplayFinance": "19:59",
       "sortTimestamp": 1774659540,
