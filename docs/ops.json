@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-28T13:39:05.735664Z",
+  "generatedAt": "2026-03-28T14:19:14.587494Z",
   "pods": [
     {
       "id": "pod-1",
@@ -35,90 +35,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G10-1774705800-MIA",
-      "flightDisplay": "2129",
-      "flightIata": "DL2129",
-      "gateNumber": 10,
-      "gateLabel": "G10",
-      "destination": "MIA",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
-      "timeDisplayOps": "0850",
-      "timeDisplayFinance": "08:50",
-      "sortTimestamp": 1774705800,
-      "status": "Boarding"
-    },
-    {
-      "id": "G9-1774706100-PUJ",
-      "flightDisplay": "1979",
-      "flightIata": "DL1979",
-      "gateNumber": 9,
-      "gateLabel": "G9",
-      "destination": "PUJ",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
-      "timeDisplayOps": "0855",
-      "timeDisplayFinance": "08:55",
-      "sortTimestamp": 1774706100,
-      "status": "On Time"
-    },
-    {
-      "id": "G1-1774706400-MZT",
-      "flightDisplay": "1795",
-      "flightIata": "DL1795",
-      "gateNumber": 1,
-      "gateLabel": "G1",
-      "destination": "MZT",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "0900",
-      "timeDisplayFinance": "09:00",
-      "sortTimestamp": 1774706400,
-      "status": "Boarding"
-    },
-    {
-      "id": "G17-1774706760-SAN",
-      "flightDisplay": "2121",
-      "flightIata": "DL2121",
-      "gateNumber": 17,
-      "gateLabel": "G17",
-      "destination": "SAN",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0906",
-      "timeDisplayFinance": "09:06",
-      "sortTimestamp": 1774706760,
-      "status": "Boarding"
-    },
-    {
-      "id": "G21-1774707300-LAX",
-      "flightDisplay": "2102",
-      "flightIata": "DL2102",
-      "gateNumber": 21,
-      "gateLabel": "G21",
-      "destination": "LAX",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0915",
-      "timeDisplayFinance": "09:15",
-      "sortTimestamp": 1774707300,
-      "status": "Boarding"
-    },
-    {
-      "id": "G14-1774707420-LAS",
-      "flightDisplay": "2262",
-      "flightIata": "DL2262",
-      "gateNumber": 14,
-      "gateLabel": "G14",
-      "destination": "LAS",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "0917",
-      "timeDisplayFinance": "09:17",
-      "sortTimestamp": 1774707420,
-      "status": "On Time"
-    },
     {
       "id": "G18-1774708500-TPA",
       "flightDisplay": "2745",
