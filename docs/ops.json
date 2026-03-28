@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-28T06:39:37.597006Z",
+  "generatedAt": "2026-03-28T07:34:44.274183Z",
   "pods": [
     {
       "id": "pod-1",
@@ -120,34 +120,6 @@
       "status": "On Time"
     },
     {
-      "id": "G4-1774699020-PHX",
-      "flightDisplay": "1047",
-      "flightIata": "DL1047",
-      "gateNumber": 4,
-      "gateLabel": "G4",
-      "destination": "PHX",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "0657",
-      "timeDisplayFinance": "06:57",
-      "sortTimestamp": 1774699020,
-      "status": "On Time"
-    },
-    {
-      "id": "G14-1774699200-ATL",
-      "flightDisplay": "1039",
-      "flightIata": "DL1039",
-      "gateNumber": 14,
-      "gateLabel": "G14",
-      "destination": "ATL",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "0700",
-      "timeDisplayFinance": "07:00",
-      "sortTimestamp": 1774699200,
-      "status": "On Time"
-    },
-    {
       "id": "G2-1774699260-PUJ",
       "flightDisplay": "1853",
       "flightIata": "DL1853",
@@ -159,20 +131,6 @@
       "timeDisplayOps": "0701",
       "timeDisplayFinance": "07:01",
       "sortTimestamp": 1774699260,
-      "status": "On Time"
-    },
-    {
-      "id": "G8-1774699500-BZE",
-      "flightDisplay": "1940",
-      "flightIata": "DL1940",
-      "gateNumber": 8,
-      "gateLabel": "G8",
-      "destination": "BZE",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "0705",
-      "timeDisplayFinance": "07:05",
-      "sortTimestamp": 1774699500,
       "status": "On Time"
     },
     {
@@ -204,20 +162,6 @@
       "status": "On Time"
     },
     {
-      "id": "G10-1774700400-SLC",
-      "flightDisplay": "2628",
-      "flightIata": "DL2628",
-      "gateNumber": 10,
-      "gateLabel": "G10",
-      "destination": "SLC",
-      "podId": "pod-2",
-      "podLabel": "Pod 2",
-      "timeDisplayOps": "0720",
-      "timeDisplayFinance": "07:20",
-      "sortTimestamp": 1774700400,
-      "status": "On Time"
-    },
-    {
       "id": "G4-1774702800-ATL",
       "flightDisplay": "1052",
       "flightIata": "DL1052",
@@ -229,6 +173,20 @@
       "timeDisplayOps": "0800",
       "timeDisplayFinance": "08:00",
       "sortTimestamp": 1774702800,
+      "status": "On Time"
+    },
+    {
+      "id": "G22-1774704240-FLL",
+      "flightDisplay": "1134",
+      "flightIata": "DL1134",
+      "gateNumber": 22,
+      "gateLabel": "G22",
+      "destination": "FLL",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
+      "timeDisplayOps": "0824",
+      "timeDisplayFinance": "08:24",
+      "sortTimestamp": 1774704240,
       "status": "On Time"
     },
     {
@@ -254,20 +212,6 @@
       "destination": "MIA",
       "podId": "pod-2",
       "podLabel": "Pod 2",
-      "timeDisplayOps": "0850",
-      "timeDisplayFinance": "08:50",
-      "sortTimestamp": 1774705800,
-      "status": "On Time"
-    },
-    {
-      "id": "G18-1774705800-LGA",
-      "flightDisplay": "2764",
-      "flightIata": "DL2764",
-      "gateNumber": 18,
-      "gateLabel": "G18",
-      "destination": "LGA",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
       "timeDisplayOps": "0850",
       "timeDisplayFinance": "08:50",
       "sortTimestamp": 1774705800,
@@ -582,11 +526,11 @@
       "status": "On Time"
     },
     {
-      "id": "G6-1774722900-ICN",
+      "id": "G8-1774722900-ICN",
       "flightDisplay": "171",
       "flightIata": "DL171",
-      "gateNumber": 6,
-      "gateLabel": "G6",
+      "gateNumber": 8,
+      "gateLabel": "G8",
       "destination": "ICN",
       "podId": "pod-1",
       "podLabel": "Pod 1",
