@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-28T18:01:14.321571Z",
+  "generatedAt": "2026-03-28T19:19:24.912642Z",
   "pods": [
     {
       "id": "pod-1",
@@ -35,20 +35,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G17-1774722000-HDN",
-      "flightDisplay": "1260",
-      "flightIata": "DL1260",
-      "gateNumber": 17,
-      "gateLabel": "G17",
-      "destination": "HDN",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1320",
-      "timeDisplayFinance": "13:20",
-      "sortTimestamp": 1774722000,
-      "status": "Boarding"
-    },
     {
       "id": "G14-1774727760-ATL",
       "flightDisplay": "1036",
@@ -201,6 +187,20 @@
       "timeDisplayOps": "1825",
       "timeDisplayFinance": "18:25",
       "sortTimestamp": 1774740300,
+      "status": "On Time"
+    },
+    {
+      "id": "G17-1774740960-FAR",
+      "flightDisplay": "2278",
+      "flightIata": "DL2278",
+      "gateNumber": 17,
+      "gateLabel": "G17",
+      "destination": "FAR",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
+      "timeDisplayOps": "1836",
+      "timeDisplayFinance": "18:36",
+      "sortTimestamp": 1774740960,
       "status": "On Time"
     },
     {
@@ -358,25 +358,25 @@
       "status": "On Time"
     },
     {
-      "id": "G15-1774753140-LAS",
+      "id": "G19-1774753140-LAS",
       "flightDisplay": "1442",
       "flightIata": "DL1442",
-      "gateNumber": 15,
-      "gateLabel": "G15",
+      "gateNumber": 19,
+      "gateLabel": "G19",
       "destination": "LAS",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
       "timeDisplayOps": "2159",
       "timeDisplayFinance": "21:59",
       "sortTimestamp": 1774753140,
       "status": "On Time"
     },
     {
-      "id": "G19-1774753680-PHX",
+      "id": "G20-1774753680-PHX",
       "flightDisplay": "1029",
       "flightIata": "DL1029",
-      "gateNumber": 19,
-      "gateLabel": "G19",
+      "gateNumber": 20,
+      "gateLabel": "G20",
       "destination": "PHX",
       "podId": "pod-5",
       "podLabel": "Pod 5",
