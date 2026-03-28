@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-28T14:19:14.587494Z",
+  "generatedAt": "2026-03-28T15:04:35.503668Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,34 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G18-1774708500-TPA",
-      "flightDisplay": "2745",
-      "flightIata": "DL2745",
-      "gateNumber": 18,
-      "gateLabel": "G18",
-      "destination": "TPA",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0935",
-      "timeDisplayFinance": "09:35",
-      "sortTimestamp": 1774708500,
-      "status": "On Time"
-    },
-    {
-      "id": "G15-1774709340-PLS",
-      "flightDisplay": "1982",
-      "flightIata": "DL1982",
-      "gateNumber": 15,
-      "gateLabel": "G15",
-      "destination": "PLS",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "0949",
-      "timeDisplayFinance": "09:49",
-      "sortTimestamp": 1774709340,
-      "status": "On Time"
-    },
-    {
       "id": "G6-1774710600-HNL",
       "flightDisplay": "312",
       "flightIata": "DL312",
@@ -75,7 +47,7 @@
       "timeDisplayOps": "1010",
       "timeDisplayFinance": "10:10",
       "sortTimestamp": 1774710600,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G19-1774710600-CZM",
@@ -89,7 +61,7 @@
       "timeDisplayOps": "1010",
       "timeDisplayFinance": "10:10",
       "sortTimestamp": 1774710600,
-      "status": "On Time"
+      "status": "Departed"
     },
     {
       "id": "G3-1774711320-ATL",
@@ -103,7 +75,7 @@
       "timeDisplayOps": "1022",
       "timeDisplayFinance": "10:22",
       "sortTimestamp": 1774711320,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G10-1774714560-LAS",
@@ -397,20 +369,6 @@
       "timeDisplayOps": "1850",
       "timeDisplayFinance": "18:50",
       "sortTimestamp": 1774741800,
-      "status": "On Time"
-    },
-    {
-      "id": "G2-1774743000-SFO",
-      "flightDisplay": "756",
-      "flightIata": "DL756",
-      "gateNumber": 2,
-      "gateLabel": "G2",
-      "destination": "SFO",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1910",
-      "timeDisplayFinance": "19:10",
-      "sortTimestamp": 1774743000,
       "status": "On Time"
     },
     {
