@@ -3,86 +3,50 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>MSP Flight Board</title>
-    <script>
-      try {
-        const theme = localStorage.getItem("mspage-gcon-theme");
-        if (theme) {
-          document.documentElement.dataset.theme = theme;
-        }
-      } catch (error) {
-        console.warn("Theme preference unavailable.", error);
+    <title>401</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #050505;
+        --frame: rgba(255, 255, 255, 0.08);
       }
-    </script>
-    <link rel="stylesheet" href="./styles.css">
+
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        background: var(--bg);
+      }
+
+      body {
+        display: grid;
+        place-items: center;
+        min-height: 100vh;
+        overflow: hidden;
+      }
+
+      .photo {
+        width: min(100vw, 1000px);
+        height: min(100vh, 1000px);
+        display: grid;
+        place-items: center;
+        padding: clamp(12px, 2vw, 24px);
+        box-sizing: border-box;
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+        border: 1px solid var(--frame);
+        background: #000;
+      }
+    </style>
   </head>
   <body>
-    <main class="shell">
-      <section class="hero">
-        <div class="eyebrow-row">
-          <p class="eyebrow">Terminal 1</p>
-          <p class="eyebrow-meta" id="last-updated-inline">Awaiting snapshot</p>
-        </div>
-        <div class="hero-heading">
-          <div class="hero-copy">
-            <h1>Concourse G</h1>
-            <p class="lede">
-              Departures snapshot for G.
-            </p>
-          </div>
-          <div class="theme-inline">
-            <button type="button" class="theme-cycle" id="theme-cycle" aria-label="Cycle theme">
-              <svg viewBox="0 0 24 24" role="presentation" focusable="false">
-                <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-        <div class="hero-toolbar">
-          <span class="toolbar-label">Filter</span>
-          <div class="pod-filters" id="pod-filters" aria-label="Board filters"></div>
-        </div>
-      </section>
-
-      <section class="board">
-        <div class="board-header">
-          <div class="board-heading">
-            <h2 id="board-title">Operations View</h2>
-            <p class="board-count" id="visible-count">Flights: 0</p>
-          </div>
-          <div class="board-actions">
-            <div class="board-controls" id="board-controls"></div>
-            <p class="board-note hidden" id="board-note"></p>
-          </div>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead id="departures-head"></thead>
-            <tbody id="departures-body"></tbody>
-          </table>
-          <div class="empty-state hidden" id="empty-state">No departures match this view.</div>
-        </div>
-        <div class="finance-stack">
-          <section class="finance-diff hidden" id="finance-diff" aria-live="polite">
-            <div class="finance-diff-head">
-              <div>
-                <p class="finance-diff-kicker">Current vs Recent Flights Run</p>
-                <h3 id="finance-diff-title">No changes detected</h3>
-              </div>
-              <p class="finance-diff-meta" id="finance-diff-meta"></p>
-            </div>
-            <div class="finance-diff-list" id="finance-diff-list"></div>
-            <div class="finance-diff-summary" id="finance-diff-summary"></div>
-          </section>
-          <div class="finance-plain hidden" id="finance-plain" aria-live="polite"></div>
-        </div>
-      </section>
-      <footer class="status-footer">
-        <p class="status-line" id="status-line">Status: Awaiting snapshot</p>
-      </footer>
+    <main class="photo" aria-label="401 photo">
+      <img src="assets/401.jpg" alt="401 unauthorized poster with a cat">
     </main>
-
-    <script src="./vendor/anime.iife.min.js" defer></script>
-    <script src="./app.js" defer></script>
   </body>
 </html>
