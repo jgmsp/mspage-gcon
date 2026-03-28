@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-28T09:21:31.728113Z",
+  "generatedAt": "2026-03-28T10:05:29.829597Z",
   "pods": [
     {
       "id": "pod-1",
@@ -47,7 +47,7 @@
       "timeDisplayOps": "0515",
       "timeDisplayFinance": "05:15",
       "sortTimestamp": 1774692900,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G9-1774695600-DTW",
@@ -224,20 +224,6 @@
       "gateNumber": 1,
       "gateLabel": "G1",
       "destination": "MZT",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "0900",
-      "timeDisplayFinance": "09:00",
-      "sortTimestamp": 1774706400,
-      "status": "On Time"
-    },
-    {
-      "id": "G2-1774706400-DTW",
-      "flightDisplay": "1433",
-      "flightIata": "DL1433",
-      "gateNumber": 2,
-      "gateLabel": "G2",
-      "destination": "DTW",
       "podId": "pod-1",
       "podLabel": "Pod 1",
       "timeDisplayOps": "0900",
@@ -691,20 +677,6 @@
       "timeDisplayOps": "1910",
       "timeDisplayFinance": "19:10",
       "sortTimestamp": 1774743000,
-      "status": "On Time"
-    },
-    {
-      "id": "G15-1774746420-LGA",
-      "flightDisplay": "2733",
-      "flightIata": "DL2733",
-      "gateNumber": 15,
-      "gateLabel": "G15",
-      "destination": "LGA",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "2007",
-      "timeDisplayFinance": "20:07",
-      "sortTimestamp": 1774746420,
       "status": "On Time"
     },
     {
