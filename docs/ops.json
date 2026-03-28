@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-28T11:04:00.373946Z",
+  "generatedAt": "2026-03-28T11:59:11.567330Z",
   "pods": [
     {
       "id": "pod-1",
@@ -36,62 +36,6 @@
   ],
   "departures": [
     {
-      "id": "G14-1774695960-CUN",
-      "flightDisplay": "399",
-      "flightIata": "DL399",
-      "gateNumber": 14,
-      "gateLabel": "G14",
-      "destination": "CUN",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
-      "timeDisplayOps": "0606",
-      "timeDisplayFinance": "06:06",
-      "sortTimestamp": 1774695960,
-      "status": "On Time"
-    },
-    {
-      "id": "G2-1774696200-TPA",
-      "flightDisplay": "2301",
-      "flightIata": "DL2301",
-      "gateNumber": 2,
-      "gateLabel": "G2",
-      "destination": "TPA",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "0610",
-      "timeDisplayFinance": "06:10",
-      "sortTimestamp": 1774696200,
-      "status": "On Time"
-    },
-    {
-      "id": "G19-1774696800-RSW",
-      "flightDisplay": "854",
-      "flightIata": "DL854",
-      "gateNumber": 19,
-      "gateLabel": "G19",
-      "destination": "RSW",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0620",
-      "timeDisplayFinance": "06:20",
-      "sortTimestamp": 1774696800,
-      "status": "Boarding"
-    },
-    {
-      "id": "G18-1774698900-LAS",
-      "flightDisplay": "2261",
-      "flightIata": "DL2261",
-      "gateNumber": 18,
-      "gateLabel": "G18",
-      "destination": "LAS",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "0655",
-      "timeDisplayFinance": "06:55",
-      "sortTimestamp": 1774698900,
-      "status": "On Time"
-    },
-    {
       "id": "G20-1774699500-MIA",
       "flightDisplay": "2112",
       "flightIata": "DL2112",
@@ -103,7 +47,7 @@
       "timeDisplayOps": "0705",
       "timeDisplayFinance": "07:05",
       "sortTimestamp": 1774699500,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G21-1774699500-LAX",
@@ -117,7 +61,7 @@
       "timeDisplayOps": "0705",
       "timeDisplayFinance": "07:05",
       "sortTimestamp": 1774699500,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G4-1774702800-ATL",
@@ -330,14 +274,14 @@
       "status": "On Time"
     },
     {
-      "id": "G14-1774714560-LAX",
+      "id": "G17-1774714560-LAX",
       "flightDisplay": "2119",
       "flightIata": "DL2119",
-      "gateNumber": 14,
-      "gateLabel": "G14",
+      "gateNumber": 17,
+      "gateLabel": "G17",
       "destination": "LAX",
-      "podId": "pod-4",
-      "podLabel": "Pod 4",
+      "podId": "pod-5",
+      "podLabel": "Pod 5",
       "timeDisplayOps": "1116",
       "timeDisplayFinance": "11:16",
       "sortTimestamp": 1774714560,
@@ -596,20 +540,6 @@
       "status": "On Time"
     },
     {
-      "id": "G22-1774741920-SNA",
-      "flightDisplay": "2107",
-      "flightIata": "DL2107",
-      "gateNumber": 22,
-      "gateLabel": "G22",
-      "destination": "SNA",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1852",
-      "timeDisplayFinance": "18:52",
-      "sortTimestamp": 1774741920,
-      "status": "On Time"
-    },
-    {
       "id": "G2-1774743000-SFO",
       "flightDisplay": "756",
       "flightIata": "DL756",
@@ -694,14 +624,14 @@
       "status": "On Time"
     },
     {
-      "id": "G8-1774750020-IND",
+      "id": "G15-1774750020-IND",
       "flightDisplay": "674",
       "flightIata": "DL674",
-      "gateNumber": 8,
-      "gateLabel": "G8",
+      "gateNumber": 15,
+      "gateLabel": "G15",
       "destination": "IND",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
+      "podId": "pod-4",
+      "podLabel": "Pod 4",
       "timeDisplayOps": "2107",
       "timeDisplayFinance": "21:07",
       "sortTimestamp": 1774750020,
