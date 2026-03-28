@@ -1,7 +1,7 @@
 {
   "airport": "MSP",
   "concourse": "G",
-  "generatedAt": "2026-03-28T15:04:35.503668Z",
+  "generatedAt": "2026-03-28T16:02:25.091398Z",
   "pods": [
     {
       "id": "pod-1",
@@ -35,48 +35,6 @@
     }
   ],
   "departures": [
-    {
-      "id": "G6-1774710600-HNL",
-      "flightDisplay": "312",
-      "flightIata": "DL312",
-      "gateNumber": 6,
-      "gateLabel": "G6",
-      "destination": "HNL",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1010",
-      "timeDisplayFinance": "10:10",
-      "sortTimestamp": 1774710600,
-      "status": "Boarding"
-    },
-    {
-      "id": "G19-1774710600-CZM",
-      "flightDisplay": "1811",
-      "flightIata": "DL1811",
-      "gateNumber": 19,
-      "gateLabel": "G19",
-      "destination": "CZM",
-      "podId": "pod-5",
-      "podLabel": "Pod 5",
-      "timeDisplayOps": "1010",
-      "timeDisplayFinance": "10:10",
-      "sortTimestamp": 1774710600,
-      "status": "Departed"
-    },
-    {
-      "id": "G3-1774711320-ATL",
-      "flightDisplay": "1046",
-      "flightIata": "DL1046",
-      "gateNumber": 3,
-      "gateLabel": "G3",
-      "destination": "ATL",
-      "podId": "pod-1",
-      "podLabel": "Pod 1",
-      "timeDisplayOps": "1022",
-      "timeDisplayFinance": "10:22",
-      "sortTimestamp": 1774711320,
-      "status": "Boarding"
-    },
     {
       "id": "G10-1774714560-LAS",
       "flightDisplay": "2238",
@@ -117,7 +75,7 @@
       "timeDisplayOps": "1130",
       "timeDisplayFinance": "11:30",
       "sortTimestamp": 1774715400,
-      "status": "On Time"
+      "status": "Boarding"
     },
     {
       "id": "G19-1774718880-RSW",
